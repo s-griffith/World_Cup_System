@@ -16,9 +16,17 @@
 #define WORLDCUP23A1_H_
 
 #include "wet1util.h"
+#include "Teams.h"
+#include "Players.h"
+#include "AVLTree.h"
 
 class world_cup_t {
 private:
+	Tree<std::shared_ptr<Player>> m_playersByID;
+	Tree<std::shared_ptr<Team>> m_teamsByID;
+	Tree<std::shared_ptr<Player>> m_playersByScore;
+	int m_numPlayers;
+	std::shared_ptr<Player> m_overallTopScorer;
 	//
 	// Here you may add anything you want
 	//

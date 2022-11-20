@@ -1,0 +1,14 @@
+To Do:
+
+-Players Class (Lior)
+-Team Class (Sarah)
+-AVL Tree:
+	-Insert (Sarah)
+	-Remove (Lior)
+	-RR rotation (Sarah)
+	-RL rotation (Sarah)
+	-LL rotation (Lior)
+	-LR rotation (Lior)
+	-Search max/min value (Sarah) ?
+	-Search specific value (Lior) ?
+	-Calculate balance factor (whoever gets to it) - helper function - private!
