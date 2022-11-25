@@ -13,11 +13,17 @@ class Tree {
     */
     class Node{
     public:
+        //Pointers to the parent node and the two child nodes
         Node* m_parent;
         Node* m_left;
         Node* m_right;
+        //The data that the tree holds
         T m_data;
+        //The height of the sub-tree of this node
         int m_height;
+        //Balance factor of node
+        int m_bf;
+        //The key by which the tree is sorted
         int m_id;
 
         //Constructor
@@ -174,7 +180,7 @@ void Tree<T>::destroy_tree(Node* m_node)
     }
 }
 
-//Copy tree recursively
+//Copy tree recursively----------------------------------------UNFINISHED
 template <class T>
 void Tree<T>::copy_tree(Node* m_node, const Tree& other)
 {
