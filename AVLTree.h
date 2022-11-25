@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <new>
+#include "Exception.h"
 
 template <class T>
 class Tree {
@@ -34,6 +35,30 @@ class Tree {
         Node(const Node&) = default;
         Node& operator=(const Node& other) = default;
         ~Node() = default;
+
+        /*
+         * RR Rotation
+         * @return - none
+         */
+        void rr_rotation();
+
+        /*
+         * RL Rotation
+         * @return - none
+         */
+        void rl_rotation();
+
+        /*
+         * LL Rotation
+         * @return - none
+         */
+        void ll_rotation();
+
+        /*
+         * LR Rotation
+         * @return - none
+         */
+        void lr_rotation();
     };
 public:
     //Tree Constructor
@@ -69,39 +94,17 @@ public:
      * @return - none
      */
     void remove(const int id);
-
-    /*
-     * RR Rotation
-     * @return - none
-     */
-    void rr_rotation();
-
-    /*
-     * RL Rotation
-     * @return - none
-     */
-    void rl_rotation();
-
-    /*
-     * LL Rotation
-     * @return - none
-     */
-    void ll_rotation();
-
-    /*
-     * LR Rotation
-     * @return - none
-     */
-    void lr_rotation();
+    Node* check_bf_remove(Node* currentNode);
 
     /*
      * Search for node with specific data, according to the id given
      * @return - none
      */
     Node& search_specific_id(const int id) const;
+    Node& search_recursively(const int id, const Node& currentNode) const;
 
     /*
-     * Search for node with specific data, according to the id given
+     * Calculate the balance factor
      * @return - none
      */
     int calculate_balance_factor(const Tree& currentTree) const;
@@ -126,12 +129,14 @@ Tree<T>::Tree()
     }
 }
 
+
 //Tree Destructor
 template <class T>
 Tree<T>::~Tree()
 {
     destroy_tree(m_node);
 }
+
 
 //Tree Copy Constructor
 template <class T>
@@ -148,6 +153,7 @@ Tree<T>::Tree(const Tree& other)
     //Copy existing tree to new tree
     copy_tree(m_node, other);
 }
+
 
 //Tree Assignment Operator
 template <class T>
@@ -168,108 +174,133 @@ typename Tree<T>::Tree& Tree<T>::operator=(const Tree& other)
     //The temporary tree, pointing to the old current tree will now be destroyed
 }
 
+
 //Destroy tree recursively
 template <class T>
-void Tree<T>::destroy_tree(Node* m_node)
+void Tree<T>::destroy_tree(Node* currentNode)
 {
-    Node* currentNode = m_node;
-    if (currentNode != nullptr) {
-        destroyTree(m_node->m_left);
-        destroyTree(m_node->m_right);
-        delete currentNode;
+    Node* tmpNode = currentNode;
+    if (tmpNode != nullptr) {
+        destroyTree(currentNode->m_left);
+        destroyTree(currentNode->m_right);
+        delete tmpNode;
     }
 }
 
+
 //Copy tree recursively-----------------------------------------------------------------UNFINISHED
 template <class T>
-void Tree<T>::copy_tree(Node* m_node, const Tree& other)
+void Tree<T>::copy_tree(Node* currentNode, const Tree& other)
 {
     if (other.get_left() != nullptr) {
         //Create empty new node
         try {
-            m_node->m_left = new Node;
-            m_node->m_left->m_data = other.get_left_data();
-            copy_tree(m_node->m_left, other.get_left())
+            currentNode->m_left = new Node;
+            currentNode->m_left->m_data = other.get_left_data();
+            copy_tree(currentNode->m_left, other.get_left())
         }
         catch (const std::bad_alloc& e) {
-            delete m_node->m_left;
+            delete currentNode->m_left;
             throw std::bad_alloc();
         }
     }
     if (other->get_right() != nullptr) {
         //Create empty new node
         try {
-            m_node->m_right = new Node;
-            m_node->m_right->m_data = other.get_right_data();
-            copy_tree(m_node->m_right, other.get_right())
+            currentNode->m_right = new Node;
+            currentNode->m_right->m_data = other.get_right_data();
+            copy_tree(currentNode->m_right, other.get_right())
         }
         catch (const std::bad_alloc& e) {
-            delete m_node->m_right;
+            delete currentNode->m_right;
             throw std::bad_alloc();
         }
     }
 }
 
-//Left-Left tree rotation, on the node with balance factor of +2
+//-----------------------------------------------------------------------Unfinished
 template <class T>
-void Tree<T>::ll_rotation()
+void Tree<T>::remove(const int id)
 {
-    //Changing A->B to A->Parent
-    m_node->m_left->m_parent = m_node->m_parent;
-    //Changing Parent->B to Parent->A
-    if (m_node->m_parent != nullptr) {
-        if (m_node->m_parent->m_left == m_node) {
-            m_node->m_parent->m_left = m_node->m_left;
-        }
-        else {
-            m_node->m_parent->m_right = m_node->m_left;
-        }
+    Node* toRemove = roll_down(search_specific_id(id));
+    //Change parent pointer to nullptr and update parent balance factor
+    Node* parent = toRemove->m_parent;
+    if (parent->m_left == toRemove) {
+        parent->m_left = nullptr;
+        parent->m_bf--;
     }
-    //Changing B->Parent to B->A
-    m_node->m_parent = m_node->m_left;
-    //Changing Ar->A to Ar->B
-    if (m_node->m_left->m_right != nullptr) {
-        m_node->m_left->m_right->m_parent = m_node;
+    else {
+        parent->m_right = nullptr;
+        parent->m_bf++;
     }
-    //Changing B->A to B->Ar
-    m_node->m_left = m_node->m_left->m_right;
-    //Changing A->Ar to A->B
-    m_node->m_parent->m_right = m_node;
+    delete toRemove;
+    //Go up the tree and check the balance factors and complete needed rotations
+    check_bf_remove(parent);
 }
 
-//Left-Right tree rotation, on the node with balance factor of +2
+
+//-----------------------------------------------------------------------Unfinished
 template <class T>
-void Tree<T>::lr_rotation()
-{
-    //Changing B->A to B->Parent
-    m_node->m_left->m_right->m_parent = m_node->m_parent;
-    //Changing Parent->C to Parent->B
-    if (m_node->m_parent != nullptr) {
-        if (m_node->m_parent->m_left == m_node) {
-            m_node->m_parent->m_left = m_node->m_left->m_right;
+Node* Tree<T>::check_bf_remove(Node* currentNode) {
+    if (currentNode->m_parent->m_left == currentNode) {
+        currentNode->m_parent->m_bf--;
+    }
+    else {
+        currentNode->m_parent->m_bf++;
+    }
+    if (currentNode->m_parent->m_bf == 2) {
+        if (currentNode->m_parent->m_left->m_bf == -1) {
+            currentNode->m_parent->lr_rotation();
+            currentNode->m_parent->m_left->m_bf++;
+            currentNode->m_parent->m_bf = 0;
+            currentNode->m_parent->m_right->m_bf = -1;
         }
         else {
-            m_node->m_parent->m_right = m_node->m_left->m_right;
+            currentNode->m_parent->ll_rotation();
+            currentNode->m_parent->m_bf = 0;
+            currentNode->m_parent->m_right->m_bf = 0;
         }
     }
-    //Changing C->Parent to C->B
-    m_node->m_parent = m_node->m_left->m_right;
-    //Changing A->B to A->Bl
-    m_node->m_left->m_right = m_node->m_left->m_right->m_left;
-    //Changing Bl->B to Bl->A
-    m_node->m_parent->m_left->m_parent = m_node->m_left;
-    //Changing B->Bl to B->A
-    m_node->m_parent->m_left = m_node->m_left;
-    //Changing A->C to A->B
-    m_node->m_left->m_parent = m_node->m_parent;
-    //Changing C->A to C->Br
-    m_node->m_left = m_node->m_parent->m_right;
-    //Changing Br->B to Br->C
-    if (m_node->m_parent->m_right != nullptr) {
-        m_node->m_parent->m_right->m_parent = m_node;
+    if (currentNode->m_parent->m_bf == -2) {
+        if (currentNode->m_parent->m_right->m_bf == 1) {
+            currentNode->m_parent->rl_rotation();
+            currentNode->m_parent->m_left->m_bf = 1;
+            currentNode->m_parent->m_bf = 0;
+            currentNode->m_parent->m_right->m_bf = 0;
+        }
+        else {
+            currentNode->m_parent->rr_rotation();
+            currentNode->m_parent->m_left->m_bf = 0;
+            currentNode->m_parent->m_bf = 0;
+            currentNode->m_parent->m_right->m_bf = -1;
+        }
     }
-    //Changing B->Br to B->C
-    m_node->m_parent->m_right = m_node;
+}
+
+
+
+
+
+template <class T>
+Node& Tree<T>::search_specific_id(const int id) const
+{
+    return search_recursively(id, *m_node);
+}
+
+
+template <class T>
+Node& Tree<T>::search_specific_id(const int id, const Node& currentNode) const
+{
+    if (currentNode == nullptr) {
+        throw NodeNotFound();
+    }
+    if (currentNode.m_id == id) {
+        return currentNode;
+    }
+    if (currentNode.m_id > id) {
+        return search_recursively(id, currentNode.m_right);
+    }
+    return search_recursively(id, currentNode.m_left);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -287,6 +318,69 @@ Tree<T>::Node::Node()
     m_height = 0;
     m_id = 0;
     m_bf = 0;
+}
+
+//Left-Left tree rotation, on the node with balance factor of +2
+template <class T>
+void Tree<T>::Node::ll_rotation()
+{
+    //Changing A->B to A->Parent
+    m_left->m_parent = m_parent;
+    //Changing Parent->B to Parent->A
+    if (m_parent != nullptr) {
+        if (m_parent->m_left == this) {
+            m_parent->m_left = m_left;
+        }
+        else {
+            m_parent->m_right = m_left;
+        }
+    }
+    //Changing B->Parent to B->A
+    m_parent = m_left;
+    //Changing Ar->A to Ar->B
+    if (m_left->m_right != nullptr) {
+        m_left->m_right->m_parent = this;
+    }
+    //Changing B->A to B->Ar
+    m_left = m_left->m_right;
+    //Changing A->Ar to A->B
+    m_parent->m_right = this;
+}
+
+
+//Left-Right tree rotation, on the node with balance factor of +2
+template <class T>
+void Tree<T>::Node::lr_rotation()
+{
+    //Changing B->A to B->Parent
+    m_left->m_right->m_parent = m_parent;
+    //Changing Parent->C to Parent->B
+    if (m_parent != nullptr) {
+        if (m_parent->m_left == this) {
+            m_parent->m_left = m_left->m_right;
+        }
+        else {
+            m_parent->m_right = m_left->m_right;
+        }
+    }
+    //Changing C->Parent to C->B
+    m_parent = m_left->m_right;
+    //Changing A->B to A->Bl
+    m_left->m_right = m_left->m_right->m_left;
+    //Changing Bl->B to Bl->A
+    m_parent->m_left->m_parent = m_left;
+    //Changing B->Bl to B->A
+    m_parent->m_left = m_left;
+    //Changing A->C to A->B
+    m_left->m_parent = m_parent;
+    //Changing C->A to C->Br
+    m_left = m_parent->m_right;
+    //Changing Br->B to Br->C
+    if (m_parent->m_right != nullptr) {
+        m_parent->m_right->m_parent = this;
+    }
+    //Changing B->Br to B->C
+    m_parent->m_right = this;
 }
 
 //---------------------------------------------------------------------------------------------------------
