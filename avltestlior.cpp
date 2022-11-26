@@ -20,6 +20,7 @@ int main() {
     printf("\n");
 
 
+
     t1.remove(20);
     printf("Removal of 20:\n");
     t1.inorderWalk(1);
@@ -40,9 +41,6 @@ int main() {
 
     int i = t1.insert(5,5);
     printf("Added 5 again: %d\n",i);
-    t1.inorderWalk(1);
-    printf("\n");
-
 
     t1.remove(3);
     printf("Removed 3:\n");
