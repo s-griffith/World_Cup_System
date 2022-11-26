@@ -230,7 +230,7 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
             throw std::bad_alloc();
         }
     }
-    if (otherNode->m_right() != nullptr) {
+    if (otherNode->m_right != nullptr) {
         //Create empty new node
         try {
             currentNode->m_right = new Node;
@@ -247,7 +247,7 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
 template<class T>
 bool Tree<T>::insert(const T& data, const int id) {
     //If this is the first node in the tree:
-    if (m_node->m_data == -1) { //change this to something like nullptr
+    if (m_node->m_height == -2) { //change this to something like nullptr
         m_node->m_data = data; //Why is node.data a shared_ptr of a shared_ptr??!?!?
         m_node->m_id = id;
         m_node->m_height++;
@@ -422,7 +422,7 @@ void Tree<T>::inorderWalk(bool flag) {
 
 //Node Constructor
 template <class T>
-Tree<T>::Node::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_data(-1), m_height(-1),  //Change this to something like nullptr
+Tree<T>::Node::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height(-2),
     m_id(0), m_bf(0) {}
 
 //Left-Left tree rotation, on the node with balance factor of +2
