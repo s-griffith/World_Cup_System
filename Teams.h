@@ -11,7 +11,6 @@ public:
     //Creates an empty team with no players
     Team(const int teamID, const int points);
 
-    //Don't need another one - if the team doesn't exist and want to add players to it, it is an invalid operation (error)
     Team(const Team& other) = delete; //bc two teams can't have the same id
 
     ~Team() = default; //check this!
@@ -43,9 +42,9 @@ private:
     int m_numGames;
     std::shared_ptr<Player> m_topScorer;
     //AVL Tree organized by player ID
-    Tree<std::shared_ptr<Player>> m_playersByID;  
+    Tree<std::shared_ptr<Player>> m_playersByID;  //Needs to be of the type that Lior is creating with extra field
     //AVL Tree organized by best-scoring players
-    Tree<std::shared_ptr<Player>> m_playersByScore;
+    Tree<std::shared_ptr<Player>> m_playersByScore; //Needs to be of the type that we create that organizes the tree by 3 variables
 
     void update_top_player(const std::shared_ptr<Player> player);
 };
