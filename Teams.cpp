@@ -41,8 +41,8 @@ StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id,
 
 void Team::remove_player(int playerID){
     //Do the cards he had get subtracted from the team's total? Goals? etc.
-    m_playersByID.Tree::remove(playerID);
-    m_playersByScore.Tree::remove(playerID);
+    m_playersByID.remove(playerID);
+    m_playersByScore.remove(playerID);
 }
 
 bool Team::is_valid() const{

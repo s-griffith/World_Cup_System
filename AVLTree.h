@@ -123,7 +123,7 @@ public:
      * @return - none
      */
     typename Tree<T>::Node::Node& search_specific_id(const int id) const;
-    typename Tree<T>::Node::Node& search_recursively(const int id, const Node* currentNode) const;
+    typename Tree<T>::Node::Node& search_recursively(const int id, Node* currentNode) const;
 
 protected:
     Node* m_node;
@@ -289,7 +289,7 @@ bool Tree<T>::insert(const T& data, const int id) {
 template <class T>
 void Tree<T>::remove(const int id)
 {
-    Node* toRemove = search_specific_id(id);
+    Node* toRemove = &(search_specific_id(id));
     Node* nodeToFix = toRemove->make_node_leaf();
     delete toRemove;
     //Go up the tree and check the balance factors and complete needed rotations
@@ -345,13 +345,13 @@ typename Tree<T>::Node::Node& Tree<T>::search_specific_id(const int id) const
 
 //Search and return node with specific ID recursively
 template <class T>
-typename Tree<T>::Node::Node& Tree<T>::search_recursively(const int id, const Node* currentNode) const
+typename Tree<T>::Node::Node& Tree<T>::search_recursively(const int id, Node* currentNode) const
 {
     if (currentNode == nullptr) {
         throw NodeNotFound();
     }
     if (currentNode->m_id == id) {
-        return currentNode;
+        return *(currentNode);
     }
     if (currentNode->m_id > id) {
         return search_recursively(id, currentNode->m_right);
