@@ -37,28 +37,40 @@ class Tree {
         ~Node() = default;
 
         /*
-         * RR Rotation
+         * Right-Right Rotation
          * @return - none
          */
         void rr_rotation();
 
         /*
-         * RL Rotation
+         * Right-Left Rotation
          * @return - none
          */
         void rl_rotation();
 
         /*
-         * LL Rotation
+         * Left-Left Rotation
          * @return - none
          */
         void ll_rotation();
 
         /*
-         * LR Rotation
+         * Left-Right Rotation
          * @return - none
          */
         void lr_rotation();
+
+        /*
+        * Update height of the current node
+        * @return - none
+        */
+        void update_height();
+
+        /*
+        * Update balance factor of the current node
+        * @return - none
+        */
+        void update_bf();
     };
 public:
     //Tree Constructor
@@ -102,12 +114,6 @@ public:
      */
     Node& search_specific_id(const int id) const;
     Node& search_recursively(const int id, const Node& currentNode) const;
-
-    /*
-     * Calculate the balance factor
-     * @return - none
-     */
-    int calculate_balance_factor(const Tree& currentTree) const;
 
 protected:
     Node* m_node;
@@ -234,51 +240,41 @@ void Tree<T>::remove(const int id)
         parent->m_bf++;
     }
     delete toRemove;
+    //Update parent sub-tree height
+    if (parent->m_left == nullptr && parent->m_right == nullptr) {
+        parent->m_height = 0;
+    }
     //Go up the tree and check the balance factors and complete needed rotations
-    check_bf_remove(parent);
+    check_bf_remove(parent->m_parent);
 }
 
 
 //-----------------------------------------------------------------------Unfinished
 template <class T>
 Node* Tree<T>::check_bf_remove(Node* currentNode) {
-    if (currentNode->m_parent->m_left == currentNode) {
-        currentNode->m_parent->m_bf--;
+    if (currentNode == nullptr) {
+        return nullptr;
     }
-    else {
-        currentNode->m_parent->m_bf++;
-    }
-    if (currentNode->m_parent->m_bf == 2) {
-        if (currentNode->m_parent->m_left->m_bf == -1) {
-            currentNode->m_parent->lr_rotation();
-            currentNode->m_parent->m_left->m_bf++;
-            currentNode->m_parent->m_bf = 0;
-            currentNode->m_parent->m_right->m_bf = -1;
+    currentNode->update_height();
+    currentNode->update_bf();
+
+    if (currentNode->m_bf == 2) {
+        if (currentNode->m_left->m_bf == -1) {
+            currentNode->lr_rotation();
         }
         else {
-            currentNode->m_parent->ll_rotation();
-            currentNode->m_parent->m_bf = 0;
-            currentNode->m_parent->m_right->m_bf = 0;
+            currentNode->ll_rotation()
         }
     }
-    if (currentNode->m_parent->m_bf == -2) {
-        if (currentNode->m_parent->m_right->m_bf == 1) {
-            currentNode->m_parent->rl_rotation();
-            currentNode->m_parent->m_left->m_bf = 1;
-            currentNode->m_parent->m_bf = 0;
-            currentNode->m_parent->m_right->m_bf = 0;
+    else if (currentNode->m_bf == -2) {
+        if (currentNode->m_right->m_bf == 1) {
+            currentNode->rl_rotation();
         }
         else {
-            currentNode->m_parent->rr_rotation();
-            currentNode->m_parent->m_left->m_bf = 0;
-            currentNode->m_parent->m_bf = 0;
-            currentNode->m_parent->m_right->m_bf = -1;
+            currentNode->rr_rotation();
         }
     }
 }
-
-
-
 
 
 template <class T>
@@ -381,6 +377,39 @@ void Tree<T>::Node::lr_rotation()
     }
     //Changing B->Br to B->C
     m_parent->m_right = this;
+}
+
+
+template <class T>
+void Tree<T>::Node::update_bf()
+{
+    int bfLeft = 0, bfRight = 0;
+    if (m_left != nullptr) {
+        bfLeft = m_left->m_height + 1;
+    }
+    if (m_right != nullptr) {
+        bfRight = m_right->m_height + 1;
+    }
+    m_bf = bfLeft - bfRight;
+}
+
+
+template <class T>
+void Tree<T>::Node::update_height()
+{
+    int heightLeft = 0, heightRight = 0;
+    if (m_left != nullptr) {
+        heightLeft = m_left->m_height + 1;
+    }
+    if (m_right != nullptr) {
+        heightRight = m_right->m_height + 1;
+    }
+    if (heightLeft >= heightRight) {
+        m_height = heightLeft;
+    }
+    else {
+        m_height = heightRight;
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------
