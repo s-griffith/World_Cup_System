@@ -100,7 +100,7 @@ public:
      * Recursively copy full tree
      * @return - none
      */
-    void copy_tree(Node* currentNode, const Tree &other);
+    void copy_tree(Node* currentNode, Node* otherNode);
 
     /*
      * Insert new node with data, according to the id given
@@ -122,8 +122,8 @@ public:
      * @param - The ID of the requested node
      * @return - none
      */
-    Node& search_specific_id(const int id) const;
-    Node& search_recursively(const int id, const Node& currentNode) const;
+    Tree<T>::Node& search_specific_id(const int id) const;
+    Tree<T>::Node& search_recursively(const int id, const Node* currentNode) const;
 
 protected:
     Node* m_node;
@@ -222,7 +222,7 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
             throw std::bad_alloc();
         }
     }
-    if (other->get_right() != nullptr) {
+    if (otherNode->get_right() != nullptr) {
         //Create empty new node
         try {
             currentNode->m_right = new Node;
@@ -337,15 +337,15 @@ void Tree<T>::rebalance_tree(Node* currentNode) {
 //Combine??
 //Search and return node with specific ID
 template <class T>
-Node& Tree<T>::search_specific_id(const int id) const
+typename Tree<T>::Node& Tree<T>::search_specific_id(const int id) const
 {
-    return search_recursively(id, *m_node);
+    return search_recursively(id, m_node);
 }
 
 
 //Search and return node with specific ID recursively
 template <class T>
-Node& Tree<T>::search_recursively(const int id, const Node& currentNode) const
+typename Tree<T>::Node& Tree<T>::search_recursively(const int id, const Node* currentNode) const
 {
     if (currentNode == nullptr) {
         throw NodeNotFound();
@@ -434,7 +434,7 @@ void Tree<T>::Node::lr_rotation()
 
 //Make the current node a leaf (maintaining sort)
 template <class T>
-Node* Tree<T>::Node::make_node_leaf()
+typename Tree<T>::Node::Node* Tree<T>::Node::make_node_leaf()
 {
     //Node to be deleted is already a leaf
     if (m_left == nullptr && m_right == nullptr) {

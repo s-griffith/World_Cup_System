@@ -1,0 +1,3 @@
+C:/Users/liorb/OneDrive/Documents/Technion/Semester C/Data Structures/wet_1/World_Cup_System/cmake-build-debug/CMakeFiles/World_Cup_System.dir
+C:/Users/liorb/OneDrive/Documents/Technion/Semester C/Data Structures/wet_1/World_Cup_System/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/liorb/OneDrive/Documents/Technion/Semester C/Data Structures/wet_1/World_Cup_System/cmake-build-debug/CMakeFiles/rebuild_cache.dir
