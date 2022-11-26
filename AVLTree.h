@@ -164,7 +164,7 @@ Tree<T>::Tree(const Tree& other)
         throw std::bad_alloc();
     }
     //Copy existing tree to new tree
-    copy_tree(m_node, other);
+    copy_tree(m_node, other.m_node);
 }
 
 
@@ -203,7 +203,7 @@ void Tree<T>::destroy_tree(Node* currentNode)
 
 //Copy tree recursively-----------------------------------------------------------------UNFINISHED
 template <class T>
-void Tree<T>::copy_tree(Node* currentNode, const Tree& other)
+void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
 {
     if (other.get_left() != nullptr) {
         //Create empty new node
@@ -292,7 +292,7 @@ Node& Tree<T>::search_specific_id(const int id) const
 
 //Search and return node with specific ID recursively
 template <class T>
-Node& Tree<T>::search_specific_id(const int id, const Node& currentNode) const
+Node& Tree<T>::search_recursively(const int id, const Node& currentNode) const
 {
     if (currentNode == nullptr) {
         throw NodeNotFound();
