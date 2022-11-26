@@ -61,10 +61,10 @@ class Tree {
         void lr_rotation();
 
         /*
-         * Take the node and roll it down left, switching between the current node
-         *      with it's left child recursively
+         * Make the node a leaf without breaking the sorted tree
+         * @return - a pointer to the node from which the tree is no longer balanced
          */
-        void make_node_leaf();
+        Node* make_node_leaf();
 
         /*
         * Update height of the current node
@@ -116,6 +116,7 @@ public:
 
     /*
      * Search for node with specific data, according to the id given
+     * @param - The ID of the requested node
      * @return - none
      */
     Node& search_specific_id(const int id) const;
@@ -230,7 +231,8 @@ void Tree<T>::copy_tree(Node* currentNode, const Tree& other)
     }
 }
 
-//-----------------------------------------------------------------------Unfinished
+
+//Remove node with specific ID
 template <class T>
 void Tree<T>::remove(const int id)
 {
@@ -242,7 +244,7 @@ void Tree<T>::remove(const int id)
 }
 
 
-//-----------------------------------------------------------------------Unfinished
+//Re-balance tree after node removal
 template <class T>
 void Tree<T>::check_bf_remove(Node* currentNode) {
     if (currentNode == nullptr) {
@@ -280,6 +282,7 @@ void Tree<T>::check_bf_remove(Node* currentNode) {
 }
 
 
+//Search and return node with specific ID
 template <class T>
 Node& Tree<T>::search_specific_id(const int id) const
 {
@@ -287,6 +290,7 @@ Node& Tree<T>::search_specific_id(const int id) const
 }
 
 
+//Search and return node with specific ID recursively
 template <class T>
 Node& Tree<T>::search_specific_id(const int id, const Node& currentNode) const
 {
@@ -383,6 +387,7 @@ void Tree<T>::Node::lr_rotation()
 }
 
 
+//Make the current node a leaf (maintaining sort)
 template <class T>
 Node* Tree<T>::Node::make_node_leaf()
 {
@@ -464,6 +469,7 @@ Node* Tree<T>::Node::make_node_leaf()
 }
 
 
+//Update the balance factor of the specific node
 template <class T>
 void Tree<T>::Node::update_bf()
 {
@@ -478,6 +484,7 @@ void Tree<T>::Node::update_bf()
 }
 
 
+//Update the sub-tree height of the specific node
 template <class T>
 void Tree<T>::Node::update_height()
 {
