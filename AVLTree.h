@@ -270,18 +270,18 @@ bool Tree<T>::insert(const T& data, const int id) {
         delete node;
         return false;
     }
-    node->m_parent = y; //Balance factor stuff!!
+    node->m_parent = y;
+    node->m_left = nullptr;
+    node->m_right = nullptr;
+    node->m_data = data;
+    node->m_id = id;
     if (id < y->m_id) {
         y->m_left = node;
     }
     else {
         y->m_right = node;
     }
-    node->m_height = 0;
-    while (x != m_node) {
-        x = node->m_parent;
-        if (x->)
-    }
+    rebalance_tree(node->m_parent);
     return true;
 }
 
