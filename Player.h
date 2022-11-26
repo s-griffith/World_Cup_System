@@ -1,7 +1,6 @@
-#ifndef PLAYER_h
-#define PLAYER_h
+#ifndef PLAYER_H
+#define PLAYER_H
 
-#include "Teams.h"
 #include <iostream>
 #include <string>
 
@@ -82,4 +81,5 @@ private:
     bool m_goalkeeper;
 };
 
-#endif //PLAYER_h
+
+#endif //PLAYER_H
