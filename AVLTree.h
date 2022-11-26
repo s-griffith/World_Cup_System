@@ -61,6 +61,12 @@ class Tree {
         void lr_rotation();
 
         /*
+         * Take the node and roll it down left, switching between the current node
+         *      with it's left child recursively
+         */
+        void make_node_leaf();
+
+        /*
         * Update height of the current node
         * @return - none
         */
@@ -106,7 +112,7 @@ public:
      * @return - none
      */
     void remove(const int id);
-    Node* check_bf_remove(Node* currentNode);
+    void check_bf_remove(Node* currentNode);
 
     /*
      * Search for node with specific data, according to the id given
@@ -228,52 +234,49 @@ void Tree<T>::copy_tree(Node* currentNode, const Tree& other)
 template <class T>
 void Tree<T>::remove(const int id)
 {
-    Node* toRemove = roll_down(search_specific_id(id));
-    //Change parent pointer to nullptr and update parent balance factor
-    Node* parent = toRemove->m_parent;
-    if (parent->m_left == toRemove) {
-        parent->m_left = nullptr;
-        parent->m_bf--;
-    }
-    else {
-        parent->m_right = nullptr;
-        parent->m_bf++;
-    }
+    Node* toRemove = this->search_specific_id(id);
+    Node* nodeToFix = toRemove->make_node_leaf();
     delete toRemove;
-    //Update parent sub-tree height
-    if (parent->m_left == nullptr && parent->m_right == nullptr) {
-        parent->m_height = 0;
-    }
     //Go up the tree and check the balance factors and complete needed rotations
-    check_bf_remove(parent->m_parent);
+    check_bf_remove(nodeToFix);
 }
 
 
 //-----------------------------------------------------------------------Unfinished
 template <class T>
-Node* Tree<T>::check_bf_remove(Node* currentNode) {
+void Tree<T>::check_bf_remove(Node* currentNode) {
     if (currentNode == nullptr) {
-        return nullptr;
+        return;
     }
     currentNode->update_height();
     currentNode->update_bf();
-
-    if (currentNode->m_bf == 2) {
-        if (currentNode->m_left->m_bf == -1) {
-            currentNode->lr_rotation();
+    if (currentNode->m_bf > 1 || currentNode->m_bf < -1) {
+        if (currentNode->m_bf == 2) {
+            if (currentNode->m_left->m_bf == -1) {
+                currentNode->lr_rotation();
+            }
+            else {
+                currentNode->ll_rotation();
+            }
         }
-        else {
-            currentNode->ll_rotation()
+        else if (currentNode->m_bf == -2) {
+            if (currentNode->m_right->m_bf == 1) {
+                currentNode->rl_rotation();
+            }
+            else {
+                currentNode->rr_rotation();
+            }
+        }
+        if (currentNode->m_parent->m_left != nullptr) {
+            currentNode->m_parent->m_left->update_height();
+            currentNode->m_parent->m_left->update_bf();
+        }
+        if (currentNode->m_parent->m_right != nullptr) {
+            currentNode->m_parent->m_right->update_height();
+            currentNode->m_parent->m_right->update_bf();
         }
     }
-    else if (currentNode->m_bf == -2) {
-        if (currentNode->m_right->m_bf == 1) {
-            currentNode->rl_rotation();
-        }
-        else {
-            currentNode->rr_rotation();
-        }
-    }
+    check_bf_remove(currentNode->m_parent);
 }
 
 
@@ -381,16 +384,97 @@ void Tree<T>::Node::lr_rotation()
 
 
 template <class T>
+Node* Tree<T>::Node::make_node_leaf()
+{
+    //Node to be deleted is already a leaf
+    if (m_left == nullptr && m_right == nullptr) {
+        return m_parent;
+    }
+    //Node to be deleted has one child
+    if (m_left == nullptr || m_right == nullptr) {
+        Node* tmpChild;
+        if (m_left != nullptr) {
+            tmpChild = m_left;
+        }
+        else {
+            tmpChild = m_right;
+        }
+        //Connect child to parent
+        tmpChild->m_parent = m_parent;
+        if (m_parent != nullptr) {
+            if (m_parent->m_left == this) {
+                m_parent->m_left = tmpChild;
+            }
+            else {
+                m_parent->m_right = tmpChild;
+            }
+        }
+        return m_parent;
+    }
+    //Node to be deleted has two children
+    Node* successor = m_right;
+    while (successor->m_left != nullptr) {
+        successor = successor->m_left;
+    }
+    Node* parentToReturn;
+    if (successor != m_right) {
+        parentToReturn = successor->m_parent;
+    }
+    else {
+        parentToReturn = successor;
+    }
+    if (successor->m_right == nullptr) {
+        if (successor->m_parent->m_right == successor) {
+            successor->m_parent->m_right = nullptr;
+        }
+        else {
+            successor->m_parent->m_left = nullptr;
+        }
+    }
+    else if (m_right != successor) {
+        successor->m_right->m_parent = successor->m_parent;
+        if (successor->m_parent->m_right == successor) {
+            successor->m_parent->m_right = successor->m_right;
+        }
+        else {
+            successor->m_parent->m_left = successor->m_right;
+        }
+    }
+    //Switch between successor and current node
+    successor->m_parent = m_parent;
+    if (m_parent != nullptr) {
+        if (m_parent->m_right == this) {
+            m_parent->m_right = successor;
+        }
+        else {
+            m_parent->m_left = successor;
+        }
+    }
+    successor->m_left = m_left;
+    if (m_left != nullptr) {
+        m_left->m_parent = successor;
+    }
+    if (successor != m_right) {
+        successor->m_right = m_right;
+        if (m_right != nullptr) {
+            m_right->m_parent = successor;
+        }
+    }
+    return parentToReturn;
+}
+
+
+template <class T>
 void Tree<T>::Node::update_bf()
 {
-    int bfLeft = 0, bfRight = 0;
+    int heightLeft = 0, heightRight = 0;
     if (m_left != nullptr) {
-        bfLeft = m_left->m_height + 1;
+        heightLeft = m_left->m_height + 1;
     }
     if (m_right != nullptr) {
-        bfRight = m_right->m_height + 1;
+        heightRight = m_right->m_height + 1;
     }
-    m_bf = bfLeft - bfRight;
+    m_bf = heightLeft - heightRight;
 }
 
 
