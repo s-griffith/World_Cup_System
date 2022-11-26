@@ -4,7 +4,10 @@
 #include <iostream>
 #include <string>
 #include <new>
+#include <memory>
 #include "Exception.h"
+
+
 
 template <class T>
 class Tree {
@@ -91,20 +94,20 @@ public:
      * Recursively destroy full tree
      * @return - none
      */
-    void destroy_tree();
+    void destroy_tree(Node* currentNode);
 
     /*
      * Recursively copy full tree
      * @return - none
      */
-    void copy_tree();
+    void copy_tree(Node* currentNode, const Tree &other);
 
     /*
      * Insert new node with data, according to the id given
      * @param - New data to insert and the ID of the new node
-     * @return - none
+     * @return - bool
      */
-    void insert(const T& data, const int id);
+    bool insert(const T& data, const int id);
 
     /*
      * Remove node according to the id given
@@ -194,8 +197,8 @@ void Tree<T>::destroy_tree(Node* currentNode)
 {
     Node* tmpNode = currentNode;
     if (tmpNode != nullptr) {
-        destroyTree(currentNode->m_left);
-        destroyTree(currentNode->m_right);
+        destroy_tree(currentNode->m_left);
+        destroy_tree(currentNode->m_right);
         delete tmpNode;
     }
 }
@@ -210,7 +213,7 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
         try {
             currentNode->m_left = new Node;
             currentNode->m_left->m_data = other.get_left_data();
-            copy_tree(currentNode->m_left, other.get_left())
+            copy_tree(currentNode->m_left, other.get_left());
         }
         catch (const std::bad_alloc& e) {
             delete currentNode->m_left;
@@ -222,7 +225,7 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
         try {
             currentNode->m_right = new Node;
             currentNode->m_right->m_data = other.get_right_data();
-            copy_tree(currentNode->m_right, other.get_right())
+            copy_tree(currentNode->m_right, other.get_right());
         }
         catch (const std::bad_alloc& e) {
             delete currentNode->m_right;
@@ -231,8 +234,56 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
     }
 }
 
+template<class T>
+bool Tree<T>::insert(const T& data, const int id) {
+    //If this is the first node in the tree:
+    if (m_node->m_data == NULL) {
+        m_node->m_data = data; //Why is node.data a shared_ptr of a shared_ptr??!?!?
+        m_node->m_id = id;
+        m_node->m_height++;
+        return true;
+    }
+    //Find the proper location of the new node (when it's not the first):
+    Node* x = m_node;
+    Node* y = nullptr;
+    while (x != nullptr) {
+        y = x;
+        if (x->m_id == id) {
+            return false; //node with that id already exists - invalid operation
+        }
+        if (id < x->m_id) {
+            x = x->m_left;
+        }
+        else {
+            x = x->m_right;
+        }
+    }
+    //Create the new node and add it to the tree:
+    Node* node = nullptr;
+    try{
+        Node* node = new Node;   
+    }
+    catch(const std::bad_alloc& e)
+    {
+        delete node;
+        return false;
+    }
+    node->m_parent = y; //Balance factor stuff!!
+    if (id < y->m_id) {
+        y->m_left = node;
+    }
+    else {
+        y->m_right = node;
+    }
+    node->m_height = 0;
+    while (x != m_node) {
+        x = node->m_parent;
+        if (x->)
+    }
+    return true;
+}
 
-//Remove node with specific ID
+//-----------------------------------------------------------------------Unfinished
 template <class T>
 void Tree<T>::remove(const int id)
 {
@@ -281,7 +332,7 @@ void Tree<T>::check_bf_remove(Node* currentNode) {
     check_bf_remove(currentNode->m_parent);
 }
 
-
+//Combine??
 //Search and return node with specific ID
 template <class T>
 Node& Tree<T>::search_specific_id(const int id) const
@@ -312,16 +363,8 @@ Node& Tree<T>::search_recursively(const int id, const Node& currentNode) const
 
 //Node Constructor
 template <class T>
-Tree<T>::Node::Node()
-{
-    m_parent = nullptr;
-    m_left = nullptr;
-    m_right = nullptr;
-    m_data = nullptr;
-    m_height = 0;
-    m_id = 0;
-    m_bf = 0;
-}
+Tree<T>::Node::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_data(nullptr), m_height(-1), 
+    m_id(0), m_bf(0) {}
 
 //Left-Left tree rotation, on the node with balance factor of +2
 template <class T>

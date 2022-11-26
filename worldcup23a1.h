@@ -22,9 +22,7 @@
 
 class world_cup_t {
 private:
-	Tree<std::shared_ptr<Player>> m_playersByID;
 	Tree<std::shared_ptr<Team>> m_teamsByID;
-	Tree<std::shared_ptr<Player>> m_playersByScore;
 	int m_numPlayers;
 	std::shared_ptr<Player> m_overallTopScorer;
 	//
