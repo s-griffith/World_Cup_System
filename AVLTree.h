@@ -43,25 +43,25 @@ class Tree {
          * Right-Right Rotation
          * @return - none
          */
-        void rr_rotation();
+        typename Tree<T>::Node::Node* rr_rotation();
 
         /*
          * Right-Left Rotation
          * @return - none
          */
-        void rl_rotation();
+        typename Tree<T>::Node::Node* rl_rotation();
 
         /*
          * Left-Left Rotation
          * @return - none
          */
-        void ll_rotation();
+        typename Tree<T>::Node::Node* lr_rotation();
 
         /*
          * Left-Right Rotation
          * @return - none
          */
-        void lr_rotation();
+        typename Tree<T>::Node::Node* ll_rotation();
 
         /*
          * Make the node a leaf without breaking the sorted tree
@@ -247,7 +247,7 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
 template<class T>
 bool Tree<T>::insert(const T& data, const int id) {
     //If this is the first node in the tree:
-    if (m_node->m_height == -2) { //change this to something like nullptr
+    if (m_node->m_height == -1) {
         m_node->m_data = data; //Why is node.data a shared_ptr of a shared_ptr??!?!?
         m_node->m_id = id;
         m_node->m_height++;
@@ -316,18 +316,18 @@ void Tree<T>::rebalance_tree(Node* currentNode) {
     if (currentNode->m_bf > 1 || currentNode->m_bf < -1) {
         if (currentNode->m_bf == 2) {
             if (currentNode->m_left->m_bf == -1) {
-                currentNode->lr_rotation();
+                m_node = currentNode->lr_rotation();
             }
             else {
-                currentNode->ll_rotation();
+                m_node = currentNode->ll_rotation();
             }
         }
         else if (currentNode->m_bf == -2) {
             if (currentNode->m_right->m_bf == 1) {
-                currentNode->rl_rotation();
+                m_node = currentNode->rl_rotation();
             }
             else {
-                currentNode->rr_rotation();
+                m_node = currentNode->rr_rotation();
             }
         }
         if (currentNode->m_parent->m_left != nullptr) {
@@ -422,13 +422,14 @@ void Tree<T>::inorderWalk(bool flag) {
 
 //Node Constructor
 template <class T>
-Tree<T>::Node::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height(-2),
+Tree<T>::Node::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height(-1),
     m_id(0), m_bf(0) {}
 
 //Left-Left tree rotation, on the node with balance factor of +2
 template <class T>
-void Tree<T>::Node::ll_rotation()
+typename Tree<T>::Node::Node* Tree<T>::Node::ll_rotation()
 {
+    Node * tmpToReturn = this;
     //Changing A->B to A->Parent
     m_left->m_parent = m_parent;
     //Changing Parent->B to Parent->A
@@ -440,6 +441,9 @@ void Tree<T>::Node::ll_rotation()
             m_parent->m_right = m_left;
         }
     }
+    else {
+        tmpToReturn = m_left;
+    }
     //Changing B->Parent to B->A
     m_parent = m_left;
     //Changing Ar->A to Ar->B
@@ -450,12 +454,14 @@ void Tree<T>::Node::ll_rotation()
     m_left = m_left->m_right;
     //Changing A->Ar to A->B
     m_parent->m_right = this;
+    return tmpToReturn;
 }
 
 //Right-Right tree rotation, on the node with balance factor of -2
 template <class T>
-void Tree<T>::Node::rr_rotation()
+typename Tree<T>::Node::Node* Tree<T>::Node::rr_rotation()
 {
+    Node* tmpToReturn = this;
     m_right->m_parent = m_parent;
     if (m_parent != nullptr) {
         if (m_parent->m_right == this) {
@@ -465,26 +471,32 @@ void Tree<T>::Node::rr_rotation()
             m_parent->m_left = m_right;
         }
     }
+    else {
+        tmpToReturn = m_right;
+    }
     m_parent = m_right;
     if(m_right->m_left != nullptr) {
         m_right->m_left->m_parent = this;
     }
     m_right = m_right->m_left;
     m_parent->m_left = this;
+    return tmpToReturn;
 }
 
 template <class T>
-void Tree<T>::Node::rl_rotation()
+typename Tree<T>::Node::Node* Tree<T>::Node::rl_rotation()
 {
-    m_left->ll_rotation();
-    rr_rotation();
+    Node* tmp = m_right->ll_rotation();
+    tmp = tmp->rr_rotation();
+    return tmp;
 }
 
 template <class T>
-void Tree<T>::Node::lr_rotation()
+typename Tree<T>::Node::Node* Tree<T>::Node::lr_rotation()
 {
-    m_right->rr_rotation();
-    ll_rotation();
+    Node* tmp = m_left->rr_rotation();
+    tmp = tmp->ll_rotation();
+    return tmp;
 }
 
 /*

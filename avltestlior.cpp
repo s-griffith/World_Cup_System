@@ -13,19 +13,7 @@ int main() {
     t1.insert(2,2);
     t1.insert(3,3);
     t1.insert(4,4);
-    /*
-    t1.insert(8,8);
-    t1.insert(-7,-7);
-    t1.insert(80,80);
-    t1.insert(5,5);
-    t1.insert(0,0);
-    t1.insert(1,1);
-    t1.insert(100,100);
-    t1.insert(-33,-33);
-    t1.insert(46,46);
-    t1.insert(11,11);
-    t1.insert(7,7);
-     */
+
 
     printf("Original Tree:\n");
     t1.inorderWalk(1);
@@ -71,5 +59,6 @@ int main() {
     printf("Print copied tree:\n");
     t3.inorderWalk(1);
     printf("\n");
+
 };
 
