@@ -115,7 +115,7 @@ public:
      * @return - none
      */
     void remove(const int id);
-    void check_bf_remove(Node* currentNode);
+    void rebalance_tree(Node* currentNode);
 
     /*
      * Search for node with specific data, according to the id given
@@ -166,6 +166,8 @@ Tree<T>::Tree(const Tree& other)
         delete m_node;
         throw std::bad_alloc();
     }
+    //Copy first node
+    m_node = other.m_node;
     //Copy existing tree to new tree
     copy_tree(m_node, other.m_node);
 }
@@ -204,16 +206,16 @@ void Tree<T>::destroy_tree(Node* currentNode)
 }
 
 
-//Copy tree recursively-----------------------------------------------------------------UNFINISHED
+//Copy tree recursively
 template <class T>
 void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
 {
-    if (other.get_left() != nullptr) {
+    if (otherNode->m_left != nullptr) {
         //Create empty new node
         try {
             currentNode->m_left = new Node;
-            currentNode->m_left->m_data = other.get_left_data();
-            copy_tree(currentNode->m_left, other.get_left());
+            currentNode->m_left->m_data = otherNode->m_left->m_data;
+            copy_tree(currentNode->m_left, otherNode->m_left);
         }
         catch (const std::bad_alloc& e) {
             delete currentNode->m_left;
@@ -224,8 +226,8 @@ void Tree<T>::copy_tree(Node* currentNode, Node* otherNode)
         //Create empty new node
         try {
             currentNode->m_right = new Node;
-            currentNode->m_right->m_data = other.get_right_data();
-            copy_tree(currentNode->m_right, other.get_right());
+            currentNode->m_right->m_data = otherNode->m_right->m_data;
+            copy_tree(currentNode->m_right, otherNode->m_right);
         }
         catch (const std::bad_alloc& e) {
             delete currentNode->m_right;
@@ -283,7 +285,7 @@ bool Tree<T>::insert(const T& data, const int id) {
     return true;
 }
 
-//-----------------------------------------------------------------------Unfinished
+//Remove node according to the id provided
 template <class T>
 void Tree<T>::remove(const int id)
 {
@@ -291,13 +293,13 @@ void Tree<T>::remove(const int id)
     Node* nodeToFix = toRemove->make_node_leaf();
     delete toRemove;
     //Go up the tree and check the balance factors and complete needed rotations
-    check_bf_remove(nodeToFix);
+    rebalance_tree(nodeToFix);
 }
 
 
 //Re-balance tree after node removal
 template <class T>
-void Tree<T>::check_bf_remove(Node* currentNode) {
+void Tree<T>::rebalance_tree(Node* currentNode) {
     if (currentNode == nullptr) {
         return;
     }
@@ -329,7 +331,7 @@ void Tree<T>::check_bf_remove(Node* currentNode) {
             currentNode->m_parent->m_right->update_bf();
         }
     }
-    check_bf_remove(currentNode->m_parent);
+    rebalance_tree(currentNode->m_parent);
 }
 
 //Combine??
