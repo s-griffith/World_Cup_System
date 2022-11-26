@@ -25,8 +25,8 @@ const std::shared_ptr<Player> Team::get_top_scorer() const {
 
 //-------------------------------------Helper Functions for WorldCup----------------------------
 StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper){
-    if(m_playersByID.Tree::insert(std::move(player), id)) {
-        if (m_playersByScore.Tree::insert(std::move(player), player->get_goals())) {
+    if(m_playersByID.insert(player, id)) {
+        if (m_playersByScore.insert(player, player->get_goals())) {
             update_num_goals(goals);
             update_num_cards(cards);
             m_numPlayers++;

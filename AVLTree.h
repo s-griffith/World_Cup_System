@@ -22,8 +22,8 @@ class Tree {
         Node* m_left;
         Node* m_right;
         //Shared ptr of the data that the tree holds
-        std::shared_ptr<T> m_data;
-        //The height of the sub-tree of this node
+        T m_data;
+        //The height of the subtree of this node
         int m_height;
         //Balance factor of node
         int m_bf;
@@ -263,7 +263,7 @@ bool Tree<T>::insert(const T& data, const int id) {
     //Create the new node and add it to the tree:
     Node* node = nullptr;
     try{
-        Node* node = new Node;   
+        node = new Node;
     }
     catch(const std::bad_alloc& e)
     {
@@ -289,7 +289,7 @@ bool Tree<T>::insert(const T& data, const int id) {
 template <class T>
 void Tree<T>::remove(const int id)
 {
-    Node* toRemove = this->search_specific_id(id);
+    Node* toRemove = *(this)->search_specific_id(id);
     Node* nodeToFix = toRemove->make_node_leaf();
     delete toRemove;
     //Go up the tree and check the balance factors and complete needed rotations
@@ -350,13 +350,13 @@ typename Tree<T>::Node& Tree<T>::search_recursively(const int id, const Node* cu
     if (currentNode == nullptr) {
         throw NodeNotFound();
     }
-    if (currentNode.m_id == id) {
+    if (currentNode->m_id == id) {
         return currentNode;
     }
-    if (currentNode.m_id > id) {
-        return search_recursively(id, currentNode.m_right);
+    if (currentNode->m_id > id) {
+        return search_recursively(id, currentNode->m_right);
     }
-    return search_recursively(id, currentNode.m_left);
+    return search_recursively(id, currentNode->m_left);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -529,7 +529,7 @@ void Tree<T>::Node::update_bf()
 }
 
 
-//Update the sub-tree height of the specific node
+//Update the subtree height of the specific node
 template <class T>
 void Tree<T>::Node::update_height()
 {
