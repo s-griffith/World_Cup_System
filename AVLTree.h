@@ -80,6 +80,11 @@ class Tree {
         * @return - none
         */
         void update_bf();
+
+    void inorderWalkNode(bool flag);
+    void printNode();
+    void printData();
+
     };
 public:
     //Tree Constructor
@@ -125,6 +130,9 @@ public:
     typename Tree<T>::Node::Node& search_specific_id(const int id) const;
     typename Tree<T>::Node::Node& search_recursively(const int id, Node* currentNode) const;
 
+//-----------------------------------------FUNCTIONS FOR TESTING--------------------------
+
+    void inorderWalk(bool flag);
 protected:
     Node* m_node;
 };
@@ -360,6 +368,55 @@ typename Tree<T>::Node::Node& Tree<T>::search_recursively(const int id, Node* cu
 }
 
 //---------------------------------------------------------------------------------------------------------
+
+
+template <class T>
+void Tree<T>::Node::printNode() {
+    int parent, left, right;
+    if (m_parent == nullptr) {
+        parent = -1;
+    }
+    else {
+        parent = m_parent->m_data;
+    }
+    if (m_left == nullptr) {
+        left = -1;
+    }
+    else {
+        left = m_left->m_data;
+    }
+    if (m_right == nullptr) {
+        right = -1;
+    }
+    else {
+        right = m_right->m_data;
+    }
+    printf("Data = %d, Parent = %d, Left = %d, Right = %d\n", m_data, parent, left, right);
+}
+
+template <class T>
+void Tree<T>::Node::printData() {
+    printf("Data = %d\n", m_data);
+}
+
+template <class T>
+void Tree<T>::Node::inorderWalkNode(bool flag) {
+    if (this != nullptr) {
+        inorderWalk(m_left, flag);
+        if (flag) {
+            this->printNode();
+        }
+        else {
+            this->printData();
+        }
+        inorderWalk(m_right, flag);
+    }
+}
+
+template <class T>
+void Tree<T>::inorderWalk(bool flag) {
+    m_node->inorderWalkNode(flag);
+}
 
 //--------------------------------------------Node Class---------------------------------------------------
 
