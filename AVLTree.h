@@ -361,7 +361,7 @@ typename Tree<T>::Node::Node& Tree<T>::search_recursively(const int id, Node* cu
     if (currentNode->m_id == id) {
         return *(currentNode);
     }
-    if (currentNode->m_id > id) {
+    if (currentNode->m_id < id) {
         return search_recursively(id, currentNode->m_right);
     }
     return search_recursively(id, currentNode->m_left);
