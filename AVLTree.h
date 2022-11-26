@@ -395,7 +395,42 @@ void Tree<T>::Node::ll_rotation()
     m_parent->m_right = this;
 }
 
+//Right-Right tree rotation, on the node with balance factor of -2
+template <class T>
+void Tree<T>::Node::rr_rotation()
+{
+    m_right->m_parent = m_parent;
+    if (m_parent != nullptr) {
+        if (m_parent->m_right == this) {
+            m_parent->m_right = m_right;
+        }
+        else {
+            m_parent->m_left = m_right;
+        }
+    }
+    m_parent = m_right;
+    if(m_right->m_left != nullptr) {
+        m_right->m_left->m_parent = this;
+    }
+    m_right = m_right->m_left;
+    m_parent->m_left = this;
+}
 
+template <class T>
+void Tree<T>::Node::rl_rotation()
+{
+    ll_rotation(m_left);
+    rr_rotation(this);
+}
+
+template <class T>
+void Tree<T>::Node::lr_rotation()
+{
+    rr_rotation(m_right);
+    ll_rotation(this);
+}
+
+/*
 //Left-Right tree rotation, on the node with balance factor of +2
 template <class T>
 void Tree<T>::Node::lr_rotation()
@@ -430,7 +465,7 @@ void Tree<T>::Node::lr_rotation()
     //Changing B->Br to B->C
     m_parent->m_right = this;
 }
-
+*/
 
 //Make the current node a leaf (maintaining sort)
 template <class T>
