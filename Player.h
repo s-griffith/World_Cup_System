@@ -8,13 +8,13 @@
 class Player {
 public:
     /*
-     * Constructor of Player class
-     *
-     * @param name - The player's ID, the number of games, goals and cards of the player,
-     *      and also if the player is a goalkeeper
-     * @return - A new instance of Player.
+    * Constructor of Player class
+    * @param name - The player's ID, the number of games, goals and cards of the player,
+    *      and also if the player is a goalkeeper
+    * @return - A new instance of Player.
     */
-    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper);
+    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper,
+           std::shared_ptr<Team>& tmpTeam);
 
     /*
     * Return the player's ID
@@ -23,9 +23,9 @@ public:
     int get_playerId() const;
 
     /*
-     * Return the number of games the player played
-     * @return - integer of the number of games the player played
-     */
+    * Return the number of games the player played
+    * @return - integer of the number of games the player played
+    */
     int get_gamesPlayed() const;
 
     /*
@@ -81,9 +81,17 @@ public:
     void update_team(std::shared_ptr<Team>& tmpTeam);
 
     /*
-     * Use the default methods for the copy constructor, destructor and the assignment operator
+    * Check which player from input is "closer" to the current player according to number of goals, cards and ID
+    * @param - two shared pointers to players to compare
+    * @return - the ID of the closest player
     */
-    Player(const Player&) = default;
+    int get_closest(std::shared_ptr<Player>& player1, std::shared_ptr<Player>& player2);
+    int check_diff(const int current, const int p1, const int p2);
+
+    /*
+    * Use the default methods for the copy constructor, destructor and the assignment operator
+    */
+    Player(const Player& other) = default;
     ~Player() = default;
     Player& operator=(const Player& other) = default;
 

@@ -24,3 +24,21 @@ WorldCup:
 -getAllPlayers - Lior
 -get_closest_player - Lior
 -knockout - Sarah
+
+
+
+Changes in Teams:
+- get_games()
+- change type of "Tree<std::shared_ptr<Player>> m_playersByID" to "TreeByScore"
+- Add function:
+
+int Team::get_closest_team_player(const int playerId) {
+    std::shared_ptr<Player> tmpPlayer;
+    try {
+        tmpPlayer = m_playersByID.get_closest_node(playerId);
+    }
+    catch (const NodeNotFound& e) {
+        throw e;
+    }
+    return tmpPlayer.get_playerId();
+}

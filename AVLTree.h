@@ -7,10 +7,10 @@
 #include <memory>
 #include "Exception.h"
 
-
-
+//AVL tree template class
 template <class T>
 class Tree {
+protected:
     /*
     * Class Tree::Node
     * This class is used to create the separate nodes in the tree
@@ -33,11 +33,11 @@ class Tree {
         //Constructor
         Node();
         /*
-         * Use the default methods for the copy constructor, the assignment operator and the destructor
+         * The copy constructor, the assignment operator and the default destructor
         */
         Node(const Node&);
         Node& operator=(const Node& other);
-        ~Node() = default;
+        virtual ~Node() = default;
 
         /*
          * Right-Right Rotation
@@ -81,12 +81,16 @@ class Tree {
     void printData();
 
     };
+
+    //The tree's root node
+    Node* m_node;
+
 public:
     //Tree Constructor
     Tree();
 
     //Tree Copy constructor, assignment operator and destructor
-    ~Tree();
+    virtual ~Tree();
     Tree(const Tree& other);
     Tree& operator=(const Tree& other);
 
@@ -135,8 +139,6 @@ public:
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
 
     void inorderWalk(bool flag);
-protected:
-    Node* m_node;
 };
 
 //--------------------------------------------Tree Class---------------------------------------------------
@@ -508,6 +510,8 @@ typename Tree<T>::Node::Node* Tree<T>::Node::rr_rotation(Node* node)
     return tmpToReturn;
 }
 
+
+//Right-Left tree rotation, on the node with balance factor of -2
 template <class T>
 typename Tree<T>::Node::Node* Tree<T>::Node::rl_rotation(Node* node)
 {
@@ -516,6 +520,8 @@ typename Tree<T>::Node::Node* Tree<T>::Node::rl_rotation(Node* node)
     return tmp;
 }
 
+
+//Left-Right tree rotation, on the node with balance factor of +2
 template <class T>
 typename Tree<T>::Node::Node* Tree<T>::Node::lr_rotation(Node* node)
 {
