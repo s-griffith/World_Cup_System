@@ -21,7 +21,7 @@ class Tree {
         Node* m_parent;
         Node* m_left;
         Node* m_right;
-        //Shared ptr of the data that the tree holds
+        //The data that the tree holds
         T m_data;
         //The height of the subtree of this node
         int m_height;
@@ -124,6 +124,7 @@ public:
      */
     typename Tree<T>::Node::Node& search_specific_id(const int id) const;
     typename Tree<T>::Node::Node& search_recursively(const int id, Node* currentNode) const;
+    T& search_and_return_data(const int id) const;
 
     /*
     * Make the node a leaf without breaking the sorted tree
@@ -360,6 +361,15 @@ template <class T>
 typename Tree<T>::Node::Node& Tree<T>::search_specific_id(const int id) const
 {
     return search_recursively(id, m_node);
+}
+
+
+//Combine??
+//Search and return node with specific ID
+template <class T>
+T& Tree<T>::search_and_return_data(const int id) const
+{
+    return search_recursively(id, m_node).m_data;
 }
 
 

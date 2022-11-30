@@ -22,12 +22,14 @@
 
 class world_cup_t {
 private:
-	Tree<std::shared_ptr<Team>> m_teamsByID;
-	int m_numPlayers;
-	std::shared_ptr<Player> m_overallTopScorer;
-	//
-	// Here you may add anything you want
-	//
+    //Total number of players throughout the entire game
+    int m_totalNumPlayers;
+    //Shared pointer to the player with the top stats (goals + cards + ID)
+    std::shared_ptr<Player> m_overallTopScorer;
+    //Tree of shared pointers of the type team, with all the teams in the game sorted by their ID
+    Tree<std::shared_ptr<Team>> m_teamsByID;
+    //Tree of shared pointers of the type player, with all the players in the game sorted by their ID
+    Tree<std::shared_ptr<Player>> m_playersByID;
 	
 public:
 	// <DO-NOT-MODIFY> {

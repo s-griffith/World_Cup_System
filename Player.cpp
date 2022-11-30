@@ -8,7 +8,8 @@ Player::Player(const int playerId, const int gamesPlayed, const int goals, const
     m_gamesPlayed(gamesPlayed),
     m_goals(goals),
     m_cards(cards),
-    m_goalkeeper(goalKeeper)
+    m_goalkeeper(goalKeeper),
+    m_team(nullptr)
 {
 }
 
@@ -42,20 +43,32 @@ bool Player::get_goalkeeper() const
     return m_goalkeeper;
 }
 
+//Return the team that the player is part of
+std::shared_ptr<Team>& Player::get_team()
+{
+    return m_team;
+}
+
 //Update the number of games the player played
-void Player::set_gamesPlayed(const int gamesPlayed)
+void Player::update_gamesPlayed(const int gamesPlayed)
 {
     m_gamesPlayed += gamesPlayed;
 }
 
 //Update the number of goals the player scored
-void Player::set_goals(const int scoredGoals)
+void Player::update_goals(const int scoredGoals)
 {
     m_goals += scoredGoals;
 }
 
 //Update the number of cards the player received
-void Player::set_cards(const int cardsReceived)
+void Player::update_cards(const int cardsReceived)
 {
     m_cards += cardsReceived;
+}
+
+//Update the team the player plays for
+void Player::update_team(std::shared_ptr<Team>& tmpTeam)
+{
+    m_team = tmpTeam;
 }

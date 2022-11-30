@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "Teams.h"
 #include <iostream>
 #include <string>
 
@@ -46,25 +47,38 @@ public:
     bool get_goalkeeper() const;
 
     /*
+    * Return if the player is a goalkeeper
+    * @return - bool, with true if the player is a goalkeeper, otherwise false
+    */
+    std::shared_ptr<Team>& get_team();
+
+    /*
     * Update the number of games the player played
     * @param - the number of new games the player played
     * @return - none
     */
-    void set_gamesPlayed(const int gamesPlayed);
+    void update_gamesPlayed(const int gamesPlayed);
 
     /*
     * Update the number of goals the player scored
     * @param - the number of new goals the player scored
     * @return - none
     */
-    void set_goals(const int scoredGoals);
+    void update_goals(const int scoredGoals);
 
     /*
     * Update the number of cards the player received
     * @param - the number of new cards the player received
     * @return - none
     */
-    void set_cards(const int cardsReceived);
+    void update_cards(const int cardsReceived);
+
+    /*
+    * Update the team that the player plays for
+    * @param - shared pointer to the team that the player plays for
+    * @return - none
+    */
+    void update_team(std::shared_ptr<Team>& tmpTeam);
 
     /*
      * Use the default methods for the copy constructor, destructor and the assignment operator
@@ -79,6 +93,7 @@ private:
     int m_goals;
     int m_cards;
     bool m_goalkeeper;
+    std::shared_ptr<Team> m_team;
 };
 
 

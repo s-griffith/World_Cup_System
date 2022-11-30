@@ -15,4 +15,5 @@ class NodeNotFound : public std::exception {
     }
 };
 
+
 #endif //WORLD_CUP_SYSTEM_EXCEPTION_H
