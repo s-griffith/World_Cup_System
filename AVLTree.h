@@ -76,9 +76,9 @@ protected:
         */
         void update_bf();
 
-    void inorderWalkNode(bool flag);
-    void printNode();
-    void printData();
+        void inorderWalkNode(bool flag);
+        void printNode();
+        void printData();
 
     };
 
@@ -111,7 +111,7 @@ public:
      * @param - New data to insert and the ID of the new node
      * @return - bool
      */
-    bool insert(const T& data, const int id);
+    virtual bool insert(const T& data, const int id);
 
     /*
      * Remove node according to the id given
@@ -128,7 +128,7 @@ public:
      */
     typename Tree<T>::Node::Node& search_specific_id(const int id) const;
     typename Tree<T>::Node::Node& search_recursively(const int id, Node* currentNode) const;
-    T& search_and_return_data(const int id) const;
+    virtual T& search_and_return_data(const int id) const;
 
     /*
     * Make the node a leaf without breaking the sorted tree
