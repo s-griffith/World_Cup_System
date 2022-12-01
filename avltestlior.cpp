@@ -1,7 +1,8 @@
 #include "AVLTree.h"
+#include "Node.h"
 
 int main() {
-    Tree<int> t1;
+    Tree<Node<int>, int> t1;
     t1.insert(5,5);
     printf("One node with '5': \n");
     t1.inorderWalk(1);
@@ -47,13 +48,13 @@ int main() {
     t1.inorderWalk(1);
     printf("\n");
 
-    Tree<int> t2 = t1;
+    Tree<Node<int>, int> t2 = t1;
     printf("Print 'operation=' tree:\n");
     t2.inorderWalk(1);
     printf("\n");
 
 
-    Tree<int> t3(t1);
+    Tree<Node<int>, int> t3(t1);
     printf("Print copied tree:\n");
     t3.inorderWalk(1);
     printf("\n");
