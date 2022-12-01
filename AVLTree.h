@@ -89,7 +89,7 @@ protected:
     //The tree's root node
     Node* m_node;
     template<class M>
-    friend class Node::Node;
+    friend class Node::Node; //Not actually sure if this is necessary - check after final implementation
 public:
     //Tree Constructor
     Tree();

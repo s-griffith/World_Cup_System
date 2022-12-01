@@ -68,8 +68,9 @@ private:
     void update_bf();
 
     void inorderWalkNode(bool flag);
-    void printNode();
-    void printData();
+    virtual void printNode();
+    virtual void printData();
+
     template <class Node, class M>
     friend class Tree;
     };
@@ -98,12 +99,12 @@ void Node<T>::printNode() {
     else {
         right = m_right->m_data;
     }
-    printf("Data = %d, Parent = %d, Left = %d, Right = %d\n", m_data, parent, left, right);
+    std::cout << "Data = " << m_data << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
 }
 
 template <class T>
 void Node<T>::printData() {
-    printf("Data = %d\n", m_data);
+    std::cout << "Data = " << m_data << std::endl;
 }
 
 template <class T>
@@ -121,7 +122,7 @@ void Node<T>::inorderWalkNode(bool flag) {
 }
 
 
-//--------------------------------------------Node Class---------------------------------------------------
+//--------------------------------------------Constructors---------------------------------------------------
 
 //Node Constructor
 template <class T>
@@ -129,6 +130,8 @@ Node<T>::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height
     m_id(0), m_bf(0)
     {}
 
+
+//--------------------------------------------Rotations---------------------------------------------------
 
 
 //Left-Left tree rotation, on the node with balance factor of +2
@@ -208,6 +211,8 @@ typename Node<T>::Node<T>* Node<T>::lr_rotation(Node* node)
     tmp = ll_rotation(tmp);
     return tmp;
 }
+
+//--------------------------------------------Node Stats---------------------------------------------------
 
 
 //Update the balance factor of the specific node
