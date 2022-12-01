@@ -1,5 +1,7 @@
 #include "AVLTree.h"
 #include "Node.h"
+#include "AVLMultiVariable.h"
+#include "ComplexNode.h"
 
 int main() {
     Tree<Node<int>, int> t1;
@@ -59,5 +61,7 @@ int main() {
     t3.inorderWalk(1);
     printf("\n");
 
+    //MultiTree<ComplexNode, int> tree;
+    
 };
 

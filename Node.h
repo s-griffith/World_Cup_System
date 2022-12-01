@@ -7,6 +7,16 @@
 */
 template <class T>
 class Node{
+public:
+    //Constructor
+    Node();
+    /*
+     * The copy constructor, the assignment operator and the default destructor
+    */
+    Node(const Node&);
+    Node& operator=(const Node& other);
+    virtual ~Node() = default;
+
 private:
     //Pointers to the parent node and the two child nodes
     Node* m_parent;
@@ -20,15 +30,6 @@ private:
     int m_bf;
     //The key by which the tree is sorted
     int m_id;
-
-    //Constructor
-    Node();
-    /*
-     * The copy constructor, the assignment operator and the default destructor
-    */
-    Node(const Node&);
-    Node& operator=(const Node& other);
-    virtual ~Node() = default;
 
     /*
      * Right-Right Rotation

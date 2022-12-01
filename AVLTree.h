@@ -103,7 +103,7 @@ public:
      * Recursively destroy full tree
      * @return - none
      */
-    void destroy_tree(Node* currentNode);
+    virtual void destroy_tree(Node* currentNode);
 
     /*
      * Recursively copy full tree
@@ -131,8 +131,8 @@ public:
      * @param - The ID of the requested node
      * @return - none
      */
-    typename Node::Node& search_specific_id(const int id) const;
-    typename Node::Node& search_recursively(const int id, Node* currentNode) const;
+    virtual typename Node::Node& search_specific_id(const int id) const;
+    virtual typename Node::Node& search_recursively(const int id, Node* currentNode) const;
     virtual T& search_and_return_data(const int id) const;
 
     /*
@@ -218,8 +218,8 @@ void Tree<Node, T>::destroy_tree(Node* currentNode)
 {
     Node* tmpNode = currentNode;
     if (tmpNode != nullptr) {
-        destroy_tree(currentNode->m_left);
-        destroy_tree(currentNode->m_right);
+        destroy_tree(currentNode->m_left); //this might cause memory leaks with multitree - only place might need to override the function for real
+        destroy_tree(currentNode->m_right); //might need dynamic cast here to Node*, or find a way to override destroy func
         delete tmpNode;
     }
 }
@@ -309,7 +309,7 @@ bool Tree<Node, T>::insert(const T& data, const int id) {
     else {
         y->m_right = node;
     }
-    rebalance_tree(node->m_parent);
+    rebalance_tree(dynamic_cast<Node*>(node->m_parent));
     return true;
 }
 
