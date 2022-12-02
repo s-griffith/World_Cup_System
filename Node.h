@@ -35,25 +35,25 @@ private:
      * Right-Right Rotation
      * @return - none
      */
-    typename Node<T>::Node<T>* rr_rotation(Node* node);
+    Node* rr_rotation(Node* node);
 
     /*
      * Right-Left Rotation
      * @return - none
      */
-    typename Node<T>::Node<T>* rl_rotation(Node* node);
+    Node* rl_rotation(Node* node);
 
     /*
      * Left-Left Rotation
      * @return - none
      */
-    typename Node<T>::Node<T>* lr_rotation(Node* node);
+    Node* lr_rotation(Node* node);
 
     /*
      * Left-Right Rotation
      * @return - none
      */
-    typename Node<T>::Node<T>* ll_rotation(Node* node);
+    Node* ll_rotation(Node* node);
 
 
     /*
@@ -137,9 +137,9 @@ Node<T>::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height
 
 //Left-Left tree rotation, on the node with balance factor of +2
 template <class T>
-typename Node<T>::Node<T>* Node<T>::ll_rotation(Node* node)
+typename Node<T>::Node* Node<T>::ll_rotation(Node<T>* node)
 {
-    Node * tmpToReturn = node;
+    Node<T>* tmpToReturn = node;
     //Changing A->B to A->Parent
     m_left->m_parent = m_parent;
     //Changing Parent->B to Parent->A
@@ -169,9 +169,9 @@ typename Node<T>::Node<T>* Node<T>::ll_rotation(Node* node)
 
 //Right-Right tree rotation, on the node with balance factor of -2
 template <class T>
-typename Node<T>::Node<T>* Node<T>::rr_rotation(Node* node)
+typename Node<T>::Node* Node<T>::rr_rotation(Node<T>* node)
 {
-    Node* tmpToReturn = node;
+    Node<T>* tmpToReturn = node;
     m_right->m_parent = m_parent;
     if (m_parent != nullptr) {
         if (m_parent->m_right == this) {
@@ -196,9 +196,9 @@ typename Node<T>::Node<T>* Node<T>::rr_rotation(Node* node)
 
 //Right-Left tree rotation, on the node with balance factor of -2
 template <class T>
-typename Node<T>::Node<T>* Node<T>::rl_rotation(Node* node)
+typename Node<T>::Node* Node<T>::rl_rotation(Node<T>* node)
 {
-    Node* tmp = m_right->ll_rotation(node);
+    Node<T>* tmp = m_right->ll_rotation(node);
     tmp = rr_rotation(tmp);
     return tmp;
 }
@@ -206,9 +206,9 @@ typename Node<T>::Node<T>* Node<T>::rl_rotation(Node* node)
 
 //Left-Right tree rotation, on the node with balance factor of +2
 template <class T>
-typename Node<T>::Node<T>* Node<T>::lr_rotation(Node* node)
+typename Node<T>::Node* Node<T>::lr_rotation(Node<T>* node)
 {
-    Node* tmp = m_left->rr_rotation(node);
+    Node<T>* tmp = m_left->rr_rotation(node);
     tmp = ll_rotation(tmp);
     return tmp;
 }

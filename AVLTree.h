@@ -9,87 +9,12 @@
 #include "Node.h"
 
 //AVL tree template class
-template <class Node, class T>
+template <class N, class T>
 class Tree {
-/*
-protected:
-    /*
-    * Class Tree::Node
-    * This class is used to create the separate nodes in the tree
-    *
-    class Node{
-    public:
-        //Pointers to the parent node and the two child nodes
-        Node* m_parent;
-        Node* m_left;
-        Node* m_right;
-        //The data that the tree holds
-        T m_data;
-        //The height of the subtree of this node
-        int m_height;
-        //Balance factor of node
-        int m_bf;
-        //The key by which the tree is sorted
-        int m_id;
-
-        //Constructor
-        Node();
-        */
-        /*
-         * The copy constructor, the assignment operator and the default destructor
-        *
-
-        Node(const Node&);
-        Node& operator=(const Node& other);
-        virtual ~Node() = default;
-
-        /*
-         * Right-Right Rotation
-         * @return - none
-         *
-        typename Tree<T>::Node::Node* rr_rotation(Node* node);
-
-        /*
-         * Right-Left Rotation
-         * @return - none
-         *
-        typename Tree<T>::Node::Node* rl_rotation(Node* node);
-
-        /*
-         * Left-Left Rotation
-         * @return - none
-         *
-        typename Tree<T>::Node::Node* lr_rotation(Node* node);
-
-        /*
-         * Left-Right Rotation
-         * @return - none
-         *
-        typename Tree<T>::Node::Node* ll_rotation(Node* node);
-
-
-        /*
-        * Update height of the current node
-        * @return - none
-        *
-        void update_height();
-
-        /*
-        * Update balance factor of the current node
-        * @return - none
-        *
-        void update_bf();
-
-        void inorderWalkNode(bool flag);
-        void printNode();
-        void printData();
-
-    };
-*/
     //The tree's root node
-    Node* m_node;
-    template<class M>
-    friend class Node::Node; //Not actually sure if this is necessary - check after final implementation
+    N* m_node;
+   // template<class M>
+   // friend class Node<T>::Node; //Not actually sure if this is necessary - check after final implementation
 public:
     //Tree Constructor
     Tree();
@@ -103,13 +28,13 @@ public:
      * Recursively destroy full tree
      * @return - none
      */
-    virtual void destroy_tree(Node* currentNode);
+    virtual void destroy_tree(N* currentNode);
 
     /*
      * Recursively copy full tree
      * @return - none
      */
-    void copy_tree(Node* currentNode, Node* otherNode);
+    void copy_tree(N* currentNode, N* otherNode);
 
     /*
      * Insert new node with data, according to the id given
@@ -124,22 +49,22 @@ public:
      * @return - none
      */
     void remove(const int id);
-    void rebalance_tree(Node* currentNode);
+    void rebalance_tree(N* currentNode);
 
     /*
      * Search for node with specific data, according to the id given
      * @param - The ID of the requested node
      * @return - none
      */
-    virtual typename Node::Node& search_specific_id(const int id) const;
-    virtual typename Node::Node& search_recursively(const int id, Node* currentNode) const;
+    virtual N& search_specific_id(const int id) const;
+    virtual N& search_recursively(const int id, N* currentNode) const;
     virtual T& search_and_return_data(const int id) const;
 
     /*
     * Make the node a leaf without breaking the sorted tree
     * @return - a pointer to the node from which the tree is no longer balanced
     */
-    typename Node::Node* make_node_leaf(Node* node);
+    N* make_node_leaf(N* node);
 
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
 
@@ -193,16 +118,16 @@ Tree<Node, T>::Tree(const Tree<Node, T>& other)
 
 
 //Tree Assignment Operator
-template <class Node, class T>
-typename Tree<Node, T>::Tree& Tree<Node, T>::operator=(const Tree<Node, T>& other)
+template <class N, class T>
+typename Tree<N, T>::Tree& Tree<N, T>::operator=(const Tree<N, T>& other)
 {
     if (this == &other) {
         return *this;
     }
     //Copy the other tree to a new tree
-    Tree<Node, T> newTree(other);
+    Tree<N, T> newTree(other);
     //Create temporary tree variable
-    Node* tmp = newTree.m_node;
+    N* tmp = newTree.m_node;
     //Copy the current tree to the temporary tree
     newTree.m_node = m_node;
     //Copy the other tree to the current tree
@@ -213,10 +138,10 @@ typename Tree<Node, T>::Tree& Tree<Node, T>::operator=(const Tree<Node, T>& othe
 
 
 //Destroy tree recursively
-template <class Node, class T>
-void Tree<Node, T>::destroy_tree(Node* currentNode)
+template <class N, class T>
+void Tree<N, T>::destroy_tree(N* currentNode)
 {
-    Node* tmpNode = currentNode;
+    N* tmpNode = currentNode;
     if (tmpNode != nullptr) {
         destroy_tree(currentNode->m_left); //this might cause memory leaks with multitree - only place might need to override the function for real
         destroy_tree(currentNode->m_right); //might need dynamic cast here to Node*, or find a way to override destroy func
@@ -226,13 +151,13 @@ void Tree<Node, T>::destroy_tree(Node* currentNode)
 
 
 //Copy tree recursively
-template <class Node, class T>
-void Tree<Node, T>::copy_tree(Node* currentNode, Node* otherNode)
+template <class N, class T>
+void Tree<N, T>::copy_tree(N* currentNode, N* otherNode)
 {
     if (otherNode->m_left != nullptr) {
         //Create empty new node
         try {
-            currentNode->m_left = new Node;
+            currentNode->m_left = new N;
             currentNode->m_left->m_parent = currentNode;
             currentNode->m_left->m_data = otherNode->m_left->m_data;
             currentNode->m_left->m_height = otherNode->m_left->m_height;
@@ -248,7 +173,7 @@ void Tree<Node, T>::copy_tree(Node* currentNode, Node* otherNode)
     if (otherNode->m_right != nullptr) {
         //Create empty new node
         try {
-            currentNode->m_right = new Node;
+            currentNode->m_right = new N;
             currentNode->m_right->m_parent = currentNode;
             currentNode->m_right->m_data = otherNode->m_right->m_data;
             currentNode->m_right->m_height = otherNode->m_right->m_height;
@@ -263,8 +188,8 @@ void Tree<Node, T>::copy_tree(Node* currentNode, Node* otherNode)
     }
 }
 
-template<class Node, class T>
-bool Tree<Node, T>::insert(const T& data, const int id) {
+template<class N, class T>
+bool Tree<N, T>::insert(const T& data, const int id) {
     //If this is the first node in the tree:
     if (m_node->m_height == -1) {
         m_node->m_data = data;
@@ -273,8 +198,8 @@ bool Tree<Node, T>::insert(const T& data, const int id) {
         return true;
     }
     //Find the proper location of the new node (when it's not the first):
-    Node* x = m_node;
-    Node* y = nullptr;
+    N* x = m_node;
+    N* y = nullptr;
     while (x != nullptr) {
         y = x;
         if (x->m_id == id) {
@@ -288,9 +213,9 @@ bool Tree<Node, T>::insert(const T& data, const int id) {
         }
     }
     //Create the new node and add it to the tree:
-    Node* node = nullptr;
+    N* node = nullptr;
     try{
-        node = new Node;
+        node = new N;
     }
     catch(const std::bad_alloc& e)
     {
@@ -309,7 +234,7 @@ bool Tree<Node, T>::insert(const T& data, const int id) {
     else {
         y->m_right = node;
     }
-    rebalance_tree(dynamic_cast<Node*>(node->m_parent));
+    rebalance_tree((node->m_parent));
     return true;
 }
 
@@ -326,8 +251,8 @@ void Tree<Node, T>::remove(const int id)
 
 
 //Re-balance tree after node removal
-template <class Node, class T>
-void Tree<Node, T>::rebalance_tree(Node* currentNode) {
+template <class N, class T>
+void Tree<N, T>::rebalance_tree(N* currentNode) {
     if (currentNode == nullptr) {
         return;
     }
@@ -364,8 +289,8 @@ void Tree<Node, T>::rebalance_tree(Node* currentNode) {
 
 //Combine??
 //Search and return node with specific ID
-template <class Node, class T>
-typename Node::Node& Tree<Node, T>::search_specific_id(const int id) const
+template <class N, class T>
+N& Tree<N, T>::search_specific_id(const int id) const
 {
     return search_recursively(id, m_node);
 }
@@ -373,16 +298,16 @@ typename Node::Node& Tree<Node, T>::search_specific_id(const int id) const
 
 //Combine??
 //Search and return node with specific ID
-template <class Node, class T>
-T& Tree<Node, T>::search_and_return_data(const int id) const
+template <class N, class T>
+T& Tree<N, T>::search_and_return_data(const int id) const
 {
     return search_recursively(id, m_node).m_data;
 }
 
 
 //Search and return node with specific ID recursively
-template <class Node, class T>
-typename Node::Node& Tree<Node, T>::search_recursively(const int id, Node* currentNode) const
+template <class N, class T>
+N& Tree<N, T>::search_recursively(const int id, N* currentNode) const
 {
     if (currentNode == nullptr) {
         throw NodeNotFound();
@@ -391,14 +316,14 @@ typename Node::Node& Tree<Node, T>::search_recursively(const int id, Node* curre
         return *(currentNode);
     }
     if (currentNode->m_id < id) {
-        return search_recursively(id, currentNode->m_right);
+        return search_recursively(id,currentNode->m_right);
     }
     return search_recursively(id, currentNode->m_left);
 }
 
 //Make the current node a leaf (maintaining sort)
-template <class Node, class T>
-typename Node::Node* Tree<Node, T>::make_node_leaf(Node* node)
+template <class N, class T>
+N* Tree<N, T>::make_node_leaf(N* node)
 {
     //Node to be deleted is already a leaf
     if (node->m_left == nullptr && node->m_right == nullptr) {
@@ -406,7 +331,7 @@ typename Node::Node* Tree<Node, T>::make_node_leaf(Node* node)
     }
     //Node to be deleted has one child
     if (node->m_left == nullptr || node->m_right == nullptr) {
-        Node* tmpChild;
+        N* tmpChild;
         if (node->m_left != nullptr) {
             tmpChild = node->m_left;
         }
@@ -426,11 +351,11 @@ typename Node::Node* Tree<Node, T>::make_node_leaf(Node* node)
         return node->m_parent;
     }
     //Node to be deleted has two children
-    Node* successor = node->m_right;
+    N* successor = node->m_right;
     while (successor->m_left != nullptr) {
         successor = successor->m_left;
     }
-    Node* parentToReturn;
+    N* parentToReturn;
     if (successor != node->m_right) {
         parentToReturn = successor->m_parent;
     }
@@ -485,181 +410,5 @@ void Tree<Node, T>::inorderWalk(bool flag) {
     m_node->inorderWalkNode(flag);
 }
 
-//---------------------------------------------------------------------------------------------------------
-/*
-
-template <class T>
-void Tree<T>::Node::printNode() {
-    int parent, left, right;
-    if (m_parent == nullptr) {
-        parent = -1;
-    }
-    else {
-        parent = m_parent->m_data;
-    }
-    if (m_left == nullptr) {
-        left = -1;
-    }
-    else {
-        left = m_left->m_data;
-    }
-    if (m_right == nullptr) {
-        right = -1;
-    }
-    else {
-        right = m_right->m_data;
-    }
-    printf("Data = %d, Parent = %d, Left = %d, Right = %d\n", m_data, parent, left, right);
-}
-
-template <class T>
-void Tree<T>::Node::printData() {
-    printf("Data = %d\n", m_data);
-}
-
-template <class T>
-void Tree<T>::Node::inorderWalkNode(bool flag) {
-    if (this != nullptr) {
-        m_left->inorderWalkNode(flag);
-        if (flag) {
-            this->printNode();
-        }
-        else {
-            this->printData();
-        }
-        m_right->inorderWalkNode(flag);
-    }
-}
-
-template <class T>
-void Tree<T>::inorderWalk(bool flag) {
-    m_node->inorderWalkNode(flag);
-}
-
-//--------------------------------------------Node Class---------------------------------------------------
-
-//Node Constructor
-template <class T>
-Tree<T>::Node::Node() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height(-1),
-    m_id(0), m_bf(0)
-    {}
-
-
-
-//Left-Left tree rotation, on the node with balance factor of +2
-template <class T>
-typename Tree<T>::Node::Node* Tree<T>::Node::ll_rotation(Node* node)
-{
-    Node * tmpToReturn = node;
-    //Changing A->B to A->Parent
-    m_left->m_parent = m_parent;
-    //Changing Parent->B to Parent->A
-    if (m_parent != nullptr) {
-        if (m_parent->m_left == this) {
-            m_parent->m_left = m_left;
-        }
-        else {
-            m_parent->m_right = m_left;
-        }
-    }
-    else {
-        tmpToReturn = m_left;
-    }
-    //Changing B->Parent to B->A
-    m_parent = m_left;
-    //Changing Ar->A to Ar->B
-    if (m_left->m_right != nullptr) {
-        m_left->m_right->m_parent = this;
-    }
-    //Changing B->A to B->Ar
-    m_left = m_left->m_right;
-    //Changing A->Ar to A->B
-    m_parent->m_right = this;
-    return tmpToReturn;
-}
-
-//Right-Right tree rotation, on the node with balance factor of -2
-template <class T>
-typename Tree<T>::Node::Node* Tree<T>::Node::rr_rotation(Node* node)
-{
-    Node* tmpToReturn = node;
-    m_right->m_parent = m_parent;
-    if (m_parent != nullptr) {
-        if (m_parent->m_right == this) {
-            m_parent->m_right = m_right;
-        }
-        else {
-            m_parent->m_left = m_right;
-        }
-    }
-    else {
-        tmpToReturn = m_right;
-    }
-    m_parent = m_right;
-    if(m_right->m_left != nullptr) {
-        m_right->m_left->m_parent = this;
-    }
-    m_right = m_right->m_left;
-    m_parent->m_left = this;
-    return tmpToReturn;
-}
-
-
-//Right-Left tree rotation, on the node with balance factor of -2
-template <class T>
-typename Tree<T>::Node::Node* Tree<T>::Node::rl_rotation(Node* node)
-{
-    Node* tmp = m_right->ll_rotation(node);
-    tmp = rr_rotation(tmp);
-    return tmp;
-}
-
-
-//Left-Right tree rotation, on the node with balance factor of +2
-template <class T>
-typename Tree<T>::Node::Node* Tree<T>::Node::lr_rotation(Node* node)
-{
-    Node* tmp = m_left->rr_rotation(node);
-    tmp = ll_rotation(tmp);
-    return tmp;
-}
-
-
-//Update the balance factor of the specific node
-template <class T>
-void Tree<T>::Node::update_bf()
-{
-    int heightLeft = 0, heightRight = 0;
-    if (m_left != nullptr) {
-        heightLeft = m_left->m_height + 1;
-    }
-    if (m_right != nullptr) {
-        heightRight = m_right->m_height + 1;
-    }
-    m_bf = heightLeft - heightRight;
-}
-
-
-//Update the subtree height of the specific node
-template <class T>
-void Tree<T>::Node::update_height()
-{
-    int heightLeft = 0, heightRight = 0;
-    if (m_left != nullptr) {
-        heightLeft = m_left->m_height + 1;
-    }
-    if (m_right != nullptr) {
-        heightRight = m_right->m_height + 1;
-    }
-    if (heightLeft >= heightRight) {
-        m_height = heightLeft;
-    }
-    else {
-        m_height = heightRight;
-    }
-}
-
-//---------------------------------------------------------------------------------------------------------
-*/
 
 #endif //AVLTREE_h

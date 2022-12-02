@@ -61,7 +61,7 @@ int main() {
     t3.inorderWalk(1);
     printf("\n");
 
-    //MultiTree<ComplexNode, int> tree;
+    MultiTree<int> tree;
     
 };
 

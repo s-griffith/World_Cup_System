@@ -5,31 +5,34 @@
 #include "Node.h"
 #include "ComplexNode.h"
 
-template<template<class T> class ComplexNode, class T> //does this use the current complexNode?? check by trying something else
+template<class T> //does this use the current complexNode?? check by trying something else
 class MultiTree : public Tree<ComplexNode<T>, T> {
     template<class M>
     friend class ComplexNode;
 public:
     ComplexNode<T>* m_root;
     
-    MultiTree() = default;
+    MultiTree()=default;
     ~MultiTree();
     MultiTree(const MultiTree& other);
     MultiTree& operator=(const MultiTree& other);
 
-    void destroy_tree(ComplexNode<T>* currentNode);
+    //void destroy_tree(ComplexNode<T>* currentNode);
 
-    bool insert(const T& data, const int id) override;
+    //bool insert(const T& data, const int id) override;
 
-    typename Node<T>::Node<T>& search_specific_id(const int id) const override;
-    typename Node<T>::Node<T>& search_recursively(const int id, Node<T>* currentNode) const override;
-    T& search_and_return_data(const int id) const override;
+    //typename Node<T>::Node<T>& search_specific_id(const int id) const override;
+    //typename Node<T>::Node<T>& search_recursively(const int id, ComplexNode<T>* currentNode) const;
+    //T& search_and_return_data(const int id) const override;
 };
 
-template<template<class T> class ComplexNode, class T>
-MultiTree<ComplexNode, T>::~MultiTree() {
-    MultiTree<ComplexNode, T>::destroy_tree(m_root);
-    Tree<ComplexNode, T>::destroy_tree(dynamic_cast<Node<T>*>(m_root));
+//template<template<class T> class ComplexNode, class T>
+//MultiTree<ComplexNode, T>::MultiTree() : Tree<ComplexNode::ComplexNode<T>, T>::Tree() {}
+
+template<class T>
+MultiTree<T>::~MultiTree() {
+   // MultiTree<ComplexNode, T>::destroy_tree(m_root);
+    this->destroy_tree(m_root);
 }
 
 /*template<template<class T> class ComplexNode, class T>
