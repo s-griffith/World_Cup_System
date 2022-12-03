@@ -322,7 +322,7 @@ N& Tree<N, T>::search_recursively(const int id, N* currentNode) const
         throw NodeNotFound();
     }
     if (currentNode->m_id == id) {
-        return *(currentNode);
+        return *currentNode;
     }
     if (currentNode->m_id < id) {
         return search_recursively(id,currentNode->m_right);

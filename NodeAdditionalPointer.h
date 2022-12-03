@@ -2,6 +2,7 @@
 #define WORLD_CUP_SYSTEM_NODEADDITIONALPOINTER_H
 
 #include "Node.h"
+#include "ComplexNode.h"
 #include "AVLTree.h"
 #include "AVLTreeExtraPointer.h"
 
@@ -21,7 +22,7 @@ public:
     NodeWithPointer& operator=(const NodeWithPointer& other) = default;
     ~NodeWithPointer() = default;
 protected:
-    typename Node<T>::Node* m_matchOtherTree;
+    typename ComplexNode<T>::ComplexNode* m_matchOtherTree;
 
     template <class K>
     friend class TreeByScore;

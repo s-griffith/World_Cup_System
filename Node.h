@@ -88,7 +88,7 @@ protected:
 
 //---------------------------------------------------------------------------------------------------------
 
-
+/*
 template <class T>
 void Node<T>::printNode() {
     int parent, left, right;
@@ -131,7 +131,7 @@ void Node<T>::inorderWalkNode(bool flag) {
         m_right->inorderWalkNode(flag);
     }
 }
-
+*/
 //--------------------------------------------Constructors---------------------------------------------------
 
 //Node Constructor

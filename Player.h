@@ -1,9 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+class Team;
+
 #include "Teams.h"
-#include <iostream>
-#include <string>
+#include <memory>
 
 class Player {
 public:
@@ -13,8 +14,7 @@ public:
     *      and also if the player is a goalkeeper
     * @return - A new instance of Player.
     */
-    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper,
-           std::shared_ptr<Team>& tmpTeam);
+    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, std::shared_ptr<Team>& tmpTeam);
 
     /*
     * Return the player's ID

@@ -34,7 +34,7 @@ private:
     //      one goalkeeper, sorted by the team ID
     Tree<Node<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_qualifiedTeams;
     //Tree of shared pointers of the type player, with all the players in the game sorted by their ID
-    Tree<std::shared_ptr<Player>, std::shared_ptr<Player>> m_playersByID;
+    Tree<Node<std::shared_ptr<Player>>, std::shared_ptr<Player>> m_playersByID;
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
 

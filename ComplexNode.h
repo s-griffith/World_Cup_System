@@ -26,8 +26,8 @@ private:
     int m_bf;
     //The key by which the tree is sorted
     int m_id;
-    T m_goals;
-    T m_cards;
+    int m_goals;
+    int m_cards;
     
     //maybe add sort()?
 
@@ -80,6 +80,7 @@ private:
 
 };
 
+/*
 template <class T>
 void ComplexNode<T>::printNode() {
     int parent, left, right;
@@ -122,7 +123,7 @@ void ComplexNode<T>::inorderWalkNode(bool flag) {
         m_right->inorderWalkNode(flag);
     }
 }
-
+*/
 
 //--------------------------------------------Constructors---------------------------------------------------
 

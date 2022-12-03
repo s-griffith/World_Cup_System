@@ -1,8 +1,10 @@
 #ifndef TEAMS_H
 #define TEAMS_H
 
-#include "AVLTree.h"
+class Player;
+
 #include "Player.h"
+#include "AVLTree.h"
 #include <memory>
 #include "wet1util.h"
 #include "AVLMultiVariable.h"
@@ -24,8 +26,8 @@ public:
     bool is_valid() const;
 
     void update_team_stats(const std::shared_ptr<Player> player, const int goals, const int cards);
-    void Team::remove_player_by_score(const int goals, const int cards, const int id);
-    void Team::remove_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
+    void remove_player_by_score(const int goals, const int cards, const int id);
+    void remove_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
     void add_game();
     void update_points(const int k);
     void update_num_goals(const int goals);
@@ -40,8 +42,8 @@ public:
     int get_teamID() const;
 
     void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
-    int Team::get_closest_team_player(const int playerId);
-    void Team::get_all_team_players(int* const output);
+    int get_closest_team_player(const int playerId);
+    void get_all_team_players(int* const output);
 private:
     int m_id;
     int m_points;
