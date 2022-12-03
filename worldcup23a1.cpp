@@ -11,6 +11,44 @@ world_cup_t::~world_cup_t() //I feel like this should be default
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
+    if (teamId <= 0 || points < 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    try  {
+        std::shared_ptr<Team> t(new Team(teamId, points));
+	    m_teamsByID.insert(t, teamId);
+    }
+    catch (std::bad_alloc& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    catch(InvalidID& e) {
+        return StatusType::FAILURE;
+    }
+	return StatusType::SUCCESS;
+}
+
+StatusType world_cup_t::remove_team(int teamId)
+{
+    if (teamId <= 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    try {
+        m_qualifiedTeams.search_specific_id(teamId);
+        return StatusType::FAILURE;
+    }
+    catch (NodeNotFound& e) {}
+    try {
+        m_teamsByID.remove(teamId);
+        }
+    catch(NodeNotFound& e) {
+        return StatusType::FAILURE;
+    }
+    return StatusType::SUCCESS;
+}
+
+StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
+                                   int goals, int cards, bool goalKeeper)
+{
     if (playerId <= 0 || teamId <= 0 || gamesPlayed < 0 || goals < 0 || cards < 0) {
         return StatusType::INVALID_INPUT;
     }
@@ -218,7 +256,6 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     }
     Team nTeam(newTeamId, team1->get_points() + team2->get_points());
     nTeam.Team::unite_teams(team1, team2);
-
 	return StatusType::SUCCESS;
 }
 
