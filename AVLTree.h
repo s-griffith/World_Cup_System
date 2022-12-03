@@ -67,6 +67,13 @@ public:
     */
     N* make_node_leaf(N* node);
 
+    /*
+    * Add all of the tree keys to the given array
+    * @return - none
+    */
+    void get_all_data(int* const array) const;
+
+
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
 
     void inorderWalk(bool flag);
@@ -75,12 +82,12 @@ public:
 //--------------------------------------------Tree Class---------------------------------------------------
 
 //Tree Constructor
-template <class Node, class T>
-Tree<Node, T>::Tree()
+template <class N, class T>
+Tree<N, T>::Tree()
 {
     //Creating empty beginning node
     try {
-        m_node = new Node;
+        m_node = new N;
     }
     catch (const std::bad_alloc& e) {
         delete m_node;
@@ -90,20 +97,20 @@ Tree<Node, T>::Tree()
 
 
 //Tree Destructor
-template <class Node, class T>
-Tree<Node, T>::~Tree()
+template <class N, class T>
+Tree<N, T>::~Tree()
 {
     destroy_tree(m_node);
 }
 
 
 //Tree Copy Constructor
-template <class Node, class T>
-Tree<Node, T>::Tree(const Tree<Node, T>& other)
+template <class N, class T>
+Tree<N, T>::Tree(const Tree<N, T>& other)
 {
     //Create empty beginning node
     try {
-        m_node = new Node;
+        m_node = new N;
     }
     catch (const std::bad_alloc& e) {
         delete m_node;
@@ -238,11 +245,11 @@ void Tree<N, T>::insert(const T& data, const int id) {
 }
 
 //Remove node according to the id provided
-template <class Node, class T>
-void Tree<Node, T>::remove(const int id)
+template <class N, class T>
+void Tree<N, T>::remove(const int id)
 {
-    Node* toRemove = &(search_specific_id(id));
-    Node* nodeToFix = make_node_leaf(toRemove);
+    N* toRemove = &(search_specific_id(id));
+    N* nodeToFix = make_node_leaf(toRemove);
     delete toRemove;
     //Go up the tree and check the balance factors and complete needed rotations
     rebalance_tree(nodeToFix);
@@ -404,8 +411,16 @@ N* Tree<N, T>::make_node_leaf(N* node)
     return parentToReturn;
 }
 
-template <class Node, class T>
-void Tree<Node, T>::inorderWalk(bool flag) {
+template <class N, class T>
+void Tree<N, T>::get_all_data(int* const array) const
+{
+    if (this != nullptr) {
+        m_node->get_data_inorder(array, 0);
+    }
+}
+
+template <class N, class T>
+void Tree<N, T>::inorderWalk(bool flag) {
     m_node->inorderWalkNode(flag);
 }
 

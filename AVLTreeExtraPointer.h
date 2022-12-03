@@ -2,40 +2,28 @@
 #define WORLD_CUP_SYSTEM_AVLTREEBYSCORE_H
 
 #include "AVLTree.h"
+#include "Node.h"
+#include "NodeAdditionalPointer.h"
 
 //AVL tree special class, derived from the regular AVL tree class
 //This class has an extra data pointer in each node, pointing to
 template <class T>
-class TreeByScore : public Tree<T> {
-protected:
-    class NodeWithPointer : public Tree<T>::Node {
-    public:
-        typename Tree<T>::Node* m_matchOtherTree;
-
-        //Constructor
-        NodeWithPointer();
-        /*
-         * The copy constructor, the assignment operator and the destructor
-        */
-        NodeWithPointer(const NodeWithPointer&);
-        NodeWithPointer& operator=(const NodeWithPointer& other);
-        ~NodeWithPointer() = default;
-    };
+class TreeByScore : public Tree<NodeWithPointer<T>, T> {
 public:
     //Tree Constructor
     TreeByScore();
 
-    //Tree Copy constructor, assignment operator and destructor
-    ~TreeByScore() ;
-    TreeByScore(const TreeByScore& other);
-    TreeByScore& operator=(const TreeByScore& other);
+    //Tree Copy constructor, assignment operator and destructor - use the AVLTree's functions
+    ~TreeByScore() = default;
+    TreeByScore(const TreeByScore<T>& other) = default;
+    TreeByScore& operator=(const TreeByScore<T>& other) = default;
 
     /*
     * Search for the node with the given id, and then update the pointer to the  matching node in another tree
     * @param - The ID of the node that needs to be updated, and a pointer to the node in the other tree
     * @return - none
     */
-    void update_additional_pointer(const int id, typename Tree<T>::Node* otherNode);
+    void update_additional_pointer(const int id, typename Node<T>::Node* otherNode);
 
     /*
     * Search for the node with the given id, access the matching node in the other tree, and return the closest
@@ -43,46 +31,38 @@ public:
     * @param - The ID of the node that needs to be searched for
     * @return - The data of the closest node in the other tree
     */
-    T& get_closest_node(const int id);
-    typename Tree<T>::Node* findLeftClosest(typename Tree<T>::Node* otherTreeNode);
-    typename Tree<T>::Node* findRightClosest(typename Tree<T>::Node* otherTreeNode);
-
+    T& get_closest(const int id);
+    typename Node<T>::Node* findLeftClosest(typename Node<T>::Node* otherTreeNode);
+    typename Node<T>::Node* findRightClosest(typename Node<T>::Node* otherTreeNode);
 };
 
 //--------------------------------------------Tree Class---------------------------------------------------
 
 //Tree Constructor
 template <class T>
-TreeByScore<T>::TreeByScore() : Tree<T>()
+TreeByScore<T>::TreeByScore() : Tree<NodeWithPointer<T>, T>()
 {}
 
 
-//--------------------------------------------Node Class---------------------------------------------------
-
-//Node Constructor
 template <class T>
-TreeByScore<T>::NodeWithPointer::NodeWithPointer() : Tree<T>::Node(), m_matchOtherTree(nullptr)
-{}
-
-template<class T>
-void TreeByScore<T>::update_additional_pointer(const int id, typename Tree<T>::Node* otherNode)
+void TreeByScore<T>::update_additional_pointer(const int id, typename Node<T>::Node* otherNode)
 {
-    TreeByScore<T>::NodeWithPointer* tmpNode = Tree<T>::search_specific_id(id);
+    typename Node<T>::Node* tmpNode = Tree<NodeWithPointer<T>, T>::search_specific_id(id);
     tmpNode->m_matchOtherTree = otherNode;
 }
 
 
 template <class T>
-T& TreeByScore<T>::get_closest_node(const int id)
+T& TreeByScore<T>::get_closest(const int id)
 {
     //Search for specific node
-    TreeByScore<T>::NodeWithPointer* thisTreeNode = Tree<T>::search_specific_id(id);
+    typename Node<T>::Node* thisTreeNode = Tree<NodeWithPointer<T>, T>::search_specific_id(id);
     //Access the matching node in the other tree
-    typename Tree<T>::Node* otherTreeNode = thisTreeNode->m_matchOtherTree;
+    typename Node<T>::Node* otherTreeNode = thisTreeNode->m_matchOtherTree;
     //Get closest node to the left of the other tree node
-    typename Tree<T>::Node* closestLeft = findLeftClosest(otherTreeNode);
+    typename Node<T>::Node* closestLeft = findLeftClosest(otherTreeNode);
     //Get closest node to the right of the other tree node
-    typename Tree<T>::Node* closestRight = findRightClosest(otherTreeNode);
+    typename Node<T>::Node* closestRight = findRightClosest(otherTreeNode);
     //Get closest node overall
     int tmpId = (otherTreeNode->m_data).get_closest(closestLeft->m_data, closestRight->m_data);
     if (tmpId == closestLeft->m_id) {
@@ -91,10 +71,11 @@ T& TreeByScore<T>::get_closest_node(const int id)
     return closestRight->m_data;
 }
 
+
 template <class T>
-typename Tree<T>::Node* TreeByScore<T>::findLeftClosest(typename Tree<T>::Node* otherTreeNode)
+typename Node<T>::Node* TreeByScore<T>::findLeftClosest(typename Node<T>::Node* otherTreeNode)
 {
-    typename Tree<T>::Node* closestLeft = otherTreeNode;
+    typename Node<T>::Node* closestLeft = otherTreeNode;
     if (closestLeft->m_left != nullptr) {
         closestLeft = closestLeft->m_left;
         while (closestLeft->m_right != nullptr) {
@@ -119,10 +100,11 @@ typename Tree<T>::Node* TreeByScore<T>::findLeftClosest(typename Tree<T>::Node* 
     return nullptr;
 }
 
+
 template <class T>
-typename Tree<T>::Node* TreeByScore<T>::findRightClosest(typename Tree<T>::Node* otherTreeNode)
+typename Node<T>::Node* TreeByScore<T>::findRightClosest(typename Node<T>::Node* otherTreeNode)
 {
-    typename Tree<T>::Node* closestRight = otherTreeNode;
+    typename Node<T>::Node* closestRight = otherTreeNode;
     if (closestRight->m_right != nullptr) {
         closestRight = closestRight->m_right;
         while (closestRight->m_left != nullptr) {

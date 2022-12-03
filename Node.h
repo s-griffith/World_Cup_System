@@ -17,7 +17,7 @@ public:
     Node& operator=(const Node& other);
     virtual ~Node() = default;
 
-private:
+protected:
     //Pointers to the parent node and the two child nodes
     Node* m_parent;
     Node* m_left;
@@ -68,11 +68,17 @@ private:
     */
     void update_bf();
 
+    /*
+     * Update balance factor of the current node
+     * @return - none
+    */
+    int get_data_inorder(int* const array, int index) const;
+
     void inorderWalkNode(bool flag);
     virtual void printNode();
     virtual void printData();
 
-    template <class Node, class M>
+    template <class N, class M>
     friend class Tree;
     };
 
@@ -246,6 +252,18 @@ void Node<T>::update_height()
     }
     else {
         m_height = heightRight;
+    }
+}
+
+template <class T>
+int Node<T>::get_data_inorder(int* const array, int index) const
+{
+    if (m_left != nullptr) {
+        m_left->get_data_inorder(array, index);
+    }
+    array[index++] = m_id;
+    if (m_right != nullptr) {
+        m_right->get_data_inorder(array, index);
     }
 }
 
