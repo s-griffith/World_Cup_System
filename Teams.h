@@ -24,6 +24,8 @@ public:
     bool is_valid() const;
 
     void update_team_stats(const std::shared_ptr<Player> player, const int goals, const int cards);
+    void Team::remove_player_by_score(const int goals, const int cards, const int id);
+    void Team::remove_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
     void add_game();
     void update_points(const int k);
     void update_num_goals(const int goals);
@@ -35,9 +37,11 @@ public:
     int get_num_players() const;
     int get_games() const;
     const std::shared_ptr<Player> get_top_scorer() const;
+    int get_teamID() const;
 
     void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
-
+    int Team::get_closest_team_player(const int playerId);
+    void Team::get_all_team_players(int* const output);
 private:
     int m_id;
     int m_points;
@@ -48,7 +52,7 @@ private:
     int m_numGames;
     std::shared_ptr<Player> m_topScorer;
     //AVL Tree organized by player ID
-    TreeByScore<std::shared_ptr<Player>> m_playersByID;
+    TreeExtraPointer<std::shared_ptr<Player>> m_playersByID;
     //AVL Tree organized by best-scoring players
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
 

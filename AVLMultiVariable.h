@@ -19,6 +19,8 @@ public:
     MultiTree& operator=(const MultiTree& other);
 
     void insert(const T& data, const int id, const int goals, const int cards);
+    void remove(const int goals, const int cards, const int id); //-------------------------------------
+    T& search_and_return_max();
 
     //typename Node<T>::Node<T>& search_specific_id(const int id) const override;
     //typename Node<T>::Node<T>& search_recursively(const int id, ComplexNode<T>* currentNode) const;

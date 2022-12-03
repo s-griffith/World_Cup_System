@@ -1,8 +1,6 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "AVLTree.h"
-#include "AVLTreeExtraPointer.h"
 
 /*
 * Class Tree::Node

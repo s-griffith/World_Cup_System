@@ -23,6 +23,10 @@ const std::shared_ptr<Player> Team::get_top_scorer() const {
     return m_topScorer;
 }
 
+int Team::get_teamID() const  {
+    return m_id;
+}
+
 void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2) {
     this->m_numCards = team1->m_numCards + team2->m_numCards;
     this->m_numGames = team1->m_numGames + team2->m_numGames;
@@ -80,6 +84,14 @@ void Team::update_team_stats(const std::shared_ptr<Player> player, const int goa
     update_top_player(player);
 }
 
+void Team::remove_player_by_score(const int goals, const int cards, const int id) {
+
+}
+
+void Team::remove_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper) {
+
+}
+
 void Team::add_game() {
     m_numGames++;
 }
@@ -101,4 +113,19 @@ void Team::update_top_player(const std::shared_ptr<Player> player) {
     if (m_topScorer->get_goals() < player->get_goals()) {
         m_topScorer = player;
     }
+}
+
+int Team::get_closest_team_player(const int playerId) {
+    std::shared_ptr<Player> tmpPlayer;
+    try {
+        tmpPlayer = m_playersByID.get_closest(playerId);
+    }
+    catch (const NodeNotFound& e) {
+        throw e;
+    }
+    return tmpPlayer->get_playerId();
+}
+
+void Team::get_all_team_players(int* const output) {
+    m_playersByID.get_all_data(output);
 }
