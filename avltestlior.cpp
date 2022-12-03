@@ -65,6 +65,8 @@ int main() {
     tree.insert(5, 5, 5, 5);
     tree.insert(5, 6, 6, 5);
     tree.inorderWalk(1);
+
+    
     
 };
 

@@ -29,11 +29,16 @@ void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2)
     this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
-    this->insert_players(team1, team2);
-}
-
-void Team::insert_players(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2) {
-    //MergeNodes Function Using Inorder Walk
+    if (team1->m_topScorer->get_goals() > team2->m_topScorer->get_goals()) {
+        this->m_topScorer = team1->m_topScorer;
+    }
+    else {
+        this->m_topScorer = team2->m_topScorer;
+    }
+    this->m_playersByID.Tree::mergeNodes(team1->m_playersByID.m_node);
+    this->m_playersByScore.Tree::mergeNodes(team1->m_playersByScore.m_node);
+    this->m_playersByID.Tree::mergeNodes(team2->m_playersByID.m_node);
+    this->m_playersByScore.Tree::mergeNodes(team2->m_playersByScore.m_node);
 }
 
 //-------------------------------------Helper Functions for WorldCup----------------------------

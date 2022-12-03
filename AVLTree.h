@@ -11,12 +11,12 @@
 //AVL tree template class
 template <class N, class T>
 class Tree {
-protected:
-    //The tree's root node
-    N* m_node;
+private:
     template<class M>
     friend class Node<T>::Node; //Not actually sure if this is necessary - check after final implementation
 public:
+    //The tree's root node
+    N* m_node;
     //Tree Constructor
     Tree();
 
@@ -72,6 +72,8 @@ public:
     * @return - none
     */
     void get_all_data(int* const array) const;
+
+    void mergeNodes(N* node);
 
 
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
@@ -424,6 +426,28 @@ void Tree<N, T>::inorderWalk(bool flag) {
     m_node->inorderWalkNode(flag);
 }
 
+/*template<class N, class T>
+void Tree<N, T>::mergeNodes(N* node) {
+    N* x = node;
+    while (x != nullptr) {
+        this->insert(x->m_data, x->m_id);
+        if (x->m_right != nullptr) {
+            this->insert(x->m_right->m_data, x->m_right->m_id);
+        }
+        if (x->m_left != nullptr) {
+            this->insert(x->m_left->m_data, x->m_left->m_id);
+        }
+        x = x->
+    }
+} */
 
+template<class N, class T>
+void Tree<N, T>::mergeNodes(N* node) {
+    if (node != nullptr) {
+        this->mergeNodes(node->m_right);
+        this->insert(node->m_data, node->m_id);
+        this->mergeNodes(node->m_left);
+    }
+}
 
 #endif //AVLTREE_h
