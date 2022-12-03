@@ -42,6 +42,7 @@ void MultiTree<T>::insert(const T& data, const int id, const int goals, const in
         Tree<ComplexNode<T>, T>::m_node->m_height++;
         Tree<ComplexNode<T>, T>::m_node->m_goals = goals;
         Tree<ComplexNode<T>, T>::m_node->m_cards = cards;
+        return;
     }
     //Find the proper location of the new node (when it's not the first):
     ComplexNode<T>* x = Tree<ComplexNode<T>, T>::m_node;

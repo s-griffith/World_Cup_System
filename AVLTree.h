@@ -205,6 +205,7 @@ void Tree<N, T>::insert(const T& data, const int id) {
         m_node->m_data = data;
         m_node->m_id = id;
         m_node->m_height++;
+        return;
     }
     //Find the proper location of the new node (when it's not the first):
     N* x = m_node;
@@ -443,11 +444,12 @@ void Tree<N, T>::mergeNodes(N* node) {
 
 template<class N, class T>
 void Tree<N, T>::mergeNodes(N* node) {
-    if (node != nullptr) {
-        this->mergeNodes(node->m_right);
-        this->insert(node->m_data, node->m_id);
-        this->mergeNodes(node->m_left);
+    if (node == nullptr) {
+        return;
     }
+    this->mergeNodes(node->m_right);
+    this->insert(node->m_data, node->m_id);
+    this->mergeNodes(node->m_left);
 }
 
 #endif //AVLTREE_h

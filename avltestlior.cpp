@@ -61,12 +61,21 @@ int main() {
     t3.inorderWalk(1);
     printf("\n");
 
-    MultiTree<int> tree;
+    Tree<Node<int>, int> t4;
+    t4.insert(16, 16);
+    t4.insert(1, 1);
+    t4.inorderWalk(1);
+
+    Tree<Node<int>, int> t5;
+    t5.mergeNodes(t4.m_node);
+    t5.mergeNodes(t3.m_node);
+    std::cout << "Merged Tree:\n";
+    t5.inorderWalk(1); 
+
+/*    MultiTree<int> tree;
     tree.insert(5, 5, 5, 5);
     tree.insert(5, 6, 6, 5);
-    tree.inorderWalk(1);
+    tree.inorderWalk(1); */
 
-    
-    
 };
 
