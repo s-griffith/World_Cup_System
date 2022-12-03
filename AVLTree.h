@@ -422,11 +422,12 @@ void Tree<N, T>::get_all_data(int* const array) const
     }
 }
 
+/*
 template <class N, class T>
 void Tree<N, T>::inorderWalk(bool flag) {
     m_node->inorderWalkNode(flag);
 }
-
+*/
 /*template<class N, class T>
 void Tree<N, T>::mergeNodes(N* node) {
     N* x = node;

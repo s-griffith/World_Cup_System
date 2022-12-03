@@ -21,12 +21,13 @@ public:
     ~Team() = default; //check this!
 
     StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
-    void remove_player(int playerID);
+    void remove_player(const int goals, const int cards, const int playerID);
 
     bool is_valid() const;
 
     void update_team_stats(const std::shared_ptr<Player> player, const int goals, const int cards);
     void remove_player_by_score(const int goals, const int cards, const int id);
+    void insert_player_by_score(const std::shared_ptr<Player>& player, const int goals, const int cards, const int id);
     void remove_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
     void add_game();
     void update_points(const int k);

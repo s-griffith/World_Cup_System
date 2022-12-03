@@ -2,14 +2,21 @@
 #define COMPLEXNODE_H
 
 #include "Node.h"
-#include "AVLMultiVariable.h"
 
+/*
+* Class Tree : Complex Node
+* This class is used to create the separate nodes in the tree, sorted based on three keys:
+*       the number of goals the player scored, the number of cards they received and their player ID
+*/
 template <class T>
-class ComplexNode {
+class ComplexNode : Node<T> {
 public:
+    //Constructor
     ComplexNode();
-    ComplexNode(const ComplexNode&);
-    ComplexNode& operator=(const ComplexNode& other);
+
+    //The copy constructor, the assignment operator and the default destructor
+    ComplexNode(const ComplexNode&) = default;
+    ComplexNode& operator=(const ComplexNode& other) = default;
     ~ComplexNode() = default;
 
     //Pointers to the parent node and the two child nodes
@@ -18,23 +25,11 @@ public:
     ComplexNode* m_right;
 
 private:
-    //The data that the tree holds
-    T m_data;
-    //The height of the subtree of this node
-    int m_height;
-    //Balance factor of node
-    int m_bf;
-    //The key by which the tree is sorted
-    int m_id;
+    //The goals the player scored and the cards they received
     int m_goals;
     int m_cards;
     
     //maybe add sort()?
-
-    template<class M>
-    friend class MultiTree;
-    template<class ComplexNode, class N>
-    friend class Tree;
 
     /*
      * Right-Right Rotation
@@ -73,11 +68,20 @@ private:
     */
     void update_bf();
 
+    //Helper functions to print
     void inorderWalkNode(bool flag);
     virtual void printNode();
     virtual void printData();
 
+    //Friend classes
+    template <class M>
+    friend class MultiTree;
 
+    template <class K>
+    friend class TreeExtraPointer;
+
+    template <class ComplexNode, class N>
+    friend class Tree;
 };
 
 /*
@@ -129,9 +133,14 @@ void ComplexNode<T>::inorderWalkNode(bool flag) {
 
 //Node Constructor
 template <class T>
-ComplexNode<T>::ComplexNode() : m_parent(nullptr), m_left(nullptr), m_right(nullptr), m_height(-1),
-    m_id(0), m_bf(0)
-    {}
+ComplexNode<T>::ComplexNode() :
+        Node<T>(),
+        m_parent(nullptr),
+        m_left(nullptr),
+        m_right(nullptr),
+        m_goals(0),
+        m_cards(0)
+{}
 
 
 //--------------------------------------------Rotations---------------------------------------------------
@@ -215,7 +224,7 @@ typename ComplexNode<T>::ComplexNode* ComplexNode<T>::lr_rotation(ComplexNode<T>
     return tmp;
 }
 
-//--------------------------------------------Node Stats---------------------------------------------------
+//----------------------------------------------Node Stats---------------------------------------------------
 
 
 //Update the balance factor of the specific node
@@ -229,7 +238,7 @@ void ComplexNode<T>::update_bf()
     if (m_right != nullptr) {
         heightRight = m_right->m_height + 1;
     }
-    m_bf = heightLeft - heightRight;
+    Node<T>::m_bf = heightLeft - heightRight;
 }
 
 
@@ -245,10 +254,13 @@ void ComplexNode<T>::update_height()
         heightRight = m_right->m_height + 1;
     }
     if (heightLeft >= heightRight) {
-        m_height = heightLeft;
+        Node<T>::m_height = heightLeft;
     }
     else {
-        m_height = heightRight;
+        Node<T>::m_height = heightRight;
     }
 }
+
+//-----------------------------------------------------------------------------------------------------------
+
 #endif //COMPLEXNODE_H

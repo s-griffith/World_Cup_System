@@ -3,6 +3,7 @@
 
 #include "AVLTree.h"
 #include "Node.h"
+#include "ComplexNode.h"
 #include "NodeAdditionalPointer.h"
 
 //AVL tree special class, derived from the regular AVL tree class
@@ -13,8 +14,6 @@ protected:
     template <class K>
     friend class NodeWithPointer; //Not actually sure if this is necessary - check after final implementation
 
-    template <class N>
-    friend class Node; //Not actually sure if this is necessary - check after final implementation
 public:
     //Tree Constructor
     TreeExtraPointer();
@@ -38,8 +37,8 @@ public:
     * @return - The data of the closest node in the other tree
     */
     T& get_closest(const int id);
-    typename Node<T>::Node* findLeftClosest(typename Node<T>::Node* otherTreeNode);
-    typename Node<T>::Node* findRightClosest(typename Node<T>::Node* otherTreeNode);
+    typename ComplexNode<T>::ComplexNode* findLeftClosest(typename ComplexNode<T>::ComplexNode* otherTreeNode);
+    typename ComplexNode<T>::ComplexNode* findRightClosest(typename ComplexNode<T>::ComplexNode* otherTreeNode);
 };
 
 //--------------------------------------------Tree Class---------------------------------------------------
@@ -53,7 +52,7 @@ TreeExtraPointer<T>::TreeExtraPointer() : Tree<NodeWithPointer<T>, T>()
 template <class T>
 void TreeExtraPointer<T>::update_additional_pointer(const int id, typename Node<T>::Node* otherNode)
 {
-    typename Node<T>::Node* tmpNode = Tree<NodeWithPointer<T>, T>::search_specific_id(id);
+    typename NodeWithPointer<T>::NodeWithPointer* tmpNode = &(Tree<NodeWithPointer<T>, T>::search_specific_id(id));
     tmpNode->m_matchOtherTree = otherNode;
 }
 
@@ -62,15 +61,15 @@ template <class T>
 T& TreeExtraPointer<T>::get_closest(const int id)
 {
     //Search for specific node
-    typename Node<T>::Node* thisTreeNode = Tree<NodeWithPointer<T>, T>::search_specific_id(id);
+    typename NodeWithPointer<T>::NodeWithPointer* thisTreeNode = &(Tree<NodeWithPointer<T>, T>::search_specific_id(id));
     //Access the matching node in the other tree
-    typename Node<T>::Node* otherTreeNode = thisTreeNode->m_matchOtherTree;
+    typename ComplexNode<T>::ComplexNode* otherTreeNode = thisTreeNode->m_matchOtherTree;
     //Get closest node to the left of the other tree node
-    typename Node<T>::Node* closestLeft = findLeftClosest(otherTreeNode);
+    typename ComplexNode<T>::ComplexNode* closestLeft = findLeftClosest(otherTreeNode);
     //Get closest node to the right of the other tree node
-    typename Node<T>::Node* closestRight = findRightClosest(otherTreeNode);
+    typename ComplexNode<T>::ComplexNode* closestRight = findRightClosest(otherTreeNode);
     //Get closest node overall
-    int tmpId = (otherTreeNode->m_data).get_closest(closestLeft->m_data, closestRight->m_data);
+    int tmpId = (*(otherTreeNode->m_data)).get_closest(closestLeft->m_data, closestRight->m_data);
     if (tmpId == closestLeft->m_id) {
         return closestLeft->m_data;
     }
@@ -79,9 +78,9 @@ T& TreeExtraPointer<T>::get_closest(const int id)
 
 
 template <class T>
-typename Node<T>::Node* TreeExtraPointer<T>::findLeftClosest(typename Node<T>::Node* otherTreeNode)
+typename ComplexNode<T>::ComplexNode* TreeExtraPointer<T>::findLeftClosest(typename ComplexNode<T>::ComplexNode* otherTreeNode)
 {
-    typename Node<T>::Node* closestLeft = otherTreeNode;
+    typename ComplexNode<T>::ComplexNode* closestLeft = otherTreeNode;
     if (closestLeft->m_left != nullptr) {
         closestLeft = closestLeft->m_left;
         while (closestLeft->m_right != nullptr) {
@@ -94,7 +93,7 @@ typename Node<T>::Node* TreeExtraPointer<T>::findLeftClosest(typename Node<T>::N
         }
         else {
             //Check which node is closer: the child to the left or the parent
-            int tmpId = (otherTreeNode->m_data).is_closer(closestLeft->m_data, otherTreeNode->m_parent->m_data);
+            int tmpId = otherTreeNode->m_data->get_closest(closestLeft->m_data, otherTreeNode->m_parent->m_data);
             if (tmpId == otherTreeNode->m_parent->m_id) {
                 closestLeft = otherTreeNode->m_parent;
             }
@@ -108,9 +107,9 @@ typename Node<T>::Node* TreeExtraPointer<T>::findLeftClosest(typename Node<T>::N
 
 
 template <class T>
-typename Node<T>::Node* TreeExtraPointer<T>::findRightClosest(typename Node<T>::Node* otherTreeNode)
+typename ComplexNode<T>::ComplexNode* TreeExtraPointer<T>::findRightClosest(typename ComplexNode<T>::ComplexNode* otherTreeNode)
 {
-    typename Node<T>::Node* closestRight = otherTreeNode;
+    typename ComplexNode<T>::ComplexNode* closestRight = otherTreeNode;
     if (closestRight->m_right != nullptr) {
         closestRight = closestRight->m_right;
         while (closestRight->m_left != nullptr) {
@@ -123,7 +122,7 @@ typename Node<T>::Node* TreeExtraPointer<T>::findRightClosest(typename Node<T>::
         }
         else {
             //Check which node is closer: the child to the right or the parent
-            int tmpId = (otherTreeNode->m_data).get_closest(closestRight->m_data, otherTreeNode->m_parent->m_data);
+            int tmpId = otherTreeNode->m_data->get_closest(closestRight->m_data, otherTreeNode->m_parent->m_data);
             if (tmpId == otherTreeNode->m_parent->m_id) {
                 closestRight = otherTreeNode->m_parent;
             }

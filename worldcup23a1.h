@@ -19,7 +19,7 @@
 #include "Teams.h"
 #include "Player.h"
 #include "AVLTree.h"
-#include "Node.h"
+#include "GenericNode.h"
 #include "AVLMultiVariable.h"
 
 class world_cup_t {
@@ -29,12 +29,12 @@ private:
     //Shared pointer to the player with the top stats (goals + cards + ID)
     std::shared_ptr<Player> m_overallTopScorer;
     //Tree of shared pointers of the type team, with all the teams in the game sorted by their ID
-    Tree<Node<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_teamsByID;
+    Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_teamsByID;
     //Tree of shared pointers of the type team, with all the teams in the game with more than 11 players, and at least
     //      one goalkeeper, sorted by the team ID
-    Tree<Node<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_qualifiedTeams;
+    Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_qualifiedTeams;
     //Tree of shared pointers of the type player, with all the players in the game sorted by their ID
-    Tree<Node<std::shared_ptr<Player>>, std::shared_ptr<Player>> m_playersByID;
+    Tree<GenericNode<std::shared_ptr<Player>>, std::shared_ptr<Player>> m_playersByID;
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
 

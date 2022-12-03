@@ -1,10 +1,10 @@
 #include "AVLTree.h"
-#include "Node.h"
+#include "GenericNode.h"
 #include "AVLMultiVariable.h"
 #include "ComplexNode.h"
 
 int main() {
-    Tree<Node<int>, int> t1;
+    Tree<GenericNode<int>, int> t1;
     t1.insert(5,5);
     printf("One node with '5': \n");
     t1.inorderWalk(1);
@@ -50,23 +50,23 @@ int main() {
     t1.inorderWalk(1);
     printf("\n");
 
-    Tree<Node<int>, int> t2 = t1;
+    Tree<GenericNode<int>, int> t2 = t1;
     printf("Print 'operation=' tree:\n");
     t2.inorderWalk(1);
     printf("\n");
 
 
-    Tree<Node<int>, int> t3(t1);
+    Tree<GenericNode<int>, int> t3(t1);
     printf("Print copied tree:\n");
     t3.inorderWalk(1);
     printf("\n");
 
-    Tree<Node<int>, int> t4;
+    Tree<GenericNode<int>, int> t4;
     t4.insert(16, 16);
     t4.insert(1, 1);
     t4.inorderWalk(1);
 
-    Tree<Node<int>, int> t5;
+    Tree<GenericNode<int>, int> t5;
     t5.mergeNodes(t4.m_node);
     t5.mergeNodes(t3.m_node);
     std::cout << "Merged Tree:\n";
