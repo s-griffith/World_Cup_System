@@ -1,11 +1,9 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t()
-{
-	// TODO: Your code goes here
-}
+world_cup_t::world_cup_t() : m_totalNumPlayers(0), m_overallTopScorer(nullptr)
+{}
 
-world_cup_t::~world_cup_t()
+world_cup_t::~world_cup_t() //I feel like this should be default
 {
 	// TODO: Your code goes here
 }
@@ -13,14 +11,39 @@ world_cup_t::~world_cup_t()
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-	// TODO: Your code goes here
+    if (teamId <= 0 || points < 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    try  {
+        std::shared_ptr<Team> t(new Team(teamId, points));
+	    m_teamsByID.insert(t, teamId)
+    }
+    catch (std::bad_alloc& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    catch(InvalidID& e) {
+        return StatusType::FAILURE;
+    }
 	return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-	// TODO: Your code goes here
-	return StatusType::FAILURE;
+    if (teamId <= 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    try {
+        m_qualifiedTeams.search_specific_id(teamId);
+        return StatusType::FAILURE;
+    }
+    catch (NodeNotFound& e) {}
+    try {
+        m_teamsByID.remove(teamId);
+        }
+    catch(NodeNotFound& e) {
+        return StatusType::FAILURE;
+    }
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
@@ -132,7 +155,32 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
 
 StatusType world_cup_t::play_match(int teamId1, int teamId2)
 {
-	// TODO: Your code goes here
+    if (teamId1 == teamId2 || teamId1 <= 0 || teamId2 <= 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Team> team1 = nullptr;
+    std::shared_ptr<Team> team2 = nullptr;
+    try {
+        team1 = m_qualifiedTeams.search_and_return_data(teamId1);
+        team2 = m_qualifiedTeams.search_and_return_data(teamId2);
+    }
+    catch (NodeNotFound& e) {
+        return StatusType::FAILURE;
+    }
+    int point1 = team1->get_points() + team1->get_goals() - team1->get_cards();
+    int point2 = team2->get_points() + team2->get_goals() - team2->get_cards();
+    if (point1 > point2) {
+        team1->update_points(3); //---------------------------------------------can we make a define for this-------------------
+    }
+    else if (point1 == point2) {
+        team1->update_points(1);
+        team2->update_points(1);
+    }
+    else {
+        team2->update_points(3);
+    }
+    team1->add_game();
+    team2->add_game();
 	return StatusType::SUCCESS;
 }
 
@@ -173,7 +221,29 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 {
-	// TODO: Your code goes here
+    if (teamId1 == teamId2 || newTeamId <= 0 || teamId1 <= 0 || teamId2 <= 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    try {
+        m_teamsByID.search_specific_id(newTeamId);
+    }
+    catch (NodeNotFound& e){
+        if (newTeamId != teamId1 && newTeamId != teamId2) {
+            return StatusType::FAILURE;
+        }
+    }
+    std::shared_ptr<Team> team1 = nullptr;
+    std::shared_ptr<Team> team2 = nullptr;
+    try {
+        team1 = m_teamsByID.search_and_return_data(teamId1);
+        team2 = m_teamsByID.search_and_return_data(teamId2);
+    }
+    catch (NodeNotFound& e) {
+        return StatusType::FAILURE;
+    }
+    Team nTeam(newTeamId, team1->get_points() + team2->get_points());
+    nTeam.Team::unite_teams(team1, team2);
+
 	return StatusType::SUCCESS;
 }
 

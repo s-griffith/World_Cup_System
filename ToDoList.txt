@@ -2,7 +2,7 @@ To Do:
 
 AVLTree:
 -Search max/min value (Sarah) ?
--AVLTree sub-class that organizes the tree by 3 variables - needs search, insert to be overridden - Sarah
+-AVLTree sub-class that organizes the tree by 3 variables - needs search - Sarah
 
 AVLTree - sub-class:
 -Player Tree by ID needs a pointer to that player's location in large tree of all players by goals
@@ -28,8 +28,6 @@ WorldCup:
 
 
 Changes in Teams:
-- get_games()
-- change type of "Tree<std::shared_ptr<Player>> m_playersByID" to "TreeByScore"
 - Add function:
 
 int Team::get_closest_team_player(const int playerId) {

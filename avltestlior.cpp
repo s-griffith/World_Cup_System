@@ -42,8 +42,8 @@ int main() {
         printf("Couldn't remove 70!\n");
     }
 
-    int i = t1.insert(5,5);
-    printf("Added 5 again: %d\n",i);
+    //int i = t1.insert(5,5);
+    //printf("Added 5 again: %d\n",i);
 
     t1.remove(3);
     printf("Removed 3:\n");
@@ -62,6 +62,9 @@ int main() {
     printf("\n");
 
     MultiTree<int> tree;
+    tree.insert(5, 5, 5, 5);
+    tree.insert(5, 6, 6, 5);
+    tree.inorderWalk(1);
     
 };
 

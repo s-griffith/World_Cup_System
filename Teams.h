@@ -5,9 +5,12 @@
 #include "Player.h"
 #include <memory>
 #include "wet1util.h"
+#include "AVLMultiVariable.h"
+#include "AVLTreeExtraPointer.h"
 
 class Team {
 public:
+    Team() = default; //maybe can get rid of this at the end
     //Creates an empty team with no players
     Team(const int teamID, const int points);
 
@@ -30,7 +33,10 @@ public:
     int get_cards() const;
     int get_goals() const;
     int get_num_players() const;
+    int get_games() const;
     const std::shared_ptr<Player> get_top_scorer() const;
+
+    void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
 
 private:
     int m_id;
@@ -42,9 +48,9 @@ private:
     int m_numGames;
     std::shared_ptr<Player> m_topScorer;
     //AVL Tree organized by player ID
-    Tree<std::shared_ptr<Player>> m_playersByID;  //Needs to be of the type that Lior is creating with extra field
+    TreeByScore<std::shared_ptr<Player>> m_playersByID;
     //AVL Tree organized by best-scoring players
-    Tree<std::shared_ptr<Player>> m_playersByScore; //Needs to be of the type that we create that organizes the tree by 3 variables
+    MultiTree<std::shared_ptr<Player>> m_playersByScore;
 
     void update_top_player(const std::shared_ptr<Player> player);
 };

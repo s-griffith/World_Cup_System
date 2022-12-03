@@ -122,7 +122,6 @@ void Node<T>::inorderWalkNode(bool flag) {
     }
 }
 
-
 //--------------------------------------------Constructors---------------------------------------------------
 
 //Node Constructor

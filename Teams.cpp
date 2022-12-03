@@ -23,20 +23,35 @@ const std::shared_ptr<Player> Team::get_top_scorer() const {
     return m_topScorer;
 }
 
+void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2) {
+    this->m_numCards = team1->m_numCards + team2->m_numCards;
+    this->m_numGames = team1->m_numGames + team2->m_numGames;
+    this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
+    this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
+    this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
+    this->insert_players(team1, team2);
+}
+
+void Team::insert_players(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2) {
+    //MergeNodes Function Using Inorder Walk
+}
+
 //-------------------------------------Helper Functions for WorldCup----------------------------
 StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper){
-    if(m_playersByID.insert(player, id)) {
-        if (m_playersByScore.insert(player, player->get_goals())) {
-            update_num_goals(goals);
-            update_num_cards(cards);
-            m_numPlayers++;
-            if (goalkeeper) {
-                m_numGoalkeepers++;
-            }
-            return StatusType::SUCCESS;
-        }
+    try {
+        m_playersByID.insert(player, id);
+        m_playersByScore.insert(player, player->get_goals(), player->get_goals(), player->get_cards());
     }
-    return StatusType::FAILURE;
+    catch (InvalidID& e) {
+        return StatusType::FAILURE;
+    }
+    update_num_goals(goals);
+    update_num_cards(cards);
+    m_numPlayers++;
+    if (goalkeeper) {
+         m_numGoalkeepers++;
+    }
+    return StatusType::SUCCESS;
 }
 
 void Team::remove_player(int playerID){

@@ -11,10 +11,11 @@
 //AVL tree template class
 template <class N, class T>
 class Tree {
+protected:
     //The tree's root node
     N* m_node;
-   // template<class M>
-   // friend class Node<T>::Node; //Not actually sure if this is necessary - check after final implementation
+    template<class M>
+    friend class Node<T>::Node; //Not actually sure if this is necessary - check after final implementation
 public:
     //Tree Constructor
     Tree();
@@ -39,9 +40,9 @@ public:
     /*
      * Insert new node with data, according to the id given
      * @param - New data to insert and the ID of the new node
-     * @return - bool
+     * @return - void
      */
-    virtual bool insert(const T& data, const int id);
+    void insert(const T& data, const int id);
 
     /*
      * Remove node according to the id given
@@ -189,13 +190,12 @@ void Tree<N, T>::copy_tree(N* currentNode, N* otherNode)
 }
 
 template<class N, class T>
-bool Tree<N, T>::insert(const T& data, const int id) {
+void Tree<N, T>::insert(const T& data, const int id) {
     //If this is the first node in the tree:
     if (m_node->m_height == -1) {
         m_node->m_data = data;
         m_node->m_id = id;
         m_node->m_height++;
-        return true;
     }
     //Find the proper location of the new node (when it's not the first):
     N* x = m_node;
@@ -203,7 +203,7 @@ bool Tree<N, T>::insert(const T& data, const int id) {
     while (x != nullptr) {
         y = x;
         if (x->m_id == id) {
-            return false; //node with that id already exists - invalid operation
+            throw InvalidID(); //node with that id already exists - invalid operation
         }
         if (id < x->m_id) {
             x = x->m_left;
@@ -220,7 +220,7 @@ bool Tree<N, T>::insert(const T& data, const int id) {
     catch(const std::bad_alloc& e)
     {
         delete node;
-        return false;
+        throw e;
     }
     node->m_parent = y;
     node->m_left = nullptr;
@@ -235,7 +235,6 @@ bool Tree<N, T>::insert(const T& data, const int id) {
         y->m_right = node;
     }
     rebalance_tree((node->m_parent));
-    return true;
 }
 
 //Remove node according to the id provided
@@ -409,6 +408,7 @@ template <class Node, class T>
 void Tree<Node, T>::inorderWalk(bool flag) {
     m_node->inorderWalkNode(flag);
 }
+
 
 
 #endif //AVLTREE_h

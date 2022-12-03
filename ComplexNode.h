@@ -12,14 +12,12 @@ public:
     ComplexNode& operator=(const ComplexNode& other);
     ~ComplexNode() = default;
 
-
-    //maybe add sort()?
-
-private:
     //Pointers to the parent node and the two child nodes
     ComplexNode* m_parent;
     ComplexNode* m_left;
     ComplexNode* m_right;
+
+private:
     //The data that the tree holds
     T m_data;
     //The height of the subtree of this node
@@ -30,6 +28,9 @@ private:
     int m_id;
     T m_goals;
     T m_cards;
+    
+    //maybe add sort()?
+
     template<class M>
     friend class MultiTree;
     template<class ComplexNode, class N>

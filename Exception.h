@@ -15,5 +15,10 @@ class NodeNotFound : public std::exception {
     }
 };
 
+class InvalidID : public std::exception {
+    const char* what() const noexcept override {
+        return "Invalid ID Error: ID already exists in the tree.";
+    }
+};
 
 #endif //WORLD_CUP_SYSTEM_EXCEPTION_H
