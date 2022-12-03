@@ -1,5 +1,5 @@
-#ifndef WORLD_CUP_SYSTEM_AVLTREEBYSCORE_H
-#define WORLD_CUP_SYSTEM_AVLTREEBYSCORE_H
+#ifndef WORLD_CUP_SYSTEM_AVLTREEEXTRAPOINTER_H
+#define WORLD_CUP_SYSTEM_AVLTREEEXTRAPOINTER_H
 
 #include "AVLTree.h"
 #include "Node.h"
@@ -8,15 +8,21 @@
 //AVL tree special class, derived from the regular AVL tree class
 //This class has an extra data pointer in each node, pointing to
 template <class T>
-class TreeByScore : public Tree<NodeWithPointer<T>, T> {
+class TreeExtraPointer : public Tree<NodeWithPointer<T>, T> {
+protected:
+    template <class K>
+    friend class NodeWithPointer; //Not actually sure if this is necessary - check after final implementation
+
+    template <class N>
+    friend class Node; //Not actually sure if this is necessary - check after final implementation
 public:
     //Tree Constructor
-    TreeByScore();
+    TreeExtraPointer();
 
     //Tree Copy constructor, assignment operator and destructor - use the AVLTree's functions
-    ~TreeByScore() = default;
-    TreeByScore(const TreeByScore<T>& other) = default;
-    TreeByScore& operator=(const TreeByScore<T>& other) = default;
+    ~TreeExtraPointer() = default;
+    TreeExtraPointer(const TreeExtraPointer<T>& other) = default;
+    TreeExtraPointer& operator=(const TreeExtraPointer<T>& other) = default;
 
     /*
     * Search for the node with the given id, and then update the pointer to the  matching node in another tree
@@ -40,12 +46,12 @@ public:
 
 //Tree Constructor
 template <class T>
-TreeByScore<T>::TreeByScore() : Tree<NodeWithPointer<T>, T>()
+TreeExtraPointer<T>::TreeExtraPointer() : Tree<NodeWithPointer<T>, T>()
 {}
 
 
 template <class T>
-void TreeByScore<T>::update_additional_pointer(const int id, typename Node<T>::Node* otherNode)
+void TreeExtraPointer<T>::update_additional_pointer(const int id, typename Node<T>::Node* otherNode)
 {
     typename Node<T>::Node* tmpNode = Tree<NodeWithPointer<T>, T>::search_specific_id(id);
     tmpNode->m_matchOtherTree = otherNode;
@@ -53,7 +59,7 @@ void TreeByScore<T>::update_additional_pointer(const int id, typename Node<T>::N
 
 
 template <class T>
-T& TreeByScore<T>::get_closest(const int id)
+T& TreeExtraPointer<T>::get_closest(const int id)
 {
     //Search for specific node
     typename Node<T>::Node* thisTreeNode = Tree<NodeWithPointer<T>, T>::search_specific_id(id);
@@ -73,7 +79,7 @@ T& TreeByScore<T>::get_closest(const int id)
 
 
 template <class T>
-typename Node<T>::Node* TreeByScore<T>::findLeftClosest(typename Node<T>::Node* otherTreeNode)
+typename Node<T>::Node* TreeExtraPointer<T>::findLeftClosest(typename Node<T>::Node* otherTreeNode)
 {
     typename Node<T>::Node* closestLeft = otherTreeNode;
     if (closestLeft->m_left != nullptr) {
@@ -102,7 +108,7 @@ typename Node<T>::Node* TreeByScore<T>::findLeftClosest(typename Node<T>::Node* 
 
 
 template <class T>
-typename Node<T>::Node* TreeByScore<T>::findRightClosest(typename Node<T>::Node* otherTreeNode)
+typename Node<T>::Node* TreeExtraPointer<T>::findRightClosest(typename Node<T>::Node* otherTreeNode)
 {
     typename Node<T>::Node* closestRight = otherTreeNode;
     if (closestRight->m_right != nullptr) {
@@ -129,4 +135,4 @@ typename Node<T>::Node* TreeByScore<T>::findRightClosest(typename Node<T>::Node*
     return nullptr;
 }
 
-#endif //WORLD_CUP_SYSTEM_AVLTREEBYSCORE_H
+#endif //WORLD_CUP_SYSTEM_AVLTREEEXTRAPOINTER_H

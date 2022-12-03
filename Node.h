@@ -1,6 +1,9 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "AVLTree.h"
+#include "AVLTreeExtraPointer.h"
+
 /*
 * Class Tree::Node
 * This class is used to create the separate nodes in the tree
@@ -13,8 +16,8 @@ public:
     /*
      * The copy constructor, the assignment operator and the default destructor
     */
-    Node(const Node&);
-    Node& operator=(const Node& other);
+    Node(const Node&) = default;
+    Node& operator=(const Node& other) = default;
     virtual ~Node() = default;
 
 protected:
@@ -72,7 +75,7 @@ protected:
      * Update balance factor of the current node
      * @return - none
     */
-    int get_data_inorder(int* const array, int index) const;
+    void get_data_inorder(int* const array, int index) const;
 
     void inorderWalkNode(bool flag);
     virtual void printNode();
@@ -80,6 +83,9 @@ protected:
 
     template <class N, class M>
     friend class Tree;
+
+    template <class K>
+    friend class TreeExtraPointer;
     };
 
 //---------------------------------------------------------------------------------------------------------
@@ -256,7 +262,7 @@ void Node<T>::update_height()
 }
 
 template <class T>
-int Node<T>::get_data_inorder(int* const array, int index) const
+void Node<T>::get_data_inorder(int* const array, int index) const
 {
     if (m_left != nullptr) {
         m_left->get_data_inorder(array, index);

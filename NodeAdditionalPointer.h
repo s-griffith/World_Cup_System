@@ -2,6 +2,8 @@
 #define WORLD_CUP_SYSTEM_NODEADDITIONALPOINTER_H
 
 #include "Node.h"
+#include "AVLTree.h"
+#include "AVLTreeExtraPointer.h"
 
 /*
 * Class NodeWithPointer, derived from parent class Node
@@ -15,11 +17,17 @@ public:
     /*
      * The copy constructor, the assignment operator and the destructor
     */
-    NodeWithPointer(const NodeWithPointer&);
-    NodeWithPointer& operator=(const NodeWithPointer& other);
+    NodeWithPointer(const NodeWithPointer&) = default;
+    NodeWithPointer& operator=(const NodeWithPointer& other) = default;
     ~NodeWithPointer() = default;
 protected:
     typename Node<T>::Node* m_matchOtherTree;
+
+    template <class K>
+    friend class TreeByScore;
+
+    template <class N, class M>
+    friend class Tree;
 };
 
 //-----------------------------------------Node Implementation-----------------------------------------------
