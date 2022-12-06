@@ -369,11 +369,41 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     return newOutput;
 }
 
-output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
+output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from
 {
-	// TODO: Your code goes here
-	return 2;
+    if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
+        return output_t t(StatusType::INVALID_INPUT, 0);
+    }
+    Tree<GenericNode, Team> teamsCopy; //used this instead of an array bc we don't know how many teams we have yet
+    int currentId = minTeamId;
+    std::shared_ptr<Team> currentTeam = nullptr;
+    while (currentId < maxTeamId) {
+        try {
+            currentTeam = m_qualifiedTeams.search_and_return_data(currentId);
+        }
+        catch (NodeNotFound& e) {
+            continue;
+        }
+        Team* t;
+        teamsCopy.insert(currentTeam->knockout_copy(t));
+    }
+    if (teamsCopy.m_node == nullptr) {
+        return output_t t(StatusType::FAILURE, 0);
+    }
+
+
+	return output_t t(currentId);
 }
 
 
 //-------------------------------------------Helper Functions----------------------------------------------
+
+Tree<GenericNode, T> knockout_rounds(Tree<GenericNode, Team> teams) {
+    while(teams.m_node->m_left != nullptr || teams.m_node->m_right != nullptr) {
+        teams.knockout_games()
+    }
+}
+
+void knockout_games(Team* team1, Team* team2) {
+    //try doing recursion on two nodes of the tree using inorder recursion idea
+}

@@ -129,3 +129,14 @@ int Team::get_closest_team_player(const int playerId) {
 void Team::get_all_team_players(int* const output) {
     m_playersByID.get_all_data(output);
 }
+
+Team* Team::knockout_copy(Team* teamCopy) { 
+    teamCopy->m_id = m_id;
+    teamCopy->m_numCards = m_numCards;
+    teamCopy->m_numGames = m_numGames;
+    teamCopy->m_numGoalkeepers = m_numGoalkeepers;
+    teamCopy->m_numGoals = m_numGoals;
+    teamCopy->m_numPlayers = m_numPlayers;
+    teamCopy->m_points = m_points;
+    return teamCopy;
+}
