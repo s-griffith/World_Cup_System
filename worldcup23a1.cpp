@@ -206,14 +206,16 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
 output_t<int> world_cup_t::get_num_played_games(int playerId)
 {
     if (playerId <= 0) {
-        return StatusType::INVALID_INPUT;
+        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
+        return outputInvalid;
     }
     std::shared_ptr<Player> tmpPlayer;
     try {
         tmpPlayer = m_playersByID.search_and_return_data(playerId);
     }
     catch (const NodeNotFound& e) {
-        return StatusType::FAILURE;
+        output_t<int> outputFailure(StatusType::FAILURE);
+        return outputFailure;
     }
     //Extract the total goals of the player - their personal goals + the total team goals
     std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
@@ -225,14 +227,16 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
 output_t<int> world_cup_t::get_team_points(int teamId)
 {
     if (teamId <= 0) {
-        return StatusType::INVALID_INPUT;
+        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
+        return outputInvalid;
     }
     std::shared_ptr<Team> tmpTeam;
     try {
         tmpTeam = m_teamsByID.search_and_return_data(teamId);
     }
     catch (const NodeNotFound& e) {
-        return StatusType::FAILURE;
+        output_t<int> outputFailure(StatusType::FAILURE);
+        return outputFailure;
     }
     output_t<int> newOutput(tmpTeam->get_points());
     return newOutput;
@@ -268,24 +272,26 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 output_t<int> world_cup_t::get_top_scorer(int teamId)
 {
     if (teamId == 0) {
-        return StatusType::INVALID_INPUT;
+        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
+        return outputInvalid;
     }
+    output_t<int> outputFailure(StatusType::FAILURE);
     if (teamId > 0) {
         std::shared_ptr<Team> tmpTeam;
         try {
             tmpTeam = m_teamsByID.search_and_return_data(teamId);
         }
         catch (const NodeNotFound& e) {
-            return StatusType::FAILURE;
+            return outputFailure;
         }
         if (tmpTeam->get_num_players() == 0) {
-            return StatusType::FAILURE;
+            return outputFailure;
         }
         output_t<int> newOutput(tmpTeam->get_top_scorer()->get_playerId());
         return newOutput;
     }
     if (m_totalNumPlayers == 0) {
-        return StatusType::FAILURE;
+        return outputFailure;
     }
     output_t<int> newOutput(m_overallTopScorer->get_playerId());
     return newOutput;
@@ -294,7 +300,8 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
 output_t<int> world_cup_t::get_all_players_count(int teamId)
 {
     if (teamId == 0) {
-        return StatusType::INVALID_INPUT;
+        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
+        return outputInvalid;
     }
     if (teamId > 0) {
         std::shared_ptr<Team> tmpTeam;
@@ -302,7 +309,8 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
             tmpTeam = m_teamsByID.search_and_return_data(teamId);
         }
         catch (const NodeNotFound& e) {
-            return StatusType::FAILURE;
+            output_t<int> outputFailure(StatusType::FAILURE);
+            return outputFailure;
         }
         output_t<int> newOutput(tmpTeam->get_num_players());
         return newOutput;
@@ -344,18 +352,20 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
     if (playerId <= 0 || teamId <= 0) {
-        return StatusType::INVALID_INPUT;
+        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
+        return outputInvalid;
     }
+    output_t<int> outputFailure(StatusType::FAILURE);
     //If there is only one or no players in the entire game, return failure
     if (m_totalNumPlayers <= 1) {
-        return StatusType::FAILURE;
+        return outputFailure;
     }
     std::shared_ptr<Team> tmpTeam;
     try {
         tmpTeam = m_teamsByID.search_and_return_data(teamId);
     }
     catch (const NodeNotFound& e) {
-        return StatusType::FAILURE;
+        return outputFailure;
     }
     int closestPlayerId = 0;
     //Get the closest team player - need to add the function to the Team********************************************************************************
@@ -363,7 +373,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
         closestPlayerId = tmpTeam->get_closest_team_player(playerId);
     }
     catch (const NodeNotFound& e) {
-        return StatusType::FAILURE;
+        return outputFailure;
     }
     output_t<int> newOutput(closestPlayerId);
     return newOutput;
