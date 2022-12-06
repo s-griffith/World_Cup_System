@@ -19,16 +19,14 @@ public:
     MultiTree& operator=(const MultiTree& other);
 
     void insert(const T& data, const int id, const int goals, const int cards);
-    void remove(const int goals, const int cards, const int id); //-------------------------------------
+    void remove(const int goals, const int cards, const int id);
     T& search_and_return_max();
 
-    //typename Node<T>::Node<T>& search_specific_id(const int id) const override;
-    //typename Node<T>::Node<T>& search_recursively(const int id, ComplexNode<T>* currentNode) const;
-    //T& search_and_return_data(const int id) const override;
+    typename ComplexNode<T>::ComplexNode& search_specific_id(const int id, const int goals, const int cards) const;
+    typename ComplexNode<T>::ComplexNode& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode) const;
+    T& search_and_return_data(const int id, const int goals, const int cards) const;
 };
 
-//template<template<class T> class ComplexNode, class T>
-//MultiTree<ComplexNode, T>::MultiTree() : Tree<ComplexNode::ComplexNode<T>, T>::Tree() {}
 
 template<class T>
 MultiTree<T>::~MultiTree() {
@@ -108,6 +106,58 @@ void MultiTree<T>::insert(const T& data, const int id, const int goals, const in
     }
     this->rebalance_tree(node->m_parent);
 }
+
+template<class T>
+void MultiTree<T>::remove(const int goals, const int cards, const int id) {
+    ComplexNode<T>* toRemove = &(search_specific_id(id, goals, cards));
+    ComplexNode<T>* nodeToFix = Tree<ComplexNode<T>, T>::make_node_leaf(toRemove);
+    delete toRemove;
+    //Go up the tree and check the balance factors and complete needed rotations
+    Tree<ComplexNode<T>, T>::rebalance_tree(nodeToFix);
+}
+
+
+template<class T>
+T& MultiTree<T>::search_and_return_max() {
+    ComplexNode<T> node = m_node;
+    while(node->m_right != nullptr) {
+        node = node->m_right;
+    }
+    return node->m_data;
+}
+
+template<class T>
+typename ComplexNode<T>::ComplexNode& MultiTree<T>::search_specific_id(const int id, const int goals, const int cards) const {
+    return search_recursively(id, goals, cards, m_node);
+}
+
+
+template<class T>
+T& MultiTree<T>::search_and_return_data(const int id, const int goals, const int cards) const {
+    return search_recursively(id, goals, cards, m_node).m_data;
+}
+
+template<class T>
+typename ComplexNode<T>::ComplexNode& MultiTree<T>::search_recursively(const int id, const int goals, const int cards,
+             ComplexNode<T>::ComplexNode* currentNode) const {
+    if (currentNode == nullptr) {
+        throw NodeNotFound();
+    }
+    if (currentNode->m_id == id) {
+        return *currentNode;
+    }
+    if (currentNode->m_goals < goals) {
+        return search_recursively(id,currentNode->m_right);
+    }
+    else if (currentNode->m_cards > cards) {
+        return search_recursively(id, goals, cards, currentNode->m_right);
+    }
+    else if (currentNode->m_id < id) {
+        return search_recursively(id, goals, cards, currentNode->m_right);
+    }
+    return search_recursively(id, goals, cards, currentNode->m_left);
+}
+
 
 
 

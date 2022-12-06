@@ -45,6 +45,8 @@ public:
     void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
+
+    Team* knockout_copy(Team* teamCopy);
 private:
     int m_id;
     int m_points;
