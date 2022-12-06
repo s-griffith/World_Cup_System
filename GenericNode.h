@@ -68,6 +68,7 @@ protected:
 
     //Helper functions to print
     void inorderWalkNode(bool flag);
+    int inorderWalkNode(int counter, const int maxID, const int minID);
     virtual void printNode();
     virtual void printData();
 
@@ -262,5 +263,14 @@ void GenericNode<T>::get_data_inorder(int* const array, int index) const
 }
 
 //-----------------------------------------------------------------------------------------------------------
+
+template <class T>
+int GenericNode<T>::inorderWalkNode(int counter, const int maxID, const int minID) {
+    if (this != nullptr && this->m_id <= maxID && this->m_id >= minID) {
+        return counter += m_left->inorderWalkNode(counter, maxID, minID);
+        counter++;
+        return counter += m_right->inorderWalkNode(counter, maxID, minID);
+    }
+}
 
 #endif //WORLD_CUP_SYSTEM_GENERICNODE_H

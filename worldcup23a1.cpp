@@ -372,38 +372,40 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from
 {
     if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
-        return output_t t(StatusType::INVALID_INPUT, 0);
+        return output_t<int>(StatusType::INVALID_INPUT);
     }
-    Tree<GenericNode, Team> teamsCopy; //used this instead of an array bc we don't know how many teams we have yet
+    int counter = 0;
     int currentId = minTeamId;
-    std::shared_ptr<Team> currentTeam = nullptr;
-    while (currentId < maxTeamId) {
+    GenericNode<std::shared_ptr<Team>> currentTeam = 0;
+    while (currentTeam == 0) {
         try {
-            currentTeam = m_qualifiedTeams.search_and_return_data(currentId);
+            currentTeam = m_qualifiedTeams.search_specific_id(currentId);
         }
         catch (NodeNotFound& e) {
             continue;
         }
-        Team* t;
-        teamsCopy.insert(currentTeam->knockout_copy(t));
     }
+    Team* teams[] = new Team[sizeof(Team)*(*currentTeam).inorderWalkNode(0, maxTeamId, minTeamId)];
+        std::shared_ptr<Team> t;
+        teamsCopy.insert((*currentTeam).knockout_copy(t), currentId);
+
     if (teamsCopy.m_node == nullptr) {
-        return output_t t(StatusType::FAILURE, 0);
+        return output_t<int>(StatusType::FAILURE);
     }
 
 
-	return output_t t(currentId);
+	return output_t<int>(currentId);
 }
 
 
 //-------------------------------------------Helper Functions----------------------------------------------
 
-Tree<GenericNode, T> knockout_rounds(Tree<GenericNode, Team> teams) {
+Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> world_cup_t::knockout_rounds(Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> teams) {
     while(teams.m_node->m_left != nullptr || teams.m_node->m_right != nullptr) {
         teams.knockout_games()
     }
 }
 
-void knockout_games(Team* team1, Team* team2) {
+void world_cup_t::knockout_games(Team* team1, Team* team2) {
     //try doing recursion on two nodes of the tree using inorder recursion idea
 }

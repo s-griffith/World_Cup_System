@@ -130,7 +130,7 @@ void Team::get_all_team_players(int* const output) {
     m_playersByID.get_all_data(output);
 }
 
-Team* Team::knockout_copy(Team* teamCopy) { 
+std::shared_ptr<Team> Team::knockout_copy(std::shared_ptr<Team> teamCopy) { 
     teamCopy->m_id = m_id;
     teamCopy->m_numCards = m_numCards;
     teamCopy->m_numGames = m_numGames;

@@ -46,7 +46,7 @@ public:
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
 
-    Team* knockout_copy(Team* teamCopy);
+    std::shared_ptr<Team> knockout_copy(std::shared_ptr<Team> teamCopy);
 private:
     int m_id;
     int m_points;

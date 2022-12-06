@@ -21,6 +21,7 @@
 #include "AVLTree.h"
 #include "GenericNode.h"
 #include "AVLMultiVariable.h"
+#include <memory.h>
 
 class world_cup_t {
 private:
@@ -38,7 +39,8 @@ private:
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
 
-	
+	Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> knockout_rounds(Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> teams);
+	void knockout_games(Team* team1, Team* team2);
 public:
 	// <DO-NOT-MODIFY> {
 	
