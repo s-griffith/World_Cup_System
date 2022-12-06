@@ -15,7 +15,7 @@ public:
     Node(const Node&) = default;
     Node& operator=(const Node& other) = default;
     virtual ~Node() = default;
-
+    int getID() const;
 protected:
     //The data that the tree holds
     T m_data;
@@ -48,5 +48,10 @@ Node<T>::Node() :
 {}
 
 //-----------------------------------------------------------------------------------------------------------
+
+template <class T>
+int Node<T>::getID() const {
+    return m_id;
+}
 
 #endif //NODE_H

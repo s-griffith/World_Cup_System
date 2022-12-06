@@ -40,7 +40,7 @@ private:
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
 
 	Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> knockout_rounds(Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> teams);
-	void knockout_games(Team* team1, Team* team2);
+	int knockout_games(Team* teams, Team* team1, Team* team2, int numTeams, const int size);
 public:
 	// <DO-NOT-MODIFY> {
 	

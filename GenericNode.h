@@ -2,6 +2,7 @@
 #define WORLD_CUP_SYSTEM_GENERICNODE_H
 
 #include "Node.h"
+#include "Teams.h"
 
 /*
 * Class Tree : Generic Node
@@ -17,7 +18,8 @@ public:
     GenericNode(const GenericNode&) = default;
     GenericNode& operator=(const GenericNode& other) = default;
     virtual ~GenericNode() = default;
-
+    int numOfTeams(const int minTeamID, const int maxTeamID);
+    void addTeams(Team* teams, const int minTeamId, const int maxTeamId);
 protected:
     //Pointers to the parent node and the two child nodes
     GenericNode* m_parent;
@@ -68,10 +70,11 @@ protected:
 
     //Helper functions to print
     void inorderWalkNode(bool flag);
-    int inorderWalkNode(int counter, const int maxID, const int minID);
+    int inorderWalkCount(int counter, const int maxID, const int minID);
+    void inorderWalkInsert(Team* teams, const int minID, const int maxID, int index);
     virtual void printNode();
     virtual void printData();
-
+    typename GenericNode<T>::GenericNode& getFirstTeam(const int minTeamId, const int maxTeamId);
     //Friend classes
     template <class N, class M>
     friend class Tree;
@@ -265,11 +268,50 @@ void GenericNode<T>::get_data_inorder(int* const array, int index) const
 //-----------------------------------------------------------------------------------------------------------
 
 template <class T>
-int GenericNode<T>::inorderWalkNode(int counter, const int maxID, const int minID) {
+int GenericNode<T>::inorderWalkCount(int counter, const int maxID, const int minID) {
     if (this != nullptr && this->m_id <= maxID && this->m_id >= minID) {
-        return counter += m_left->inorderWalkNode(counter, maxID, minID);
+        return counter += m_left->inorderWalkCount(counter, maxID, minID);
         counter++;
-        return counter += m_right->inorderWalkNode(counter, maxID, minID);
+        return counter += m_right->inorderWalkCount(counter, maxID, minID);
+    }
+}
+
+template<class T>
+typename GenericNode<T>::GenericNode& GenericNode<T>::getFirstTeam(const int minTeamId, const int maxTeamId) {
+    GenericNode<std::shared_ptr<Team>>* x = this;
+    GenericNode<std::shared_ptr<Team>>* y = nullptr;
+    while (x != nullptr && x->m_id <= maxTeamId) {
+        y = x;
+        if (x->m_id == minTeamId) {
+            return x; //node with that id already exists - invalid operation
+        }
+        if (minTeamId < x->m_id) {
+            x = x->m_left;
+        }
+        else {
+            x = x->m_right;
+        }
+    }
+    return y;
+}
+
+template<class T>
+int GenericNode<T>::numOfTeams(const int minTeamID, const int maxTeamID) {
+    int counter = 0;
+    return (this->getFirstTeam(minTeamID, maxTeamID)).inorderWalkCount(counter, maxTeamID, minTeamID);
+}
+
+template<class T>
+void GenericNode<T>::addTeams(Team* teams, const int minTeamId, const int maxTeamId) {
+    GenericNode<std::shared_ptr<Team>> first = this->getFirstTeam(minTeamId, maxTeamId);
+    first.inorderWalkInsert(teams, minTeamId, maxTeamId, 0);
+}
+
+template <class T>
+void GenericNode<T>::inorderWalkInsert(Team* teams, const int minID, const int maxID, int index) {
+    if (this != nullptr && this->m_id <= maxID && this->m_id >= minID) {
+        m_left->inorderWalkInsert(teams, maxID, minID, ++index);
+        m_right->inorderWalkInsert(teams, maxID, minID, ++index);
     }
 }
 

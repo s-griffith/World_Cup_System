@@ -10,6 +10,7 @@ template<class T> //does this use the current complexNode?? check by trying some
 class MultiTree : public Tree<ComplexNode<T>, T> {
     template<class M>
     friend class ComplexNode<T>::ComplexNode;
+    ComplexNode<T> m_node;
 public:
     //ComplexNode<T>* m_root; //Already has m_node from Tree class - what should we do about it?
     

@@ -407,6 +407,27 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
 	return output_t<int>(currentId);
 }
 
+output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from
+{
+    if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
+        return output_t<int>(StatusType::INVALID_INPUT);
+    }
+    //Find number of teams invovled
+    int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
+    //If there are no qualified teams, return failure
+    if (num == 0) {
+        return output_t<int>(StatusType::FAILURE);
+    }
+    //Create an array for the qualified teams in the range    
+    Team* teams = new Team[num*sizeof(Team)];
+    //Fill in teams according to their order
+    m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
+    //In a recursive function, go over every pair in the array and send to play match.
+    //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
+
+	return output_t<int>(currentId);
+}
+
 
 //-------------------------------------------Helper Functions----------------------------------------------
 
@@ -416,6 +437,9 @@ Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> world_cup_t::kno
     }
 }
 
-void world_cup_t::knockout_games(Team* team1, Team* team2) {
-    //try doing recursion on two nodes of the tree using inorder recursion idea
+int world_cup_t::knockout_games(Team* teams, Team* team1, Team* team2, int numTeams, const int size) {
+    if (numTeams == 1) {
+        return teams->get_teamID();
+    }
+    //
 }
