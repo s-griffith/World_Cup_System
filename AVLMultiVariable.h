@@ -13,7 +13,7 @@ class MultiTree : public Tree<ComplexNode<T>, T> {
 public:
     //ComplexNode<T>* m_root; //Already has m_node from Tree class - what should we do about it?
     
-    MultiTree()=default;
+    MultiTree();
     ~MultiTree();
     MultiTree(const MultiTree& other);
     MultiTree& operator=(const MultiTree& other);
@@ -28,6 +28,10 @@ public:
 
 };
 
+template<class T>
+MultiTree<T>::MultiTree() :
+    Tree<ComplexNode<T>, T>()
+{};
 
 template<class T>
 MultiTree<T>::~MultiTree() {

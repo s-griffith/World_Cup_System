@@ -1,8 +1,27 @@
 #include "Teams.h"
 
 //-------------------------------------Constructors----------------------------
-Team::Team(const int teamID, const int points) : m_id(teamID), m_points(points) {}
+Team::Team(const int teamID, const int points) :
+    m_id(teamID),
+    m_points(points),
+    m_numPlayers(0),
+    m_numGoalkeepers(0),
+    m_numGoals(0),
+    m_numCards(0),
+    m_numGames(0),
+    m_topScorer(nullptr)
+{}
 
+Team& Team::operator=(const Team& other) {
+    m_id = other.m_id;
+    m_numCards = other.m_numCards;
+    m_numGames = other.m_numGames;
+    m_numGoalkeepers = other.m_numGoalkeepers;
+    m_numGoals = other.m_numGoals;
+    m_numPlayers = other.m_numPlayers;
+    m_points = other.m_points;
+    return *this;
+}
 //-------------------------------------Getters----------------------------
 int Team::get_points() const {
     return m_points;
@@ -108,15 +127,20 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     }
 }
 
-std::shared_ptr<Team> Team::knockout_copy(std::shared_ptr<Team> teamCopy) { 
-    teamCopy->m_id = m_id;
-    teamCopy->m_numCards = m_numCards;
-    teamCopy->m_numGames = m_numGames;
-    teamCopy->m_numGoalkeepers = m_numGoalkeepers;
-    teamCopy->m_numGoals = m_numGoals;
-    teamCopy->m_numPlayers = m_numPlayers;
-    teamCopy->m_points = m_points;
-    return teamCopy;
+/*Team Team::knockout_copy() {
+    Team copy;
+    copy.m_id = m_id;
+    copy.m_numCards = m_numCards;
+    copy.m_numGames = m_numGames;
+    copy.m_numGoalkeepers = m_numGoalkeepers;
+    copy.m_numGoals = m_numGoals;
+    copy.m_numPlayers = m_numPlayers;
+    copy.m_points = m_points;
+    return copy;
+}
+*/
+void Team::knockout_setID() {
+    this->m_id *= -1;
 }
 
 void Team::remove_player_by_score(const int goals, const int cards, const int id) {

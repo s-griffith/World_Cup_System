@@ -17,6 +17,7 @@ public:
     Team(const int teamID, const int points);
 
     Team(const Team& other) = delete; //bc two teams can't have the same id
+    Team& operator=(const Team& other);
 
     ~Team() = default; //check this!
 
@@ -41,7 +42,8 @@ public:
     StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
     void remove_player(const int goals, const int cards, const int playerID);
     bool is_valid() const;
-    std::shared_ptr<Team> knockout_copy(std::shared_ptr<Team> teamCopy);
+   // Team knockout_copy();
+    void knockout_setID();
     void knockout_unite(Team& winner, Team& loser);
     void remove_player_by_score(const int goals, const int cards, const int id);
     void insert_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards);

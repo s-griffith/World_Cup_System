@@ -312,6 +312,7 @@ template <class T>
 void GenericNode<T>::inorderWalkInsert(Team* teams, const int minID, const int maxID, int index) {
     if (this != nullptr && this->m_id <= maxID && this->m_id >= minID) {
         m_left->inorderWalkInsert(teams, maxID, minID, ++index);
+        *(teams+index) = *(this->m_data);
         m_right->inorderWalkInsert(teams, maxID, minID, ++index);
     }
 }

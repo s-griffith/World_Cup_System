@@ -420,41 +420,39 @@ void world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
     if (numTeams == 1) { //stop because there's an uneven number of teams
         return; //what to return here
     }
-    int currIndex = 0;
+    int currIndex1 = 0;
     Team* first = teams;
-    while (first == nullptr && currIndex < size) {
-        currIndex++;
-        first = teams + currIndex;
+    while (first->get_teamID() < 0 && currIndex1 < size) {
+        currIndex1++;
+        first = teams + currIndex1;
     }
-    Team* firstIndex = teams + currIndex;
-    currIndex++;
-    Team* second = teams+currIndex;
-    while (second == nullptr && currIndex < size) {
-        currIndex++;
-        second = teams + currIndex;
+    int currIndex2 = currIndex1+1;
+    Team* second = teams+currIndex2;
+    while (second->get_teamID() < 0 && currIndex2 < size) {
+        currIndex2++;
+        second = teams + currIndex2;
     }
-    Team* secondIndex = teams + currIndex;
-    if (currIndex >= size) { //This happens only when there is a single team left in the array, so continue the process with the other pairs
+    if (currIndex2 >= size) { //This happens only when there is a single team left in the array, so continue the process with the other pairs
         return;
     }
-    knockout_games(teams+currIndex, numTeams-2, size-currIndex); //might need to be currIndex-1
+    knockout_games(teams+currIndex2, numTeams-2, size-currIndex2); //might need to be currIndex-1
     int winnerID = compete(*first, *second);
     if (winnerID == first->get_teamID()) {
         first->knockout_unite(*first, *second);
-        secondIndex = nullptr;
+        (teams+currIndex2)->knockout_setID();
         }
     else if (winnerID == second->get_teamID()) {
         first->knockout_unite(*second, *first);
-        firstIndex = nullptr;
+        (teams+currIndex1)->knockout_setID();
     }
     else {
         if (first->get_teamID() > second->get_teamID()) {
             first->knockout_unite(*first, *second);
-            secondIndex = nullptr;
+            (teams+currIndex2)->knockout_setID();
         }
         else {
             first->knockout_unite(*second, *first);
-            firstIndex = nullptr;
+            (teams+currIndex1)->knockout_setID();
         }
     }
     return;
