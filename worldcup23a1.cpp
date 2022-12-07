@@ -33,13 +33,12 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::INVALID_INPUT;
     }
     try {
-        m_qualifiedTeams.search_specific_id(teamId);
-        return StatusType::FAILURE;
-    }
-    catch (NodeNotFound& e) {}
-    try {
-        m_teamsByID.remove(teamId);
+        std::shared_ptr<Team> team = m_teamsByID.search_and_return_data(teamId);
+        if (!team->get_num_players()) {
+            return StatusType::FAILURE;
         }
+        m_teamsByID.remove(teamId);
+    }
     catch(NodeNotFound& e) {
         return StatusType::FAILURE;
     }
@@ -186,20 +185,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     catch (NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    int point1 = team1->get_points() + team1->get_goals() - team1->get_cards();
-    int point2 = team2->get_points() + team2->get_goals() - team2->get_cards();
-    if (point1 > point2) {
-        team1->update_points(3); //---------------------------------------------can we make a define for this-------------------
-    }
-    else if (point1 == point2) {
-        team1->update_points(1);
-        team2->update_points(1);
-    }
-    else {
-        team2->update_points(3);
-    }
-    team1->add_game();
-    team2->add_game();
+    this->compete(*team1, *team2);
 	return StatusType::SUCCESS;
 }
 
@@ -384,34 +370,6 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
         return output_t<int>(StatusType::INVALID_INPUT);
     }
-    int counter = 0;
-    int currentId = minTeamId;
-    GenericNode<std::shared_ptr<Team>> currentTeam = 0;
-    while (currentTeam == 0) {
-        try {
-            currentTeam = m_qualifiedTeams.search_specific_id(currentId);
-        }
-        catch (NodeNotFound& e) {
-            continue;
-        }
-    }
-    Team* teams[] = new Team[sizeof(Team)*(*currentTeam).inorderWalkNode(0, maxTeamId, minTeamId)];
-        std::shared_ptr<Team> t;
-        teamsCopy.insert((*currentTeam).knockout_copy(t), currentId);
-
-    if (teamsCopy.m_node == nullptr) {
-        return output_t<int>(StatusType::FAILURE);
-    }
-
-
-	return output_t<int>(currentId);
-}
-
-output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from
-{
-    if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
-        return output_t<int>(StatusType::INVALID_INPUT);
-    }
     //Find number of teams invovled
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
     //If there are no qualified teams, return failure
@@ -424,22 +382,80 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
     //In a recursive function, go over every pair in the array and send to play match.
     //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
-
-	return output_t<int>(currentId);
+    knockout_games(teams, num, num);
+    Team* temp = teams;
+    while (temp == nullptr) {
+        temp = ++teams;
+    }
+    int winnerID = temp->get_teamID();
+	return output_t<int>(winnerID);
 }
 
 
 //-------------------------------------------Helper Functions----------------------------------------------
 
-Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> world_cup_t::knockout_rounds(Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> teams) {
-    while(teams.m_node->m_left != nullptr || teams.m_node->m_right != nullptr) {
-        teams.knockout_games()
+int world_cup_t::compete(Team& team1, Team& team2) {
+    int point1 = team1.get_points() + team1.get_goals() - team1.get_cards();
+    int point2 = team2.get_points() + team2.get_goals() - team2.get_cards();
+    int winnerID = 0;
+    if (point1 > point2) {
+        team1.update_points(3); //---------------------------------------------can we make a define for this-------------------
+        winnerID = team1.get_teamID();
     }
+    else if (point1 == point2) {
+        team1.update_points(1);
+        team2.update_points(1);
+        winnerID = 0; //a tie - b/c no team id is equal to 0
+    }
+    else {
+        team2.update_points(3);
+        winnerID = team2.get_teamID();
+    }
+    team1.add_game();
+    team2.add_game();
+    return winnerID;
 }
 
-int world_cup_t::knockout_games(Team* teams, Team* team1, Team* team2, int numTeams, const int size) {
-    if (numTeams == 1) {
-        return teams->get_teamID();
+void world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
+    if (numTeams == 1) { //stop because there's an uneven number of teams
+        return; //what to return here
     }
-    //
+    int currIndex = 0;
+    Team* first = teams;
+    while (first == nullptr && currIndex < size) {
+        currIndex++;
+        first = teams + currIndex;
+    }
+    Team* firstIndex = teams + currIndex;
+    currIndex++;
+    Team* second = teams+currIndex;
+    while (second == nullptr && currIndex < size) {
+        currIndex++;
+        second = teams + currIndex;
+    }
+    Team* secondIndex = teams + currIndex;
+    if (currIndex >= size) { //This happens only when there is a single team left in the array, so continue the process with the other pairs
+        return;
+    }
+    knockout_games(teams+currIndex, numTeams-2, size-currIndex); //might need to be currIndex-1
+    int winnerID = compete(*first, *second);
+    if (winnerID == first->get_teamID()) {
+        first->knockout_unite(*first, *second);
+        secondIndex = nullptr;
+        }
+    else if (winnerID == second->get_teamID()) {
+        first->knockout_unite(*second, *first);
+        firstIndex = nullptr;
+    }
+    else {
+        if (first->get_teamID() > second->get_teamID()) {
+            first->knockout_unite(*first, *second);
+            secondIndex = nullptr;
+        }
+        else {
+            first->knockout_unite(*second, *first);
+            firstIndex = nullptr;
+        }
+    }
+    return;
 }

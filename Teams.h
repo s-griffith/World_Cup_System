@@ -20,20 +20,12 @@ public:
 
     ~Team() = default; //check this!
 
-    StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
-    void remove_player(const int goals, const int cards, const int playerID);
 
-    bool is_valid() const;
 
     void update_team_stats(const std::shared_ptr<Player> player, const int goals, const int cards);
-    void remove_player_by_score(const int goals, const int cards, const int id);
-    void insert_player_by_score(const std::shared_ptr<Player>& player, const int goals, const int cards, const int id);
-    void remove_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
-    void add_game();
-    void update_points(const int k);
-    void update_num_goals(const int goals);
-    void update_num_cards(const int cards);
 
+
+    //Getters for the team's stats
     int get_points() const;
     int get_cards() const;
     int get_goals() const;
@@ -42,11 +34,23 @@ public:
     const std::shared_ptr<Player> get_top_scorer() const;
     int get_teamID() const;
 
+    //Helper functions for World Cup
     void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
-
+    StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
+    void remove_player(const int goals, const int cards, const int playerID);
+    bool is_valid() const;
     std::shared_ptr<Team> knockout_copy(std::shared_ptr<Team> teamCopy);
+    void knockout_unite(Team& winner, Team& loser);
+    void remove_player_by_score(const int goals, const int cards, const int id);
+    void insert_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards);
+    //Helper functions to update teams stats
+    void add_game();
+    void update_points(const int k);
+    void update_num_goals(const int goals);
+    void update_num_cards(const int cards);
+
 private:
     int m_id;
     int m_points;

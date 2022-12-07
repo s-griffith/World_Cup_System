@@ -70,8 +70,8 @@ private:
 
     //Helper functions to print
     void inorderWalkNode(bool flag);
-    virtual void printNode();
-    virtual void printData();
+    //virtual void printNode();
+    //virtual void printData();
 
     //Friend classes
     template <class M>

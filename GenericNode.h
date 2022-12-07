@@ -72,8 +72,8 @@ protected:
     void inorderWalkNode(bool flag);
     int inorderWalkCount(int counter, const int maxID, const int minID);
     void inorderWalkInsert(Team* teams, const int minID, const int maxID, int index);
-    virtual void printNode();
-    virtual void printData();
+    //virtual void printNode();
+    //virtual void printData();
     typename GenericNode<T>::GenericNode& getFirstTeam(const int minTeamId, const int maxTeamId);
     //Friend classes
     template <class N, class M>
@@ -274,6 +274,7 @@ int GenericNode<T>::inorderWalkCount(int counter, const int maxID, const int min
         counter++;
         return counter += m_right->inorderWalkCount(counter, maxID, minID);
     }
+    return 0;
 }
 
 template<class T>
@@ -283,7 +284,7 @@ typename GenericNode<T>::GenericNode& GenericNode<T>::getFirstTeam(const int min
     while (x != nullptr && x->m_id <= maxTeamId) {
         y = x;
         if (x->m_id == minTeamId) {
-            return x; //node with that id already exists - invalid operation
+            return *x; //node with that id already exists - invalid operation
         }
         if (minTeamId < x->m_id) {
             x = x->m_left;
@@ -292,7 +293,7 @@ typename GenericNode<T>::GenericNode& GenericNode<T>::getFirstTeam(const int min
             x = x->m_right;
         }
     }
-    return y;
+    return *y;
 }
 
 template<class T>
