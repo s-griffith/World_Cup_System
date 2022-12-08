@@ -20,9 +20,9 @@ public:
     ~ComplexNode() = default;
 
     //Pointers to the parent node and the two child nodes
-    ComplexNode* m_parent;
-    ComplexNode* m_left;
-    ComplexNode* m_right;
+    ComplexNode<T>* m_parent;
+    ComplexNode<T>* m_left;
+    ComplexNode<T>* m_right;
 
 private:
     //The goals the player scored and the cards they received
@@ -70,8 +70,8 @@ private:
 
     //Helper functions to print
     void inorderWalkNode(bool flag);
-    //virtual void printNode();
-    //virtual void printData();
+    void printNode();
+    void printData();
 
     //Friend classes
     template <class M>
@@ -84,7 +84,7 @@ private:
     friend class Tree;
 };
 
-/*
+
 template <class T>
 void ComplexNode<T>::printNode() {
     int parent, left, right;
@@ -92,26 +92,26 @@ void ComplexNode<T>::printNode() {
         parent = -1;
     }
     else {
-        parent = m_parent->m_data;
+        parent = m_parent->m_id;
     }
     if (m_left == nullptr) {
         left = -1;
     }
     else {
-        left = m_left->m_data;
+        left = m_left->m_id;
     }
     if (m_right == nullptr) {
         right = -1;
     }
     else {
-        right = m_right->m_data;
+        right = m_right->m_id;
     }
-    std::cout << "Data = " << m_data << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
+    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
 }
 
 template <class T>
 void ComplexNode<T>::printData() {
-    std::cout << "Data = " << m_data << std::endl;
+    std::cout << "ID = " << Node<T>::m_id << std::endl;
 }
 
 template <class T>
@@ -127,7 +127,7 @@ void ComplexNode<T>::inorderWalkNode(bool flag) {
         m_right->inorderWalkNode(flag);
     }
 }
-*/
+
 
 //--------------------------------------------Constructors---------------------------------------------------
 

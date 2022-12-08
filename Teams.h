@@ -34,7 +34,7 @@ public:
     int get_games() const;
     const std::shared_ptr<Player> get_top_scorer() const;
     int get_teamID() const;
-
+    void print_team();
     //Helper functions for World Cup
     void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
     int get_closest_team_player(const int playerId);

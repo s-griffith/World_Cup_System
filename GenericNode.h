@@ -72,8 +72,8 @@ protected:
     void inorderWalkNode(bool flag);
     int inorderWalkCount(int counter, const int maxID, const int minID);
     void inorderWalkInsert(Team* teams, const int minID, const int maxID, int index);
-    //virtual void printNode();
-    //virtual void printData();
+    void printNode();
+    void printData();
     typename GenericNode<T>::GenericNode& getFirstTeam(const int minTeamId, const int maxTeamId);
     //Friend classes
     template <class N, class M>
@@ -82,38 +82,37 @@ protected:
 
 //-----------------------------------------------------------------------------------------------------------
 
-/*
 template <class T>
-void Node<T>::printNode() {
+void GenericNode<T>::printNode() {
     int parent, left, right;
     if (m_parent == nullptr) {
         parent = -1;
     }
     else {
-        parent = m_parent->m_data;
+        parent = m_parent->m_id;
     }
     if (m_left == nullptr) {
         left = -1;
     }
     else {
-        left = m_left->m_data;
+        left = m_left->m_id;
     }
     if (m_right == nullptr) {
         right = -1;
     }
     else {
-        right = m_right->m_data;
+        right = m_right->m_id;
     }
-    std::cout << "Data = " << m_data << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
+    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
 }
 
 template <class T>
-void Node<T>::printData() {
-    std::cout << "Data = " << m_data << std::endl;
+void GenericNode<T>::printData() {
+    std::cout << "Data = " << this->m_data << std::endl;
 }
 
 template <class T>
-void Node<T>::inorderWalkNode(bool flag) {
+void GenericNode<T>::inorderWalkNode(bool flag) {
     if (this != nullptr) {
         m_left->inorderWalkNode(flag);
         if (flag) {
@@ -125,7 +124,7 @@ void Node<T>::inorderWalkNode(bool flag) {
         m_right->inorderWalkNode(flag);
     }
 }
-*/
+
 
 //--------------------------------------------Constructors---------------------------------------------------
 

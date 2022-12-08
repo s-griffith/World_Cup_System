@@ -62,6 +62,9 @@ public:
      * @return - none
     */
     void get_data_inorder(int* const array, int index) const;
+    void printNode();
+    void printData();
+    void inorderWalkNode(bool flag);
 
 protected:
     //Pointers to the parent node and the two child nodes
@@ -76,6 +79,7 @@ protected:
 
     template <class N, class M>
     friend class Tree;
+
 };
 
 //-----------------------------------------Node Implementation-----------------------------------------------
@@ -91,6 +95,50 @@ NodeWithPointer<T>::NodeWithPointer() :
 {}
 
 //-----------------------------------------------Rotations---------------------------------------------------
+
+template <class T>
+void NodeWithPointer<T>::printNode() {
+    int parent, left, right;
+    if (m_parent == nullptr) {
+        parent = -1;
+    }
+    else {
+        parent = m_parent->m_id;
+    }
+    if (m_left == nullptr) {
+        left = -1;
+    }
+    else {
+        left = m_left->m_id;
+    }
+    if (m_right == nullptr) {
+        right = -1;
+    }
+    else {
+        right = m_right->m_id;
+    }
+    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
+}
+
+template <class T>
+void NodeWithPointer<T>::printData() {
+    std::cout << "Data = " << this->m_data << std::endl;
+}
+
+template <class T>
+void NodeWithPointer<T>::inorderWalkNode(bool flag) {
+    if (this != nullptr) {
+        m_left->inorderWalkNode(flag);
+        if (flag) {
+            this->printNode();
+        }
+        else {
+            this->printData();
+        }
+        m_right->inorderWalkNode(flag);
+    }
+}
+
 
 //Left-Left tree rotation, on the node with balance factor of +2
 template <class T>

@@ -74,6 +74,7 @@ public:
     void get_all_data(int* const array) const;
 
     void mergeNodes(N* node);
+    void print_tree();
 
 
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
@@ -104,7 +105,6 @@ Tree<N, T>::~Tree()
 {
     destroy_tree(m_node);
 }
-
 
 //Tree Copy Constructor
 template <class N, class T>
@@ -246,6 +246,13 @@ void Tree<N, T>::insert(const T& data, const int id) {
     }
     rebalance_tree((node->m_parent));
 }
+
+
+template<class N, class T>
+void Tree<N, T>::print_tree() {
+    m_node->inorderWalkNode(1);
+}
+
 
 //Remove node according to the id provided
 template <class N, class T>

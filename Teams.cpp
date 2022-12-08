@@ -66,9 +66,9 @@ void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2)
         this->m_topScorer = team2->m_topScorer;
     }
     this->m_playersByID.Tree::mergeNodes(team1->m_playersByID.m_node);
-    this->m_playersByScore.Tree::mergeNodes(&(team1->m_playersByScore.m_node));
+    this->m_playersByScore.Tree::mergeNodes(team1->m_playersByScore.m_node);
     this->m_playersByID.Tree::mergeNodes(team2->m_playersByID.m_node);
-    this->m_playersByScore.Tree::mergeNodes(&(team2->m_playersByScore.m_node));
+    this->m_playersByScore.Tree::mergeNodes(team2->m_playersByScore.m_node);
 }
 
 int Team::get_closest_team_player(const int playerId) {
@@ -89,9 +89,9 @@ void Team::get_all_team_players(int* const output) {
 StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper){
     try {
         m_playersByID.insert(player, id);
-        m_playersByScore.insert(player, player->get_goals(), player->get_goals(), player->get_cards());
+        m_playersByScore.insert(player, id, goals, cards);
     }
-    catch (InvalidID& e) {
+    catch (const InvalidID& e) {
         return StatusType::FAILURE;
     }
     update_num_goals(goals);
@@ -149,6 +149,10 @@ void Team::remove_player_by_score(const int goals, const int cards, const int id
 
 void Team::insert_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards) {
     m_playersByScore.insert(player, id, goals, cards);
+}
+
+void Team::print_team() {
+    m_playersByScore.print_tree();
 }
 
 //-------------------------------------Update Stats Functions----------------------------
