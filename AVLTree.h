@@ -11,9 +11,6 @@
 //AVL tree template class
 template <class N, class T>
 class Tree {
-private:
-    template<class M>
-    friend class Node<T>::Node; //Not actually sure if this is necessary - check after final implementation
 public:
     //The tree's root node
     N* m_node;
@@ -74,12 +71,12 @@ public:
     void get_all_data(int* const array) const;
 
     void mergeNodes(N* node);
-    void print_tree();
 
 
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
 
     void inorderWalk(bool flag);
+    void print_tree();
 };
 
 //--------------------------------------------Tree Class---------------------------------------------------
@@ -90,7 +87,7 @@ Tree<N, T>::Tree()
 {
     //Creating empty beginning node
     try {
-        m_node = new N;
+        m_node = new N();
     }
     catch (const std::bad_alloc& e) {
         delete m_node;

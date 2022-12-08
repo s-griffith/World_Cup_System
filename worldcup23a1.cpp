@@ -1,6 +1,12 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t() : m_totalNumPlayers(0), m_overallTopScorer(nullptr)
+world_cup_t::world_cup_t() :
+    m_totalNumPlayers(0),
+    m_overallTopScorer(nullptr),
+    m_teamsByID(),
+    m_qualifiedTeams(),
+    m_playersByID(),
+    m_playersByScore()
 {}
 
 world_cup_t::~world_cup_t() //I feel like this should be default
@@ -158,24 +164,17 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     }
     //Pointer to the team the player plays in
     std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
-    tmpTeam->print_team();
-    std::cout << "end print" << std::endl;
     tmpTeam->remove_player_by_score(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
     //Remove player from tree of all scorers
-    m_playersByScore.print_tree();
-    std::cout << "after print" << std::endl;
     m_playersByScore.remove(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
-    std::cout << "after regular remove by score" << std::endl;
     tmpPlayer->update_gamesPlayed(gamesPlayed);
     tmpPlayer->update_cards(cardsReceived);
     tmpPlayer->update_goals(scoredGoals);
     //Update player by score tree and the overall game top scorer
     m_playersByScore.insert(tmpPlayer, tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
-    std::cout << "after insert platyer by score" << std::endl;
     m_overallTopScorer = m_playersByScore.search_and_return_max();
     //Update team - update the player by score tree****************************************************************************************
     tmpTeam->insert_player_by_score(tmpPlayer, playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
-    std::cout << "after team  insert by score" << std::endl;
     //Update the teams total stats and the top scored player tree + pointer*****************************************************************************
     tmpTeam->update_team_stats(tmpPlayer, scoredGoals, cardsReceived);
     return StatusType::SUCCESS;

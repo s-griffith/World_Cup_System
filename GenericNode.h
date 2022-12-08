@@ -17,7 +17,7 @@ public:
     //The copy constructor, the assignment operator and the default destructor
     GenericNode(const GenericNode&) = default;
     GenericNode& operator=(const GenericNode& other) = default;
-    virtual ~GenericNode() = default;
+    ~GenericNode() = default;
     int numOfTeams(const int minTeamID, const int maxTeamID);
     void addTeams(Team* teams, const int minTeamId, const int maxTeamId);
 protected:
@@ -74,6 +74,7 @@ protected:
     void inorderWalkInsert(Team* teams, const int minID, const int maxID, int index);
     void printNode();
     void printData();
+
     typename GenericNode<T>::GenericNode& getFirstTeam(const int minTeamId, const int maxTeamId);
     //Friend classes
     template <class N, class M>

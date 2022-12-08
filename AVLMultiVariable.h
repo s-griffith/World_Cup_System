@@ -6,13 +6,11 @@
 #include "ComplexNode.h"
 #include "Exception.h"
 
-template<class T> //does this use the current complexNode?? check by trying something else
+template <class T> //does this use the current complexNode?? check by trying something else
 class MultiTree : public Tree<ComplexNode<T>, T> {
-    template<class M>
-    friend class ComplexNode<T>::ComplexNode;
+    template <class M>
+    friend class ComplexNode;
 public:
-    //ComplexNode<T>* m_root; //Already has m_node from Tree class - what should we do about it?
-    
     MultiTree();
     ~MultiTree();
     MultiTree(const MultiTree& other);
@@ -23,10 +21,8 @@ public:
         void remove(const int goals, const int cards, const int id);
     T search_and_return_max();
     ComplexNode<T>& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode);
-    typename ComplexNode<T>::ComplexNode& search_specific_id(const int id, const int goals, const int cards);
+    ComplexNode<T>& search_specific_id(const int id, const int goals, const int cards);
     T& search_and_return_data(const int id, const int goals, const int cards);
-    ComplexNode<T>* m_node;
-
 };
 
 template<class T>
@@ -36,23 +32,22 @@ MultiTree<T>::MultiTree() :
 
 template<class T>
 MultiTree<T>::~MultiTree() {
-    this->Tree<ComplexNode<T>, T>::destroy_tree(m_node);
+    this->Tree<ComplexNode<T>, T>::destroy_tree(this->m_node);
 }
 
 template<class T>
 void MultiTree<T>::insert(const T& data, const int id, const int goals, const int cards) {
-    std::cout << "Height of root: " << m_node->m_height << std::endl;
     //If this is the first node in the tree:
-    if (m_node->m_height == -1) {
-        m_node->m_data = data;
-        m_node->m_id = id;
-        m_node->m_height++;
-        m_node->m_goals = goals;
-        m_node->m_cards = cards;
+    if (this->m_node->m_height == -1) {
+        this->m_node->m_data = data;
+        this->m_node->m_id = id;
+        this->m_node->m_height++;
+        this->m_node->m_goals = goals;
+        this->m_node->m_cards = cards;
         return;
     }
     //Find the proper location of the new node (when it's not the first):
-    ComplexNode<T>* x = m_node;
+    ComplexNode<T>* x = this->m_node;
     ComplexNode<T>* parent = nullptr;
     while (x != nullptr) {
         parent = x;
@@ -129,7 +124,7 @@ void MultiTree<T>::insert(const T& data, const int id, const int goals, const in
 
 template<class T>
 void MultiTree<T>::print_tree() {
-    m_node->inorderWalkNode(1);
+    this->m_node->inorderWalkNode(1);
 }
 
 template<class T>
@@ -144,7 +139,7 @@ void MultiTree<T>::remove(const int goals, const int cards, const int id) {
 
 template<class T>
 T MultiTree<T>::search_and_return_max() {
-    ComplexNode<T>* node = m_node;
+    ComplexNode<T>* node = this->m_node;
     while(node->m_right != nullptr) {
         node = node->m_right;
     }
@@ -152,14 +147,14 @@ T MultiTree<T>::search_and_return_max() {
 }
 
 template<class T>
-typename ComplexNode<T>::ComplexNode& MultiTree<T>::search_specific_id(const int id, const int goals, const int cards) {
-    return search_recursively(id, goals, cards, m_node);
+ComplexNode<T>& MultiTree<T>::search_specific_id(const int id, const int goals, const int cards) {
+    return search_recursively(id, goals, cards, this->m_node);
 }
 
 
 template<class T>
 T& MultiTree<T>::search_and_return_data(const int id, const int goals, const int cards) {
-    return search_recursively(id, goals, cards, m_node).m_data;
+    return search_recursively(id, goals, cards, this->m_node).m_data;
 }
 
 template<class T>

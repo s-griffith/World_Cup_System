@@ -9,7 +9,9 @@ Team::Team(const int teamID, const int points) :
     m_numGoals(0),
     m_numCards(0),
     m_numGames(0),
-    m_topScorer(nullptr)
+    m_topScorer(nullptr),
+    m_playersByScore(),
+    m_playersByID()
 {}
 
 Team& Team::operator=(const Team& other) {
