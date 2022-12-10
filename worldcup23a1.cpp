@@ -407,8 +407,15 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     if (num == 0) {
         return output_t<int>(StatusType::FAILURE);
     }
-    //Create an array for the qualified teams in the range   
-    Team* teams = new Team[num*sizeof(Team)];
+    //Create an array for the qualified teams in the range
+    Team* teams = nullptr;
+    try {
+        teams = new Team[num*sizeof(Team)];
+    }
+    catch (const std::bad_alloc& e) {
+        delete[] teams;
+        throw e;
+    }   
     //Fill in teams according to their order
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
     if (num == 1) {
@@ -422,6 +429,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
         temp = ++teams;
     }
     int winnerID = temp->get_teamID();
+    delete[] teams;
 	return output_t<int>(winnerID);
 }
 

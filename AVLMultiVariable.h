@@ -81,7 +81,7 @@ void MultiTree<T>::insert(const T& data, const int id, const int goals, const in
     //Create the new node and add it to the tree:
     ComplexNode<T>* node = nullptr;
     try{
-        node = new ComplexNode<T>;
+        node = new ComplexNode<T>();
     }
     catch(const std::bad_alloc& e)
     {
@@ -119,7 +119,6 @@ void MultiTree<T>::insert(const T& data, const int id, const int goals, const in
         parent->m_right = node;
     }
     this->rebalance_tree(node->m_parent);
-
 }
 
 template<class T>

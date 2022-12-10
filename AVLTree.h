@@ -103,6 +103,7 @@ Tree<N, T>::~Tree()
     destroy_tree(m_node);
     m_node->m_right = nullptr;
     m_node->m_left = nullptr;
+    delete m_node;
 }
 
 //Tree Copy Constructor
@@ -226,7 +227,7 @@ void Tree<N, T>::insert(const T& data, const int id) {
     //Create the new node and add it to the tree:
     N* node = nullptr;
     try{
-        node = new N;
+        node = new N();
     }
     catch(const std::bad_alloc& e)
     {
