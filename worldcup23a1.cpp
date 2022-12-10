@@ -407,10 +407,13 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     if (num == 0) {
         return output_t<int>(StatusType::FAILURE);
     }
-    //Create an array for the qualified teams in the range    
+    //Create an array for the qualified teams in the range   
     Team* teams = new Team[num*sizeof(Team)];
     //Fill in teams according to their order
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
+    if (num == 1) {
+        return output_t<int>(teams->get_teamID());
+    }
     //In a recursive function, go over every pair in the array and send to play match.
     //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
     knockout_games(teams, num, num);
@@ -448,7 +451,7 @@ int world_cup_t::compete(Team& team1, Team& team2) {
 }
 
 void world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
-    if (numTeams == 1) { //stop because there's an uneven number of teams
+    if (numTeams <= 1) { //stop because there's an uneven number of teams
         return; //what to return here
     }
     int currIndex1 = 0;

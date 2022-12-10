@@ -125,9 +125,6 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     winner.m_numGoalkeepers += loser.m_numGoalkeepers;
     winner.m_numGoals += loser.m_numGoals;
     winner.m_numPlayers += loser.m_numPlayers;
-    if (winner.m_topScorer->get_goals() < loser.m_topScorer->get_goals()) {
-        winner.m_topScorer = loser.m_topScorer;
-    }
 }
 
 /*Team Team::knockout_copy() {
