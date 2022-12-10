@@ -261,6 +261,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     }
     std::shared_ptr<Team> nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
     nTeam->Team::unite_teams(team1, team2);
+    std::cout << "Num of nTeams " << nTeam.use_count() << std::endl;
+    nTeam->update_team_id(nTeam);
     try {
         m_qualifiedTeams.remove(teamId1);
     }
@@ -271,11 +273,21 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (const NodeNotFound& e) {}
     m_teamsByID.remove(teamId1);
     m_teamsByID.remove(teamId2);
-    m_teamsByID.insert(nTeam, newTeamId);
-    if (nTeam->is_valid()) {
-        m_qualifiedTeams.insert(nTeam, newTeamId);
+    try {
+        m_teamsByID.insert(nTeam, newTeamId);
     }
-    (*nTeam).update_team_id(nTeam);
+    catch (const std::bad_alloc& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
+    if (nTeam->is_valid()) {
+        try {
+            m_qualifiedTeams.insert(nTeam, newTeamId);
+        }
+        catch (std::bad_alloc& e) {
+            return StatusType::ALLOCATION_ERROR;
+        }
+    }
+    std::cout << "Num of players in nTeam " << nTeam->get_num_players() << std::endl;
 	return StatusType::SUCCESS;
 }
 
