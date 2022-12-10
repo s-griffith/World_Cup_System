@@ -24,6 +24,8 @@ Team& Team::operator=(const Team& other) {
     m_points = other.m_points;
     return *this;
 }
+
+
 //-------------------------------------Getters----------------------------
 int Team::get_points() const {
     return m_points;

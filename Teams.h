@@ -52,6 +52,7 @@ public:
     void update_points(const int k);
     void update_num_goals(const int goals);
     void update_num_cards(const int cards);
+    void update_top_player();
 
 private:
     int m_id;
@@ -66,8 +67,6 @@ private:
     TreeExtraPointer<std::shared_ptr<Player>> m_playersByID;
     //AVL Tree organized by best-scoring players
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
-
-    void update_top_player();
 };
 
 #endif //TEAMS_H

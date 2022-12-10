@@ -101,6 +101,8 @@ template <class N, class T>
 Tree<N, T>::~Tree()
 {
     destroy_tree(m_node);
+    m_node->m_right = nullptr;
+    m_node->m_left = nullptr;
 }
 
 //Tree Copy Constructor
@@ -148,11 +150,13 @@ typename Tree<N, T>::Tree& Tree<N, T>::operator=(const Tree<N, T>& other)
 template <class N, class T>
 void Tree<N, T>::destroy_tree(N* currentNode)
 {
-    N* tmpNode = currentNode;
-    if (tmpNode != nullptr) {
+    if (currentNode != nullptr) {
         destroy_tree(currentNode->m_left); //this might cause memory leaks with multitree - only place might need to override the function for real
         destroy_tree(currentNode->m_right); //might need dynamic cast here to Node*, or find a way to override destroy func
-        delete tmpNode;
+        if (currentNode != m_node) {
+            make_node_leaf(currentNode);
+            delete currentNode;
+        }
     }
 }
 

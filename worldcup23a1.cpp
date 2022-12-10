@@ -21,7 +21,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
         return StatusType::INVALID_INPUT;
     }
     try  {
-        std::shared_ptr<Team> t(new Team(teamId, points));
+        std::shared_ptr<Team> t = std::make_shared<Team>(teamId, points);
 	    m_teamsByID.insert(t, teamId);
     }
     catch (std::bad_alloc& e) {
@@ -78,7 +78,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         //Update the number of games the player played - add get_games() to teams***********************************************************************
         int playerGames = gamesPlayed - tmpTeam->get_games();
         //The inputs are okay - continue adding player:
-        std::shared_ptr<Player> tmpPlayer(new Player(playerId, playerGames, goals, cards, goalKeeper, tmpTeam));
+        std::shared_ptr<Player> tmpPlayer = std::make_shared<Player>(playerId, playerGames, goals, cards, goalKeeper, tmpTeam);
         try {
             m_playersByID.insert(tmpPlayer, playerId);
             //Add player to team trees + update team stats + update top team scorer*********************************************************************
@@ -126,22 +126,21 @@ StatusType world_cup_t::remove_player(int playerId)
     catch (const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    //Remove player from team trees + update team stats*************************************************************************************************
+    //Remove player from team players by score tree
     std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
     tmpTeam->remove_player(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
+    //Remove team from tree of qualified teams
     if (!(tmpTeam->is_valid())) {
         try {
-            //Remove team from tree of qualified teams**************************************************************************************************
             m_qualifiedTeams.remove(tmpTeam->get_teamID());
         }
         catch (const NodeNotFound& e) {}
     }
-    //Remove player from tree of all scorers************************************************************************************************************
+    //Remove player from overall game tree of players by score
     m_playersByScore.remove(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
-    //Change top scorer if the requested player is the top scorer***************************************************************************************
-    if (m_overallTopScorer->get_playerId() == tmpPlayer->get_playerId()) {
-        m_overallTopScorer = m_playersByScore.search_and_return_max();
-    }
+    //Change top scorer of all players and of team players
+    m_overallTopScorer = m_playersByScore.search_and_return_max();
+    tmpTeam->update_top_player();
     //Remove player from tree of all players
     m_playersByID.remove(playerId);
     //Remove one from the counter of all players in game
@@ -170,12 +169,12 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     tmpPlayer->update_gamesPlayed(gamesPlayed);
     tmpPlayer->update_cards(cardsReceived);
     tmpPlayer->update_goals(scoredGoals);
-    //Update player by score tree and the overall game top scorer
+    //Update overall game player by score tree and the overall game top scorer
     m_playersByScore.insert(tmpPlayer, tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
     m_overallTopScorer = m_playersByScore.search_and_return_max();
-    //Update team - update the player by score tree****************************************************************************************
+    //Update team - update the team players by score tree
     tmpTeam->insert_player_by_score(tmpPlayer, playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
-    //Update the teams total stats and the top scored player tree + pointer*****************************************************************************
+    //Update the teams total stats and the top scored player of the team
     tmpTeam->update_team_stats(scoredGoals, cardsReceived);
     return StatusType::SUCCESS;
 }
@@ -212,7 +211,7 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
         output_t<int> outputFailure(StatusType::FAILURE);
         return outputFailure;
     }
-    //Extract the total goals of the player - their personal goals + the total team games
+    //Extract the total games played by the player - their personal played games + the total team games
     std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
     int totalGames = tmpPlayer->get_gamesPlayed() + tmpTeam->get_games();
     output_t<int> newOutput(totalGames);
@@ -250,8 +249,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             return StatusType::FAILURE;
         }
     }
-    std::shared_ptr<Team> team1 = nullptr;
-    std::shared_ptr<Team> team2 = nullptr;
+    std::shared_ptr<Team> team1;
+    std::shared_ptr<Team> team2;
     try {
         team1 = m_teamsByID.search_and_return_data(teamId1);
         team2 = m_teamsByID.search_and_return_data(teamId2);
@@ -259,9 +258,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    std::shared_ptr<Team> nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
+    std::shared_ptr<Team> nTeam = std::make_shared<Team>(newTeamId, team1->get_points() + team2->get_points());
     nTeam->Team::unite_teams(team1, team2);
-    std::cout << "Num of nTeams " << nTeam.use_count() << std::endl;
     nTeam->update_team_id(nTeam);
     try {
         m_qualifiedTeams.remove(teamId1);
@@ -287,8 +285,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             return StatusType::ALLOCATION_ERROR;
         }
     }
-    std::cout << "Num of players in nTeam " << nTeam->get_num_players() << std::endl;
-	return StatusType::SUCCESS;
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_top_scorer(int teamId)
@@ -358,7 +355,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         if (tmpTeam-> get_num_players() == 0) {
             return StatusType::FAILURE;
         }
-        //Get all the players of the specified team*****************************************************************************************************
+        //Get all the players of the specified team
         tmpTeam->get_all_team_players(output);
         return StatusType::SUCCESS;
     }
@@ -390,7 +387,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
         return outputFailure;
     }
     int closestPlayerId = 0;
-    //Get the closest team player - need to add the function to the Team********************************************************************************
+    //Get the closest team player
     try {
         closestPlayerId = tmpTeam->get_closest_team_player(playerId);
     }
