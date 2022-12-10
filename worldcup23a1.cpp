@@ -40,7 +40,7 @@ StatusType world_cup_t::remove_team(int teamId)
     }
     try {
         std::shared_ptr<Team> team = m_teamsByID.search_and_return_data(teamId);
-        if (!team->get_num_players()) {
+        if (team->get_num_players()) {
             return StatusType::FAILURE;
         }
         m_teamsByID.remove(teamId);
@@ -81,11 +81,11 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         std::shared_ptr<Player> tmpPlayer = std::make_shared<Player>(playerId, playerGames, goals, cards, goalKeeper, tmpTeam);
         try {
             m_playersByID.insert(tmpPlayer, playerId);
-            //Add player to team trees + update team stats + update top team scorer*********************************************************************
-            tmpTeam->add_player(tmpPlayer, playerId, goals, cards, goalKeeper);
             //Update top scorers************************************************************************************************************************
             m_playersByScore.insert(tmpPlayer, playerId, goals, cards);
             m_overallTopScorer = m_playersByScore.search_and_return_max();
+            //Add player to team trees + update team stats + update top team scorer*********************************************************************
+            tmpTeam->add_player(tmpPlayer, playerId, goals, cards, goalKeeper, &(m_playersByScore.search_specific_id(playerId, goals, cards)));
         }
         catch (const std::bad_alloc& e) {
             return StatusType::ALLOCATION_ERROR;
@@ -371,8 +371,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
     if (playerId <= 0 || teamId <= 0) {
-        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
-        return outputInvalid;
+        return output_t<int>(StatusType::INVALID_INPUT);
     }
     output_t<int> outputFailure(StatusType::FAILURE);
     //If there is only one or no players in the entire game, return failure
@@ -394,8 +393,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     catch (const NodeNotFound& e) {
         return outputFailure;
     }
-    output_t<int> newOutput(closestPlayerId);
-    return newOutput;
+    return output_t<int>(closestPlayerId);
 }
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from

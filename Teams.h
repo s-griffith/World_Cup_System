@@ -39,7 +39,7 @@ public:
     void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
-    StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper);
+    StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<std::shared_ptr<Player>>* otherTree);
     void remove_player(const int goals, const int cards, const int playerID);
     bool is_valid() const;
    // Team knockout_copy();

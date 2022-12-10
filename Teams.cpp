@@ -64,9 +64,9 @@ void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2)
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
 
-    this->m_playersByID.Tree::mergeNodes(team1->m_playersByID.m_node);
+    this->m_playersByID.mergeNodesExtraPointer(team1->m_playersByID.m_node);
     this->m_playersByScore.Tree::mergeNodes(team1->m_playersByScore.m_node);
-    this->m_playersByID.Tree::mergeNodes(team2->m_playersByID.m_node);
+    this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
     this->m_playersByScore.Tree::mergeNodes(team2->m_playersByScore.m_node);
     
     this->m_topScorer = m_playersByScore.search_and_return_max();
@@ -74,23 +74,24 @@ void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2)
 }
 
 int Team::get_closest_team_player(const int playerId) {
-    std::shared_ptr<Player> tmpPlayer;
+    int closest_id = 0;
     try {
-        tmpPlayer = m_playersByID.get_closest(playerId);
+        closest_id = m_playersByID.get_closest(playerId);
     }
     catch (const NodeNotFound& e) {
         throw e;
     }
-    return tmpPlayer->get_playerId();
+    return closest_id;
 }
 
 void Team::get_all_team_players(int* const output) {
     m_playersByID.get_all_data(output);
 }
 
-StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper){
+StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<std::shared_ptr<Player>>* playerByScoreNode){
     try {
         m_playersByID.insert(player, id);
+        m_playersByID.update_additional_pointer(id, playerByScoreNode);
         m_playersByScore.insert(player, id, goals, cards);
     }
     catch (const InvalidID& e) {
