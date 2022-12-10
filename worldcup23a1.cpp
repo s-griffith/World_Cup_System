@@ -176,7 +176,7 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     //Update team - update the player by score tree****************************************************************************************
     tmpTeam->insert_player_by_score(tmpPlayer, playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
     //Update the teams total stats and the top scored player tree + pointer*****************************************************************************
-    tmpTeam->update_team_stats(tmpPlayer, scoredGoals, cardsReceived);
+    tmpTeam->update_team_stats(scoredGoals, cardsReceived);
     return StatusType::SUCCESS;
 }
 
@@ -212,9 +212,9 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
         output_t<int> outputFailure(StatusType::FAILURE);
         return outputFailure;
     }
-    //Extract the total goals of the player - their personal goals + the total team goals
+    //Extract the total goals of the player - their personal goals + the total team games
     std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
-    int totalGames = tmpPlayer->get_gamesPlayed() + tmpTeam->get_goals();
+    int totalGames = tmpPlayer->get_gamesPlayed() + tmpTeam->get_games();
     output_t<int> newOutput(totalGames);
     return newOutput;
 }
@@ -238,7 +238,7 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 }
 
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
-{
+{ //Do we need to delete team1 if team2 and team1 merge into team2????
     if (teamId1 == teamId2 || newTeamId <= 0 || teamId1 <= 0 || teamId2 <= 0) {
         return StatusType::INVALID_INPUT;
     }
@@ -259,8 +259,23 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    Team nTeam(newTeamId, team1->get_points() + team2->get_points());
-    nTeam.Team::unite_teams(team1, team2);
+    std::shared_ptr<Team> nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
+    nTeam->Team::unite_teams(team1, team2);
+    try {
+        m_qualifiedTeams.remove(teamId1);
+    }
+    catch (const NodeNotFound& e) {}
+    try {
+        m_qualifiedTeams.remove(teamId2);
+    }
+    catch (const NodeNotFound& e) {}
+    m_teamsByID.remove(teamId1);
+    m_teamsByID.remove(teamId2);
+    m_teamsByID.insert(nTeam, newTeamId);
+    if (nTeam->is_valid()) {
+        m_qualifiedTeams.insert(nTeam, newTeamId);
+    }
+    (*nTeam).update_team_id(nTeam);
 	return StatusType::SUCCESS;
 }
 

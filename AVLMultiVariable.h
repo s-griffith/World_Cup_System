@@ -19,7 +19,7 @@ public:
     void insert(const T& data, const int id, const int goals, const int cards);
     void print_tree();
         void remove(const int goals, const int cards, const int id);
-    T search_and_return_max();
+    T& search_and_return_max();
     ComplexNode<T>& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode);
     ComplexNode<T>& search_specific_id(const int id, const int goals, const int cards);
     T& search_and_return_data(const int id, const int goals, const int cards);
@@ -138,7 +138,7 @@ void MultiTree<T>::remove(const int goals, const int cards, const int id) {
 
 
 template<class T>
-T MultiTree<T>::search_and_return_max() {
+T& MultiTree<T>::search_and_return_max() { //if this makes problems, get rid of reference at return
     ComplexNode<T>* node = this->m_node;
     while(node->m_right != nullptr) {
         node = node->m_right;
@@ -169,10 +169,10 @@ ComplexNode<T>& MultiTree<T>::search_recursively(const int id, const int goals, 
     if (currentNode->m_goals < goals) {
         return search_recursively(id, goals, cards, currentNode->m_right);
     }
-    if (currentNode->m_cards > cards) {
+    if (currentNode->m_cards > cards && currentNode->m_goals == goals) {
         return search_recursively(id, goals, cards, currentNode->m_right);
     }
-    if (currentNode->m_id < id) {
+    if (currentNode->m_id < id && currentNode->m_goals == goals && currentNode->m_cards == cards) {
         return search_recursively(id, goals, cards, currentNode->m_right);
     }
     return search_recursively(id, goals, cards, currentNode->m_left);

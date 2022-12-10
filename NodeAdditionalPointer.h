@@ -65,6 +65,7 @@ public:
     void printNode();
     void printData();
     void inorderWalkNode(bool flag);
+    void inorderWalkTeamID(const std::shared_ptr<Team>& team);
 
 protected:
     //Pointers to the parent node and the two child nodes
@@ -263,6 +264,15 @@ void NodeWithPointer<T>::get_data_inorder(int* const array, int index) const
     array[index++] = Node<T>::m_id;
     if (m_right != nullptr) {
         m_right->get_data_inorder(array, index);
+    }
+}
+
+template <class T>
+void NodeWithPointer<T>::inorderWalkTeamID(const std::shared_ptr<Team>& team) {
+    if (this != nullptr) {
+        m_left->inorderWalkTeamID(team);
+        this->m_data->update_team(team);
+        m_right->inorderWalkTeamID(team);
     }
 }
 

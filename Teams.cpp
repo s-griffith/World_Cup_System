@@ -61,16 +61,14 @@ void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2)
     this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
-    if (team1->m_topScorer->get_goals() > team2->m_topScorer->get_goals()) {
-        this->m_topScorer = team1->m_topScorer;
-    }
-    else {
-        this->m_topScorer = team2->m_topScorer;
-    }
+
     this->m_playersByID.Tree::mergeNodes(team1->m_playersByID.m_node);
     this->m_playersByScore.Tree::mergeNodes(team1->m_playersByScore.m_node);
     this->m_playersByID.Tree::mergeNodes(team2->m_playersByID.m_node);
     this->m_playersByScore.Tree::mergeNodes(team2->m_playersByScore.m_node);
+    
+    this->m_topScorer = m_playersByScore.search_and_return_max();
+    //Qualified teams
 }
 
 int Team::get_closest_team_player(const int playerId) {
@@ -158,11 +156,10 @@ void Team::print_team() {
 }
 
 //-------------------------------------Update Stats Functions----------------------------
-void Team::update_team_stats(const std::shared_ptr<Player> player, const int goals, const int cards){
-    add_game();
+void Team::update_team_stats(const int goals, const int cards){
     update_num_goals(goals);
     update_num_cards(cards);
-    update_top_player(player);
+    update_top_player();
 }
 
 void Team::add_game() {
@@ -182,8 +179,10 @@ void Team::update_num_cards(const int cards) {
 }
 
 //Private helper function
-void Team::update_top_player(const std::shared_ptr<Player> player) {
-    if (m_topScorer->get_goals() < player->get_goals()) {
-        m_topScorer = player;
-    }
+void Team::update_top_player() {
+    m_topScorer = m_playersByScore.search_and_return_max();
+}
+
+void Team::update_team_id(const std::shared_ptr<Team>& team) {
+    m_playersByID.m_node->inorderWalkTeamID(team);
 }

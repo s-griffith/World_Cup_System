@@ -22,8 +22,8 @@ public:
     ~Team() = default; //check this!
 
 
-
-    void update_team_stats(const std::shared_ptr<Player> player, const int goals, const int cards);
+    void update_team_id(const std::shared_ptr<Team>& team);
+    void update_team_stats(const int goals, const int cards);
 
 
     //Getters for the team's stats
@@ -67,7 +67,7 @@ private:
     //AVL Tree organized by best-scoring players
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
 
-    void update_top_player(const std::shared_ptr<Player> player);
+    void update_top_player();
 };
 
 #endif //TEAMS_H

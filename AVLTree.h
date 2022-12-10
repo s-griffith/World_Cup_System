@@ -340,6 +340,14 @@ N* Tree<N, T>::make_node_leaf(N* node)
 {
     //Node to be deleted is already a leaf
     if (node->m_left == nullptr && node->m_right == nullptr) {
+        if(node->m_parent != nullptr) {
+            if (node->m_parent->m_right == node) {
+                node->m_parent->m_right = nullptr;
+            }
+            else {
+                node->m_parent->m_left = nullptr;
+            }
+        }
         return node->m_parent;
     }
     //Node to be deleted has one child
@@ -360,6 +368,10 @@ N* Tree<N, T>::make_node_leaf(N* node)
             else {
                 node->m_parent->m_right = tmpChild;
             }
+        }
+        else {
+            m_node = tmpChild;
+            return m_node;
         }
         return node->m_parent;
     }
@@ -453,8 +465,13 @@ void Tree<N, T>::mergeNodes(N* node) {
         return;
     }
     this->mergeNodes(node->m_right);
-    this->insert(node->m_data, node->m_id);
+    try {
+        this->insert(node->m_data, node->m_id);
+    }
+    catch (const InvalidID& e) {}
     this->mergeNodes(node->m_left);
 }
+
+
 
 #endif //AVLTREE_h

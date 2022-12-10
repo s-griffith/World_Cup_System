@@ -69,7 +69,7 @@ void Player::update_cards(const int cardsReceived)
 }
 
 //Update the team the player plays for
-void Player::update_team(std::shared_ptr<Team>& tmpTeam)
+void Player::update_team(const std::shared_ptr<Team>& tmpTeam)
 {
     m_team = tmpTeam;
 }

@@ -78,7 +78,7 @@ public:
     * @param - shared pointer to the team that the player plays for
     * @return - none
     */
-    void update_team(std::shared_ptr<Team>& tmpTeam);
+    void update_team(const std::shared_ptr<Team>& tmpTeam);
 
     /*
     * Check which player from input is "closer" to the current player according to number of goals, cards and ID
