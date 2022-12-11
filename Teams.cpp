@@ -9,9 +9,9 @@ Team::Team(const int teamID, const int points) :
     m_numGoals(0),
     m_numCards(0),
     m_numGames(0),
-    m_topScorer(nullptr),
     m_playersByID(),
-    m_playersByScore()
+    m_playersByScore(),
+    m_topScorer(nullptr)
 {}
 
 Team& Team::operator=(const Team& other) {
@@ -47,7 +47,7 @@ int Team::get_games() const {
     return m_numGames;
 }
 
-const std::shared_ptr<Player> Team::get_top_scorer() const {
+const std::shared_ptr<Player>& Team::get_top_scorer() const {
     return m_topScorer;
 }
 
@@ -65,9 +65,9 @@ void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2)
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
 
     this->m_playersByID.mergeNodesExtraPointer(team1->m_playersByID.m_node);
-    this->m_playersByScore.Tree::mergeNodes(team1->m_playersByScore.m_node);
+    this->m_playersByScore.mergeNodes(team1->m_playersByScore.m_node);
     this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
-    this->m_playersByScore.Tree::mergeNodes(team2->m_playersByScore.m_node);
+    this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node);
     
     this->m_topScorer = m_playersByScore.search_and_return_max();
     //Qualified teams
@@ -103,6 +103,7 @@ StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id,
     if (goalkeeper) {
          m_numGoalkeepers++;
     }
+    update_top_player();
     return StatusType::SUCCESS;
 }
 
@@ -110,6 +111,7 @@ void Team::remove_player(const int goals, const int cards, const int playerID){
     //Do the cards he had get subtracted from the team's total? Goals? etc.
     m_playersByID.remove(playerID);
     m_playersByScore.remove(goals, cards, playerID);
+    update_top_player();
 }
 
 bool Team::is_valid() const{

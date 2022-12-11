@@ -12,7 +12,7 @@ class MultiTree : public Tree<ComplexNode<T>, T> {
     friend class ComplexNode;
 public:
     MultiTree();
-    ~MultiTree();
+    ~MultiTree() = default;
     MultiTree(const MultiTree& other);
     MultiTree& operator=(const MultiTree& other);
 
@@ -29,11 +29,6 @@ template<class T>
 MultiTree<T>::MultiTree() :
     Tree<ComplexNode<T>, T>()
 {}
-
-template<class T>
-MultiTree<T>::~MultiTree() {
-    this->Tree<ComplexNode<T>, T>::destroy_tree(this->m_node);
-}
 
 template<class T>
 void MultiTree<T>::insert(const T& data, const int id, const int goals, const int cards) {

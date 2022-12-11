@@ -100,6 +100,7 @@ Tree<N, T>::Tree()
 template <class N, class T>
 Tree<N, T>::~Tree()
 {
+
     destroy_tree(m_node);
     m_node->m_right = nullptr;
     m_node->m_left = nullptr;
@@ -225,28 +226,28 @@ void Tree<N, T>::insert(const T& data, const int id) {
         }
     }
     //Create the new node and add it to the tree:
-    N* node = nullptr;
-    try{
+    N* node;
+    try {
         node = new N();
+        node->m_parent = y;
+        node->m_left = nullptr;
+        node->m_right = nullptr;
+        node->m_data = data;
+        node->m_id = id;
+        node->m_height = 0;
+        if (id < y->m_id) {
+            y->m_left = node;
+        }
+        else {
+            y->m_right = node;
+        }
+        rebalance_tree((node->m_parent));
     }
     catch(const std::bad_alloc& e)
     {
         delete node;
         throw e;
     }
-    node->m_parent = y;
-    node->m_left = nullptr;
-    node->m_right = nullptr;
-    node->m_data = data;
-    node->m_id = id;
-    node->m_height = 0;
-    if (id < y->m_id) {
-        y->m_left = node;
-    }
-    else {
-        y->m_right = node;
-    }
-    rebalance_tree((node->m_parent));
 }
 
 
@@ -466,7 +467,7 @@ void Tree<N, T>::mergeNodes(N* node) {
 
 template<class N, class T>
 void Tree<N, T>::mergeNodes(N* node) {
-    if (node == nullptr) {
+    if (node == NULL) {
         return;
     }
     this->mergeNodes(node->m_right);

@@ -144,7 +144,7 @@ typename ComplexNode<T>::ComplexNode* TreeExtraPointer<T>::findRightClosest(type
 
 template <class T>
 void TreeExtraPointer<T>::mergeNodesExtraPointer(typename NodeWithPointer<T>::NodeWithPointer* node) {
-    if (node == nullptr) {
+    if (node == NULL) {
         return;
     }
     this->mergeNodesExtraPointer(node->m_right);

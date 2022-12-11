@@ -32,7 +32,7 @@ public:
     int get_goals() const;
     int get_num_players() const;
     int get_games() const;
-    const std::shared_ptr<Player> get_top_scorer() const;
+    const std::shared_ptr<Player>& get_top_scorer() const;
     int get_teamID() const;
     void print_team();
     //Helper functions for World Cup
@@ -62,11 +62,11 @@ private:
     int m_numGoals;
     int m_numCards;
     int m_numGames;
-    std::shared_ptr<Player> m_topScorer;
     //AVL Tree organized by player ID
     TreeExtraPointer<std::shared_ptr<Player>> m_playersByID;
     //AVL Tree organized by best-scoring players
     MultiTree<std::shared_ptr<Player>> m_playersByScore;
+    std::shared_ptr<Player> m_topScorer;
 };
 
 #endif //TEAMS_H

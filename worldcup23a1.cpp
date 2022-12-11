@@ -78,13 +78,13 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         //Update the number of games the player played - add get_games() to teams***********************************************************************
         int playerGames = gamesPlayed - tmpTeam->get_games();
         //The inputs are okay - continue adding player:
-        std::shared_ptr<Player> tmpPlayer = std::make_shared<Player>(playerId, playerGames, goals, cards, goalKeeper, tmpTeam);
+        std::shared_ptr<Player> tmpPlayer( new Player(playerId, playerGames, goals, cards, goalKeeper, tmpTeam));
         try {
             m_playersByID.insert(tmpPlayer, playerId);
-            //Update top scorers************************************************************************************************************************
+            //Update top scorers
             m_playersByScore.insert(tmpPlayer, playerId, goals, cards);
             m_overallTopScorer = m_playersByScore.search_and_return_max();
-            //Add player to team trees + update team stats + update top team scorer*********************************************************************
+            //Add player to team trees + update team stats + update top team scorer
             tmpTeam->add_player(tmpPlayer, playerId, goals, cards, goalKeeper, &(m_playersByScore.search_specific_id(playerId, goals, cards)));
         }
         catch (const std::bad_alloc& e) {
@@ -258,7 +258,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    std::shared_ptr<Team> nTeam = std::make_shared<Team>(newTeamId, team1->get_points() + team2->get_points());
+    std::shared_ptr<Team> nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
     nTeam->Team::unite_teams(team1, team2);
     nTeam->update_team_id(nTeam);
     try {
