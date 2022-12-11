@@ -28,18 +28,18 @@ private:
     //Total number of players throughout the entire game
     int m_totalNumPlayers;
     //Shared pointer to the player with the top stats (goals + cards + ID)
-    std::shared_ptr<Player> m_overallTopScorer;
+    Player* m_overallTopScorer;
     //Tree of shared pointers of the type team, with all the teams in the game sorted by their ID
-    Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_teamsByID;
+    Tree<GenericNode<Team*>, Team*> m_teamsByID;
     //Tree of shared pointers of the type team, with all the teams in the game with more than 11 players, and at least
     //      one goalkeeper, sorted by the team ID
-    Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> m_qualifiedTeams;
+    Tree<GenericNode<Team*>, Team*> m_qualifiedTeams;
     //Tree of shared pointers of the type player, with all the players in the game sorted by their ID
-    Tree<GenericNode<std::shared_ptr<Player>>, std::shared_ptr<Player>> m_playersByID;
+    Tree<GenericNode<Player*>, Player*> m_playersByID;
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
-    MultiTree<std::shared_ptr<Player>> m_playersByScore;
+    MultiTree<Player*> m_playersByScore;
 
-	Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> knockout_rounds(Tree<GenericNode<std::shared_ptr<Team>>, std::shared_ptr<Team>> teams);
+	Tree<GenericNode<Team*>, Team*> knockout_rounds(Tree<GenericNode<Team*>, Team*> teams);
 	void knockout_games(Team* teams, int numTeams, const int size);
 	int compete(Team& team1, Team& team2);
 public:

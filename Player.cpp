@@ -4,15 +4,14 @@
 
 //Constructor for Player
 Player::Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper,
-               std::shared_ptr<Team>& tmpTeam) :
+               Team* tmpTeam) :
     m_playerId(playerId),
     m_gamesPlayed(gamesPlayed),
     m_goals(goals),
     m_cards(cards),
     m_goalkeeper(goalKeeper),
     m_team(tmpTeam)
-{
-}
+{}
 
 //Return the player's id
 int Player::get_playerId() const
@@ -45,7 +44,7 @@ bool Player::get_goalkeeper() const
 }
 
 //Return the team that the player is part of
-std::shared_ptr<Team>& Player::get_team()
+Team* Player::get_team()
 {
     return m_team;
 }
@@ -69,13 +68,13 @@ void Player::update_cards(const int cardsReceived)
 }
 
 //Update the team the player plays for
-void Player::update_team(const std::shared_ptr<Team>& tmpTeam)
+void Player::update_team(Team* tmpTeam)
 {
     m_team = tmpTeam;
 }
 
 //Get the ID of the closest player to the current player
-int Player::get_closest(std::shared_ptr<Player>& player1, std::shared_ptr<Player>& player2)
+int Player::get_closest(Player* player1, Player* player2)
 {
     //Return the player with the closest goal count
     int diff = check_diff(m_goals, player1->m_goals, player2->m_goals);

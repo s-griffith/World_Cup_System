@@ -286,8 +286,8 @@ int GenericNode<T>::inorderWalkCount(int counter, const int maxID, const int min
 
 template<class T>
 typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int minTeamId, const int maxTeamId) {
-    GenericNode<std::shared_ptr<Team>>* x = this;
-    GenericNode<std::shared_ptr<Team>>* y = nullptr;
+    GenericNode<Team*>* x = this;
+    GenericNode<Team*>* y = nullptr;
     while (x != nullptr && x->m_id <= maxTeamId) {
         y = x;
         if (x->m_id == minTeamId) {
@@ -305,7 +305,7 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int min
 
 template<class T>
 int GenericNode<T>::numOfTeams(const int minTeamID, const int maxTeamID) {
-    GenericNode<std::shared_ptr<Team>>* first = this->getFirstTeam(minTeamID, maxTeamID);
+    GenericNode<Team*>* first = this->getFirstTeam(minTeamID, maxTeamID);
     if (first == nullptr) {
         return 0;
     }
@@ -314,7 +314,7 @@ int GenericNode<T>::numOfTeams(const int minTeamID, const int maxTeamID) {
 
 template<class T>
 void GenericNode<T>::addTeams(Team* teams, const int minTeamId, const int maxTeamId) {
-    GenericNode<std::shared_ptr<Team>>* first = this->getFirstTeam(minTeamId, maxTeamId);
+    GenericNode<Team*>* first = this->getFirstTeam(minTeamId, maxTeamId);
     first->inorderWalkInsert(teams, minTeamId, maxTeamId, 0);
 }
 

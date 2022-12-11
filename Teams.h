@@ -22,7 +22,7 @@ public:
     ~Team() = default; //check this!
 
 
-    void update_team_id(const std::shared_ptr<Team>& team);
+    void update_team_id(Team* team);
     void update_team_stats(const int goals, const int cards);
 
 
@@ -32,21 +32,21 @@ public:
     int get_goals() const;
     int get_num_players() const;
     int get_games() const;
-    const std::shared_ptr<Player>& get_top_scorer() const;
+    const Player* get_top_scorer() const;
     int get_teamID() const;
     void print_team();
     //Helper functions for World Cup
-    void unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2);
+    void unite_teams(Team* team1, Team* team2);
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
-    StatusType add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<std::shared_ptr<Player>>* otherTree);
+    StatusType add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* otherTree);
     void remove_player(const int goals, const int cards, const int playerID);
     bool is_valid() const;
    // Team knockout_copy();
     void knockout_setID();
     void knockout_unite(Team& winner, Team& loser);
     void remove_player_by_score(const int goals, const int cards, const int id);
-    void insert_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards);
+    void insert_player_by_score(Player* player, const int id, const int goals, const int cards);
     //Helper functions to update teams stats
     void add_game();
     void update_points(const int k);
@@ -63,10 +63,10 @@ private:
     int m_numCards;
     int m_numGames;
     //AVL Tree organized by player ID
-    TreeExtraPointer<std::shared_ptr<Player>> m_playersByID;
+    TreeExtraPointer<Player*> m_playersByID;
     //AVL Tree organized by best-scoring players
-    MultiTree<std::shared_ptr<Player>> m_playersByScore;
-    std::shared_ptr<Player> m_topScorer;
+    MultiTree<Player*> m_playersByScore;
+    Player* m_topScorer;
 };
 
 #endif //TEAMS_H

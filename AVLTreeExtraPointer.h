@@ -20,7 +20,7 @@ public:
     TreeExtraPointer();
 
     //Tree Copy constructor, assignment operator and destructor - use the AVLTree's functions
-    ~TreeExtraPointer() = default;
+    ~TreeExtraPointer()= default;
 
     TreeExtraPointer(const TreeExtraPointer<T> &other) = default;
 
@@ -155,5 +155,6 @@ void TreeExtraPointer<T>::mergeNodesExtraPointer(typename NodeWithPointer<T>::No
     catch (const InvalidID& e) {}
     this->mergeNodesExtraPointer(node->m_left);
 }
+
 
 #endif //WORLD_CUP_SYSTEM_AVLTREEEXTRAPOINTER_H

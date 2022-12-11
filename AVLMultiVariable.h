@@ -16,7 +16,7 @@ public:
     MultiTree(const MultiTree& other);
     MultiTree& operator=(const MultiTree& other);
 
-    void insert(const T& data, const int id, const int goals, const int cards);
+    void insert(T data, const int id, const int goals, const int cards);
     void print_tree();
         void remove(const int goals, const int cards, const int id);
     T& search_and_return_max();
@@ -31,7 +31,7 @@ MultiTree<T>::MultiTree() :
 {}
 
 template<class T>
-void MultiTree<T>::insert(const T& data, const int id, const int goals, const int cards) {
+void MultiTree<T>::insert(T data, const int id, const int goals, const int cards) {
     //If this is the first node in the tree:
     if (this->m_node->m_height == -1) {
         this->m_node->m_data = data;

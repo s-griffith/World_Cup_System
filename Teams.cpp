@@ -47,7 +47,7 @@ int Team::get_games() const {
     return m_numGames;
 }
 
-const std::shared_ptr<Player>& Team::get_top_scorer() const {
+const Player* Team::get_top_scorer() const {
     return m_topScorer;
 }
 
@@ -57,7 +57,7 @@ int Team::get_teamID() const  {
 
 //-------------------------------------Helper Functions for WorldCup----------------------------
 
-void Team::unite_teams(std::shared_ptr<Team> team1, std::shared_ptr<Team> team2) {
+void Team::unite_teams(Team* team1, Team* team2) {
     this->m_numCards = team1->m_numCards + team2->m_numCards;
     this->m_numGames = team1->m_numGames + team2->m_numGames;
     this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
@@ -88,7 +88,7 @@ void Team::get_all_team_players(int* const output) {
     m_playersByID.get_all_data(output);
 }
 
-StatusType Team::add_player(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<std::shared_ptr<Player>>* playerByScoreNode){
+StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* playerByScoreNode){
     try {
         m_playersByID.insert(player, id);
         m_playersByID.update_additional_pointer(id, playerByScoreNode);
@@ -149,7 +149,7 @@ void Team::remove_player_by_score(const int goals, const int cards, const int id
     m_playersByScore.remove(goals, cards, id);
 }
 
-void Team::insert_player_by_score(const std::shared_ptr<Player>& player, const int id, const int goals, const int cards) {
+void Team::insert_player_by_score(Player* player, const int id, const int goals, const int cards) {
     m_playersByScore.insert(player, id, goals, cards);
 }
 
@@ -185,6 +185,6 @@ void Team::update_top_player() {
     m_topScorer = m_playersByScore.search_and_return_max();
 }
 
-void Team::update_team_id(const std::shared_ptr<Team>& team) {
+void Team::update_team_id(Team* team) {
     m_playersByID.m_node->inorderWalkTeamID(team);
 }

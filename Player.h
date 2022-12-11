@@ -14,7 +14,7 @@ public:
     *      and also if the player is a goalkeeper
     * @return - A new instance of Player.
     */
-    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, std::shared_ptr<Team>& tmpTeam);
+    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, Team* tmpTeam);
 
     /*
     * Return the player's ID
@@ -50,7 +50,7 @@ public:
     * Return if the player is a goalkeeper
     * @return - bool, with true if the player is a goalkeeper, otherwise false
     */
-    std::shared_ptr<Team>& get_team();
+    Team* get_team();
 
     /*
     * Update the number of games the player played
@@ -78,14 +78,14 @@ public:
     * @param - shared pointer to the team that the player plays for
     * @return - none
     */
-    void update_team(const std::shared_ptr<Team>& tmpTeam);
+    void update_team(Team* tmpTeam);
 
     /*
     * Check which player from input is "closer" to the current player according to number of goals, cards and ID
     * @param - two shared pointers to players to compare
     * @return - the ID of the closest player
     */
-    int get_closest(std::shared_ptr<Player>& player1, std::shared_ptr<Player>& player2);
+    int get_closest(Player* player1, Player* player2);
     int check_diff(const int current, const int p1, const int p2);
 
     /*
@@ -101,7 +101,7 @@ private:
     int m_goals;
     int m_cards;
     bool m_goalkeeper;
-    std::shared_ptr<Team> m_team;
+    Team* m_team;
 };
 
 

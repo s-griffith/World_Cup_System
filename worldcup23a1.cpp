@@ -11,7 +11,9 @@ world_cup_t::world_cup_t() :
 
 world_cup_t::~world_cup_t() //I feel like this should be default
 {
-	// TODO: Your code goes here
+    m_playersByID.erase_data(m_playersByID.m_node);
+    m_teamsByID.erase_data(m_teamsByID.m_node);
+    m_overallTopScorer = nullptr;
 }
 
 
@@ -20,17 +22,20 @@ StatusType world_cup_t::add_team(int teamId, int points)
     if (teamId <= 0 || points < 0) {
         return StatusType::INVALID_INPUT;
     }
+    Team* newTeam;
     try  {
-        std::shared_ptr<Team> t = std::make_shared<Team>(teamId, points);
-	    m_teamsByID.insert(t, teamId);
+        newTeam = new Team(teamId, points);
+	    m_teamsByID.insert(newTeam, teamId);
     }
     catch (std::bad_alloc& e) {
+        delete newTeam;
         return StatusType::ALLOCATION_ERROR;
     }
     catch(InvalidID& e) {
+        delete newTeam;
         return StatusType::FAILURE;
     }
-	return StatusType::SUCCESS;
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::remove_team(int teamId)
@@ -39,11 +44,12 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::INVALID_INPUT;
     }
     try {
-        std::shared_ptr<Team> team = m_teamsByID.search_and_return_data(teamId);
+        Team* team = m_teamsByID.search_and_return_data(teamId);
         if (team->get_num_players()) {
             return StatusType::FAILURE;
         }
         m_teamsByID.remove(teamId);
+        delete team;
     }
     catch(NodeNotFound& e) {
         return StatusType::FAILURE;
@@ -66,7 +72,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         m_playersByID.search_and_return_data(playerId);
     }
     catch (const NodeNotFound& e) {
-        std::shared_ptr<Team> tmpTeam;
+        Team* tmpTeam;
         //Check if there already is a team with this ID.
         //If there is then continue after "catch", otherwise return failure.
         try {
@@ -78,7 +84,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         //Update the number of games the player played - add get_games() to teams***********************************************************************
         int playerGames = gamesPlayed - tmpTeam->get_games();
         //The inputs are okay - continue adding player:
-        std::shared_ptr<Player> tmpPlayer( new Player(playerId, playerGames, goals, cards, goalKeeper, tmpTeam));
+        Player* tmpPlayer = new Player(playerId, playerGames, goals, cards, goalKeeper, tmpTeam);
         try {
             m_playersByID.insert(tmpPlayer, playerId);
             //Update top scorers
@@ -119,7 +125,7 @@ StatusType world_cup_t::remove_player(int playerId)
     if (playerId <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    std::shared_ptr<Player> tmpPlayer;
+    Player* tmpPlayer;
     try {
         tmpPlayer = m_playersByID.search_and_return_data(playerId);
     }
@@ -127,7 +133,7 @@ StatusType world_cup_t::remove_player(int playerId)
         return StatusType::FAILURE;
     }
     //Remove player from team players by score tree
-    std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
+    Team* tmpTeam = tmpPlayer->get_team();
     tmpTeam->remove_player(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
     //Remove team from tree of qualified teams
     if (!(tmpTeam->is_valid())) {
@@ -145,6 +151,7 @@ StatusType world_cup_t::remove_player(int playerId)
     m_playersByID.remove(playerId);
     //Remove one from the counter of all players in game
     m_totalNumPlayers--;
+    delete tmpPlayer;
 	return StatusType::SUCCESS;
 }
 
@@ -154,7 +161,7 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     if (playerId <= 0 || gamesPlayed < 0 || scoredGoals < 0 || cardsReceived < 0) {
         return StatusType::INVALID_INPUT;
     }
-    std::shared_ptr<Player> tmpPlayer;
+    Player* tmpPlayer;
     try {
         tmpPlayer = m_playersByID.search_and_return_data(playerId);
     }
@@ -162,7 +169,7 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         return StatusType::FAILURE;
     }
     //Pointer to the team the player plays in
-    std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
+    Team* tmpTeam = tmpPlayer->get_team();
     tmpTeam->remove_player_by_score(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
     //Remove player from tree of all scorers
     m_playersByScore.remove(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
@@ -184,8 +191,8 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     if (teamId1 == teamId2 || teamId1 <= 0 || teamId2 <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    std::shared_ptr<Team> team1 = nullptr;
-    std::shared_ptr<Team> team2 = nullptr;
+    Team* team1 = nullptr;
+    Team* team2 = nullptr;
     try {
         team1 = m_qualifiedTeams.search_and_return_data(teamId1);
         team2 = m_qualifiedTeams.search_and_return_data(teamId2);
@@ -203,7 +210,7 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
         output_t<int> outputInvalid(StatusType::INVALID_INPUT);
         return outputInvalid;
     }
-    std::shared_ptr<Player> tmpPlayer;
+    Player* tmpPlayer;
     try {
         tmpPlayer = m_playersByID.search_and_return_data(playerId);
     }
@@ -212,7 +219,7 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
         return outputFailure;
     }
     //Extract the total games played by the player - their personal played games + the total team games
-    std::shared_ptr<Team> tmpTeam = tmpPlayer->get_team();
+    Team* tmpTeam = tmpPlayer->get_team();
     int totalGames = tmpPlayer->get_gamesPlayed() + tmpTeam->get_games();
     output_t<int> newOutput(totalGames);
     return newOutput;
@@ -224,7 +231,7 @@ output_t<int> world_cup_t::get_team_points(int teamId)
         output_t<int> outputInvalid(StatusType::INVALID_INPUT);
         return outputInvalid;
     }
-    std::shared_ptr<Team> tmpTeam;
+    Team* tmpTeam;
     try {
         tmpTeam = m_teamsByID.search_and_return_data(teamId);
     }
@@ -249,8 +256,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             return StatusType::FAILURE;
         }
     }
-    std::shared_ptr<Team> team1;
-    std::shared_ptr<Team> team2;
+    Team* team1;
+    Team* team2;
     try {
         team1 = m_teamsByID.search_and_return_data(teamId1);
         team2 = m_teamsByID.search_and_return_data(teamId2);
@@ -258,7 +265,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    std::shared_ptr<Team> nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
+    Team* nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
     nTeam->Team::unite_teams(team1, team2);
     nTeam->update_team_id(nTeam);
     try {
@@ -285,6 +292,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             return StatusType::ALLOCATION_ERROR;
         }
     }
+    delete team1;
+    delete team2;
     return StatusType::SUCCESS;
 }
 
@@ -296,7 +305,7 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
     }
     output_t<int> outputFailure(StatusType::FAILURE);
     if (teamId > 0) {
-        std::shared_ptr<Team> tmpTeam;
+        Team* tmpTeam;
         try {
             tmpTeam = m_teamsByID.search_and_return_data(teamId);
         }
@@ -323,7 +332,7 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
         return outputInvalid;
     }
     if (teamId > 0) {
-        std::shared_ptr<Team> tmpTeam;
+        Team* tmpTeam;
         try {
             tmpTeam = m_teamsByID.search_and_return_data(teamId);
         }
@@ -345,7 +354,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     }
     //If the players of a certain team is requested
     if (teamId > 0) {
-        std::shared_ptr<Team> tmpTeam;
+        Team* tmpTeam;
         try {
             tmpTeam = m_teamsByID.search_and_return_data(teamId);
         }
@@ -378,7 +387,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     if (m_totalNumPlayers <= 1) {
         return outputFailure;
     }
-    std::shared_ptr<Team> tmpTeam;
+    Team* tmpTeam;
     try {
         tmpTeam = m_teamsByID.search_and_return_data(teamId);
     }

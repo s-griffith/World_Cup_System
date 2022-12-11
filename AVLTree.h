@@ -39,7 +39,7 @@ public:
      * @param - New data to insert and the ID of the new node
      * @return - void
      */
-    void insert(const T& data, const int id);
+    void insert(T data, const int id);
 
     /*
      * Remove node according to the id given
@@ -72,6 +72,8 @@ public:
 
     void mergeNodes(N* node);
 
+    void erase_data(N* currentNode);
+
 
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
 
@@ -100,11 +102,7 @@ Tree<N, T>::Tree()
 template <class N, class T>
 Tree<N, T>::~Tree()
 {
-
     destroy_tree(m_node);
-    m_node->m_right = nullptr;
-    m_node->m_left = nullptr;
-    delete m_node;
 }
 
 //Tree Copy Constructor
@@ -155,10 +153,16 @@ void Tree<N, T>::destroy_tree(N* currentNode)
     if (currentNode != nullptr) {
         destroy_tree(currentNode->m_left); //this might cause memory leaks with multitree - only place might need to override the function for real
         destroy_tree(currentNode->m_right); //might need dynamic cast here to Node*, or find a way to override destroy func
-        if (currentNode != m_node) {
-            make_node_leaf(currentNode);
-            delete currentNode;
+        if (currentNode->m_parent != nullptr) {
+            if (currentNode->m_parent->m_left == currentNode) {
+                currentNode->m_parent->m_left = nullptr;
+            }
+            else if (currentNode->m_parent->m_right == currentNode) {
+                currentNode->m_parent->m_right = nullptr;
+            }
+            currentNode->m_parent = nullptr;
         }
+        delete currentNode;
     }
 }
 
@@ -202,7 +206,7 @@ void Tree<N, T>::copy_tree(N* currentNode, N* otherNode)
 }
 
 template<class N, class T>
-void Tree<N, T>::insert(const T& data, const int id) {
+void Tree<N, T>::insert(T data, const int id) {
     //If this is the first node in the tree:
     if (m_node->m_height == -1) {
         m_node->m_data = data;
@@ -478,6 +482,15 @@ void Tree<N, T>::mergeNodes(N* node) {
     this->mergeNodes(node->m_left);
 }
 
-
+//Destroy tree recursively
+template <class N, class T>
+void Tree<N, T>::erase_data(N* currentNode)
+{
+    if (currentNode != nullptr) {
+        erase_data(currentNode->m_left);
+        erase_data(currentNode->m_right);
+        delete currentNode->m_data;
+    }
+}
 
 #endif //AVLTREE_h
