@@ -29,6 +29,12 @@ public:
     virtual void destroy_tree(N* currentNode);
 
     /*
+     * Recursively release the data of the full tree
+     * @return - none
+     */
+    void erase_data(N* currentNode);
+
+    /*
      * Recursively copy full tree
      * @return - none
      */
@@ -72,7 +78,6 @@ public:
 
     void mergeNodes(N* node);
 
-    void erase_data(N* currentNode);
 
 
 //-----------------------------------------FUNCTIONS FOR TESTING--------------------------
@@ -166,6 +171,16 @@ void Tree<N, T>::destroy_tree(N* currentNode)
     }
 }
 
+//Free data in tree recursively
+template <class N, class T>
+void Tree<N, T>::erase_data(N* currentNode)
+{
+    if (currentNode != nullptr) {
+        erase_data(currentNode->m_left);
+        erase_data(currentNode->m_right);
+        delete currentNode->m_data;
+    }
+}
 
 //Copy tree recursively
 template <class N, class T>
@@ -480,17 +495,6 @@ void Tree<N, T>::mergeNodes(N* node) {
     }
     catch (const InvalidID& e) {}
     this->mergeNodes(node->m_left);
-}
-
-//Destroy tree recursively
-template <class N, class T>
-void Tree<N, T>::erase_data(N* currentNode)
-{
-    if (currentNode != nullptr) {
-        erase_data(currentNode->m_left);
-        erase_data(currentNode->m_right);
-        delete currentNode->m_data;
-    }
 }
 
 #endif //AVLTREE_h

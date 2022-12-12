@@ -207,40 +207,33 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
 output_t<int> world_cup_t::get_num_played_games(int playerId)
 {
     if (playerId <= 0) {
-        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
-        return outputInvalid;
+        return output_t<int>(StatusType::INVALID_INPUT);
     }
     Player* tmpPlayer;
     try {
         tmpPlayer = m_playersByID.search_and_return_data(playerId);
     }
     catch (const NodeNotFound& e) {
-        output_t<int> outputFailure(StatusType::FAILURE);
-        return outputFailure;
+        return output_t<int>(StatusType::FAILURE);
     }
     //Extract the total games played by the player - their personal played games + the total team games
-    Team* tmpTeam = tmpPlayer->get_team();
-    int totalGames = tmpPlayer->get_gamesPlayed() + tmpTeam->get_games();
-    output_t<int> newOutput(totalGames);
-    return newOutput;
+    int totalGames = tmpPlayer->get_gamesPlayed() + tmpPlayer->get_team()->get_games();
+    return output_t<int>(totalGames);
 }
 
 output_t<int> world_cup_t::get_team_points(int teamId)
 {
     if (teamId <= 0) {
-        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
-        return outputInvalid;
+        return output_t<int>(StatusType::INVALID_INPUT);
     }
     Team* tmpTeam;
     try {
         tmpTeam = m_teamsByID.search_and_return_data(teamId);
     }
     catch (const NodeNotFound& e) {
-        output_t<int> outputFailure(StatusType::FAILURE);
-        return outputFailure;
+        return output_t<int>(StatusType::FAILURE);
     }
-    output_t<int> newOutput(tmpTeam->get_points());
-    return newOutput;
+    return output_t<int>(tmpTeam->get_points());
 }
 
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
@@ -300,10 +293,12 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 output_t<int> world_cup_t::get_top_scorer(int teamId)
 {
     if (teamId == 0) {
-        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
-        return outputInvalid;
+        return output_t<int>(StatusType::INVALID_INPUT);
     }
     output_t<int> outputFailure(StatusType::FAILURE);
+    if (m_totalNumPlayers == 0) {
+        return outputFailure;
+    }
     if (teamId > 0) {
         Team* tmpTeam;
         try {
@@ -315,21 +310,15 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
         if (tmpTeam->get_num_players() == 0) {
             return outputFailure;
         }
-        output_t<int> newOutput(tmpTeam->get_top_scorer()->get_playerId());
-        return newOutput;
+        return output_t<int>(tmpTeam->get_top_scorer()->get_playerId());
     }
-    if (m_totalNumPlayers == 0) {
-        return outputFailure;
-    }
-    output_t<int> newOutput(m_overallTopScorer->get_playerId());
-    return newOutput;
+    return output_t<int>(m_overallTopScorer->get_playerId());
 }
 
 output_t<int> world_cup_t::get_all_players_count(int teamId)
 {
     if (teamId == 0) {
-        output_t<int> outputInvalid(StatusType::INVALID_INPUT);
-        return outputInvalid;
+        return output_t<int>(StatusType::INVALID_INPUT);
     }
     if (teamId > 0) {
         Team* tmpTeam;
@@ -337,14 +326,11 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
             tmpTeam = m_teamsByID.search_and_return_data(teamId);
         }
         catch (const NodeNotFound& e) {
-            output_t<int> outputFailure(StatusType::FAILURE);
-            return outputFailure;
+            return output_t<int>(StatusType::FAILURE);
         }
-        output_t<int> newOutput(tmpTeam->get_num_players());
-        return newOutput;
+        return output_t<int>(tmpTeam->get_num_players());
     }
-    output_t<int> newOutput(m_totalNumPlayers);
-    return newOutput;
+    return output_t<int>(m_totalNumPlayers);
 }
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
