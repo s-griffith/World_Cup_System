@@ -63,6 +63,7 @@ void TreeExtraPointer<T>::update_additional_pointer(const int id, typename Compl
     tmpNode->m_matchOtherTree = otherNode;
 }
 
+/*
 
 template <class T>
 int TreeExtraPointer<T>::get_closest(const int id)
@@ -141,6 +142,7 @@ typename ComplexNode<T>::ComplexNode* TreeExtraPointer<T>::findRightClosest(type
     }
     return nullptr;
 }
+ */
 
 template <class T>
 void TreeExtraPointer<T>::mergeNodesExtraPointer(typename NodeWithPointer<T>::NodeWithPointer* node) {

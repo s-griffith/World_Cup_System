@@ -10,7 +10,9 @@ Player::Player(const int playerId, const int gamesPlayed, const int goals, const
     m_goals(goals),
     m_cards(cards),
     m_goalkeeper(goalKeeper),
-    m_team(tmpTeam)
+    m_team(tmpTeam),
+    m_closestLeft(nullptr),
+    m_closestRight(nullptr)
 {}
 
 //Return the player's id
@@ -49,6 +51,16 @@ Team* Player::get_team()
     return m_team;
 }
 
+Player* Player::get_closest_right()
+{
+    return m_closestRight;
+}
+
+Player* Player::get_closest_left()
+{
+    return m_closestLeft;
+}
+
 //Update the number of games the player played
 void Player::update_gamesPlayed(const int gamesPlayed)
 {
@@ -71,6 +83,16 @@ void Player::update_cards(const int cardsReceived)
 void Player::update_team(Team* tmpTeam)
 {
     m_team = tmpTeam;
+}
+
+void Player::update_closest_left(Player* closestLeft)
+{
+    m_closestLeft = closestLeft;
+}
+
+void Player::update_closest_right(Player* closestRight)
+{
+    m_closestRight = closestRight;
 }
 
 //Get the ID of the closest player to the current player

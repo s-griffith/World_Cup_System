@@ -64,9 +64,11 @@ void Team::unite_teams(Team* team1, Team* team2) {
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
 
-    this->m_playersByID.mergeNodesExtraPointer(team1->m_playersByID.m_node);
+    //this->m_playersByID.mergeNodesExtraPointer(team1->m_playersByID.m_node);
+    this->m_playersByID.mergeNodes(team1->m_playersByID.m_node);
     this->m_playersByScore.mergeNodes(team1->m_playersByScore.m_node);
-    this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
+    //this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
+    this->m_playersByID.mergeNodes(team2->m_playersByID.m_node);
     this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node);
 
     this->m_topScorer = m_playersByScore.search_and_return_max();
@@ -75,11 +77,21 @@ void Team::unite_teams(Team* team1, Team* team2) {
 
 int Team::get_closest_team_player(const int playerId) {
     int closest_id = 0;
+    Player* tmpPlayer;
     try {
-        closest_id = m_playersByID.get_closest(playerId);
+        tmpPlayer = m_playersByID.search_and_return_data(playerId);
     }
     catch (const NodeNotFound& e) {
         throw e;
+    }
+    if (tmpPlayer->get_closest_left() == nullptr) {
+        closest_id = tmpPlayer->get_closest_right()->get_playerId();
+    }
+    else if (tmpPlayer->get_closest_right() == nullptr) {
+        closest_id = tmpPlayer->get_closest_left()->get_playerId();
+    }
+    else {
+        closest_id = tmpPlayer->get_closest(tmpPlayer->get_closest_left(), tmpPlayer->get_closest_right());
     }
     return closest_id;
 }
@@ -91,7 +103,7 @@ void Team::get_all_team_players(int* const output) {
 StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* playerByScoreNode){
     try {
         m_playersByID.insert(player, id);
-        m_playersByID.update_additional_pointer(id, playerByScoreNode);
+    //    m_playersByID.update_additional_pointer(id, playerByScoreNode);
         m_playersByScore.insert(player, id, goals, cards);
     }
     catch (const InvalidID& e) {

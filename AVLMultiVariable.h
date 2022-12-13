@@ -63,6 +63,9 @@ public:
      */
     ComplexNode<T>& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode);
 
+    void update_closest(const int playerId, const int goals, const int cards);
+    typename ComplexNode<T>::ComplexNode* findLeftClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode);
+    typename ComplexNode<T>::ComplexNode* findRightClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode);
     //Helper function to print the tree - useful for testing
     void print_tree();
 };
@@ -231,6 +234,87 @@ ComplexNode<T>& MultiTree<T>::search_recursively(const int id, const int goals, 
     return search_recursively(id, goals, cards, currentNode->m_left);
 }
 
+
+template<class T>
+void MultiTree<T>::update_closest(const int playerId, const int goals, const int cards)
+{
+    //Search for specific node
+    typename ComplexNode<T>::ComplexNode* currentPlayer = &(this->search_specific_id(playerId, goals, cards));
+    //Get closest node to the left of the other tree node
+    typename ComplexNode<T>::ComplexNode* closestLeft = findLeftClosest(currentPlayer);
+    if (closestLeft != nullptr) {
+        currentPlayer->m_data->update_closest_left(closestLeft->m_data);
+    }
+    else {
+        currentPlayer->m_data->update_closest_left(nullptr);
+    }
+    //Get closest node to the right of the other tree node
+    typename ComplexNode<T>::ComplexNode* closestRight = findRightClosest(currentPlayer);
+    if (closestRight != nullptr) {
+        currentPlayer->m_data->update_closest_right(closestRight->m_data);
+    }
+    else {
+        currentPlayer->m_data->update_closest_right(nullptr);
+    }
+}
+
+
+template <class T>
+typename ComplexNode<T>::ComplexNode* MultiTree<T>::findLeftClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode)
+{
+    typename ComplexNode<T>::ComplexNode* closestLeft = currentPlayerNode;
+    if (closestLeft->m_left != nullptr) {
+        closestLeft = closestLeft->m_left;
+        while (closestLeft->m_right != nullptr) {
+            closestLeft = closestLeft->m_right;
+        }
+    }
+    if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_right == currentPlayerNode)) {
+        if (closestLeft->m_id == currentPlayerNode->m_id) {
+            closestLeft = currentPlayerNode->m_parent;
+        }
+        else {
+            //Check which node is closer: the child to the left or the parent
+            int tmpId = currentPlayerNode->m_data->get_closest(closestLeft->m_data, currentPlayerNode->m_parent->m_data);
+            if (tmpId == currentPlayerNode->m_parent->m_id) {
+                closestLeft = currentPlayerNode->m_parent;
+            }
+        }
+    }
+    if (closestLeft->m_id != currentPlayerNode->m_id) {
+        return closestLeft;
+    }
+    return nullptr;
+}
+
+
+template <class T>
+typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode)
+{
+    typename ComplexNode<T>::ComplexNode* closestRight = currentPlayerNode;
+    if (closestRight->m_right != nullptr) {
+        closestRight = closestRight->m_right;
+        while (closestRight->m_left != nullptr) {
+            closestRight = closestRight->m_left;
+        }
+    }
+    if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_left == currentPlayerNode)) {
+        if (closestRight->m_id == currentPlayerNode->m_id) {
+            closestRight = currentPlayerNode->m_parent;
+        }
+        else {
+            //Check which node is closer: the child to the right or the parent
+            int tmpId = currentPlayerNode->m_data->get_closest(closestRight->m_data, currentPlayerNode->m_parent->m_data);
+            if (tmpId == currentPlayerNode->m_parent->m_id) {
+                closestRight = currentPlayerNode->m_parent;
+            }
+        }
+    }
+    if (closestRight->m_id != currentPlayerNode->m_id) {
+        return closestRight;
+    }
+    return nullptr;
+}
 
 //-----------------------------------------Helper Function for Testing--------------------------
 

@@ -52,6 +52,9 @@ public:
     */
     Team* get_team();
 
+    Player* get_closest_right();
+    Player* get_closest_left();
+
     /*
     * Update the number of games the player played
     * @param - the number of new games the player played
@@ -80,6 +83,9 @@ public:
     */
     void update_team(Team* tmpTeam);
 
+    void update_closest_left(Player* closestLeft);
+    void update_closest_right(Player* closestRight);
+
     /*
     * Check which player from input is "closer" to the current player according to number of goals, cards and ID
     * @param - two shared pointers to players to compare
@@ -102,6 +108,8 @@ private:
     int m_cards;
     bool m_goalkeeper;
     Team* m_team;
+    Player* m_closestLeft;
+    Player* m_closestRight;
 };
 
 

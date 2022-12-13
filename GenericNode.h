@@ -36,6 +36,8 @@ public:
      */
     void addTeams(Team* teams, const int minTeamId, const int maxTeamId);
 
+    void inorderWalkTeamID(Team* team);
+
 protected:
 
     //Pointers to the parent node and the two child nodes
@@ -382,6 +384,15 @@ void GenericNode<T>::inorderWalkNode(bool flag) {
             this->printData();
         }
         m_right->inorderWalkNode(flag);
+    }
+}
+
+template <class T>
+void GenericNode<T>::inorderWalkTeamID(Team* team) {
+    if (this != nullptr) {
+        m_left->inorderWalkTeamID(team);
+        this->m_data->update_team(team);
+        m_right->inorderWalkTeamID(team);
     }
 }
 

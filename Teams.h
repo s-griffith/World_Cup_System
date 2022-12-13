@@ -8,7 +8,7 @@ class Player;
 #include <memory>
 #include "wet1util.h"
 #include "AVLMultiVariable.h"
-#include "AVLTreeExtraPointer.h"
+#include "GenericNode.h"
 
 class Team {
 public:
@@ -63,7 +63,7 @@ private:
     int m_numCards;
     int m_numGames;
     //AVL Tree organized by player ID
-    TreeExtraPointer<Player*> m_playersByID;
+    Tree<GenericNode<Player*>, Player*> m_playersByID;
     //AVL Tree organized by best-scoring players
     MultiTree<Player*> m_playersByScore;
     Player* m_topScorer;

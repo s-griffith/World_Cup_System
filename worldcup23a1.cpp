@@ -85,7 +85,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         catch (const NodeNotFound& e) {
             return StatusType::FAILURE;
         }
-        //Update the number of games the player played - add get_games() to teams***********************************************************************
+        //Calculate the number of games the player played
         int playerGames = gamesPlayed - tmpTeam->get_games();
         try {
             //The inputs are okay - continue adding player:
@@ -98,6 +98,13 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             m_playersByID.insert(tmpPlayer, playerId);
             //Update top scorers
             m_playersByScore.insert(tmpPlayer, playerId, goals, cards);
+            m_playersByScore.update_closest(playerId, goals, cards);
+            if (tmpPlayer->get_closest_left() != nullptr) {
+                m_playersByScore.update_closest(tmpPlayer->get_closest_left()->get_playerId(), tmpPlayer->get_closest_left()->get_goals(), tmpPlayer->get_closest_left()->get_cards());
+            }
+            if (tmpPlayer->get_closest_right() != nullptr) {
+                m_playersByScore.update_closest(tmpPlayer->get_closest_right()->get_playerId(), tmpPlayer->get_closest_right()->get_goals(), tmpPlayer->get_closest_right()->get_cards());
+            }
             m_overallTopScorer = m_playersByScore.search_and_return_max();
             //Add player to team trees + update team stats + update top team scorer
             tmpTeam->add_player(tmpPlayer, playerId, goals, cards, goalKeeper, &(m_playersByScore.search_specific_id(playerId, goals, cards)));
@@ -143,6 +150,8 @@ StatusType world_cup_t::remove_player(int playerId)
     }
     //Remove player from team players by score tree
     Team* tmpTeam = tmpPlayer->get_team();
+    Player* closestLeft = tmpPlayer->get_closest_left();
+    Player* closestRight = tmpPlayer->get_closest_right();
     try {
         tmpTeam->remove_player(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards(), tmpPlayer->get_goalkeeper());
         //Remove player from tree of all players
@@ -155,6 +164,12 @@ StatusType world_cup_t::remove_player(int playerId)
         }
     }
     catch (const NodeNotFound& e) {}
+    if (closestRight != nullptr) {
+        m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), closestRight->get_cards());
+    }
+    if (closestLeft != nullptr) {
+        m_playersByScore.update_closest(closestLeft->get_playerId(), closestLeft->get_goals(), closestLeft->get_cards());
+    }
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
     tmpTeam->update_top_player();
@@ -199,8 +214,17 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         return StatusType::ALLOCATION_ERROR;
     }
     m_overallTopScorer = m_playersByScore.search_and_return_max();
+    Player* closestLeft = tmpPlayer->get_closest_left();
+    Player* closestRight = tmpPlayer->get_closest_right();
     //Update the teams total stats and the top scored player of the team
     tmpTeam->update_team_stats(scoredGoals, cardsReceived);
+    if (closestRight != nullptr) {
+        m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), closestRight->get_cards());
+    }
+    if (closestLeft != nullptr) {
+        m_playersByScore.update_closest(closestLeft->get_playerId(), closestLeft->get_goals(), closestLeft->get_cards());
+    }
+    m_playersByScore.update_closest(tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
     return StatusType::SUCCESS;
 }
 
@@ -209,8 +233,8 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     if (teamId1 == teamId2 || teamId1 <= 0 || teamId2 <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    Team* team1 = nullptr;
-    Team* team2 = nullptr;
+    Team* team1;
+    Team* team2;
     try {
         team1 = m_qualifiedTeams.search_and_return_data(teamId1);
         team2 = m_qualifiedTeams.search_and_return_data(teamId2);
