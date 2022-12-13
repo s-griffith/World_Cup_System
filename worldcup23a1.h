@@ -39,7 +39,6 @@ private:
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
     MultiTree<Player*> m_playersByScore;
 
-	Tree<GenericNode<Team*>, Team*> knockout_rounds(Tree<GenericNode<Team*>, Team*> teams);
 	int knockout_games(Team* teams, int numTeams, const int size);
 	int compete(Team& team1, Team& team2);
 public:

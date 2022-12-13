@@ -123,7 +123,6 @@ void Team::remove_player(const int playerID, const int goals, const int cards, c
     //Do the cards he had get subtracted from the team's total? Goals? etc.
     m_playersByID.remove(playerID);
     m_playersByScore.remove(playerID, goals, cards);
-    update_top_player();
     if (goalKeeper) {
         m_numGoalkeepers--;
     }

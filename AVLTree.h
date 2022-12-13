@@ -8,7 +8,11 @@
 #include "Exception.h"
 #include "Node.h"
 
-//AVL tree template class
+/*
+* Class Tree
+* This class is used to create an AVL tree sorted by a single key.
+* It is used as a base class for other types of trees.
+*/
 template <class N, class T>
 class Tree {
 protected:
@@ -17,10 +21,9 @@ protected:
 public:
     //The tree's root node
     N* m_node;
-    //Tree Constructor
-    Tree();
 
-    //Tree Copy constructor, assignment operator and destructor
+    //Constructors
+    Tree();
     virtual ~Tree();
     Tree(const Tree& other);
     Tree& operator=(const Tree& other);
@@ -56,15 +59,33 @@ public:
      * @return - none
      */
     void remove(const int id);
+
+    /*
+     * Rebalance the tree according to the heights of the relevant nodes
+     * @param - The node from which the rebalancing needs to start
+     * @return - none
+     */
     void rebalance_tree(N* currentNode);
+
+    /*
+     * Search for a node with specific data, according to the id given
+     * @param - The ID of the requested node
+     * @return - a reference to the node that holds the data
+     */
+    virtual N& search_specific_id(const int id) const;
+
+    /*
+     * Search for a node recursively throughout the tree
+     * @param - The ID of the requested node, the current node of the tree
+     * @return - a reference to the node
+     */
+    virtual N& search_recursively(const int id, N* currentNode) const;
 
     /*
      * Search for node with specific data, according to the id given
      * @param - The ID of the requested node
-     * @return - none
+     * @return - the data the node holds
      */
-    virtual N& search_specific_id(const int id) const;
-    virtual N& search_recursively(const int id, N* currentNode) const;
     virtual T& search_and_return_data(const int id) const;
 
     /*
@@ -74,16 +95,20 @@ public:
     N* make_node_leaf(N* node);
 
     /*
+    * Helper function for get_all_players in world_cup:
     * Add all of the tree keys to the given array
+    * @param - an array
     * @return - none
     */
     void get_all_data(int* const array) const;
 
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Recursively inserts nodes into the given tree, starting with the given node
+     * @param - A pointer to the starting node
+     * @return - none
+     */
     void mergeNodes(N* node);
-
-
-
-//-----------------------------------------FUNCTIONS FOR TESTING--------------------------
 
     void inorderWalk(bool flag);
     void print_tree();
@@ -159,8 +184,8 @@ template <class N, class T>
 void Tree<N, T>::destroy_tree(N* currentNode)
 {
     if (currentNode != nullptr) {
-        destroy_tree(currentNode->m_left); //this might cause memory leaks with multitree - only place might need to override the function for real
-        destroy_tree(currentNode->m_right); //might need dynamic cast here to Node*, or find a way to override destroy func
+        destroy_tree(currentNode->m_left);
+        destroy_tree(currentNode->m_right);
         if (currentNode->m_parent != nullptr) {
             if (currentNode->m_parent->m_left == currentNode) {
                 currentNode->m_parent->m_left = nullptr;
@@ -466,26 +491,6 @@ void Tree<N, T>::get_all_data(int* const array) const
     }
 }
 
-/*
-template <class N, class T>
-void Tree<N, T>::inorderWalk(bool flag) {
-    m_node->inorderWalkNode(flag);
-}
-*/
-/*template<class N, class T>
-void Tree<N, T>::mergeNodes(N* node) {
-    N* x = node;
-    while (x != nullptr) {
-        this->insert(x->m_data, x->m_id);
-        if (x->m_right != nullptr) {
-            this->insert(x->m_right->m_data, x->m_right->m_id);
-        }
-        if (x->m_left != nullptr) {
-            this->insert(x->m_left->m_data, x->m_left->m_id);
-        }
-        x = x->
-    }
-} */
 
 template<class N, class T>
 void Tree<N, T>::mergeNodes(N* node) {

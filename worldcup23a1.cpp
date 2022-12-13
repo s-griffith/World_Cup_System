@@ -172,6 +172,7 @@ StatusType world_cup_t::remove_player(int playerId)
     }
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
+    tmpTeam->update_top_player();
     //Remove one from the counter of all players in game
     m_totalNumPlayers--;
     delete tmpPlayer;
