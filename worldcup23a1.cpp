@@ -154,25 +154,24 @@ StatusType world_cup_t::remove_player(int playerId)
     Player* closestRight = tmpPlayer->get_closest_right();
     try {
         tmpTeam->remove_player(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards(), tmpPlayer->get_goalkeeper());
-        //Remove player from tree of all players
-        m_playersByID.remove(playerId);
-        //Remove player from overall game tree of players by score
-        m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
         //Remove team from tree of qualified teams
         if (!(tmpTeam->is_valid())) {
             m_qualifiedTeams.remove(tmpTeam->get_teamID());
         }
+        //Remove player from tree of all players
+        m_playersByID.remove(playerId);
+        //Remove player from overall game tree of players by score
+        m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
     }
     catch (const NodeNotFound& e) {}
     if (closestRight != nullptr) {
-        m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), closestRight->get_cards());
+        closestRight->update_closest_left(closestLeft);
     }
     if (closestLeft != nullptr) {
-        m_playersByScore.update_closest(closestLeft->get_playerId(), closestLeft->get_goals(), closestLeft->get_cards());
+        closestLeft->update_closest_right(closestRight);
     }
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
-    tmpTeam->update_top_player();
     //Remove one from the counter of all players in game
     m_totalNumPlayers--;
     delete tmpPlayer;
