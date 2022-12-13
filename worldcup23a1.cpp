@@ -134,7 +134,7 @@ StatusType world_cup_t::remove_player(int playerId)
     }
     //Remove player from team players by score tree
     Team* tmpTeam = tmpPlayer->get_team();
-    tmpTeam->remove_player(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
+    tmpTeam->remove_player(playerId ,tmpPlayer->get_goals(), tmpPlayer->get_cards());
     //Remove team from tree of qualified teams
     if (!(tmpTeam->is_valid())) {
         try {
@@ -143,7 +143,7 @@ StatusType world_cup_t::remove_player(int playerId)
         catch (const NodeNotFound& e) {}
     }
     //Remove player from overall game tree of players by score
-    m_playersByScore.remove(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
+    m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
     tmpTeam->update_top_player();
@@ -170,9 +170,9 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     }
     //Pointer to the team the player plays in
     Team* tmpTeam = tmpPlayer->get_team();
-    tmpTeam->remove_player_by_score(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
+    tmpTeam->remove_player_by_score(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
     //Remove player from tree of all scorers
-    m_playersByScore.remove(tmpPlayer->get_goals(), tmpPlayer->get_cards(), playerId);
+    m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
     tmpPlayer->update_gamesPlayed(gamesPlayed);
     tmpPlayer->update_cards(cardsReceived);
     tmpPlayer->update_goals(scoredGoals);

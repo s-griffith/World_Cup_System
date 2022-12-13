@@ -107,11 +107,12 @@ StatusType Team::add_player(Player* player, const int id, const int goals, const
     return StatusType::SUCCESS;
 }
 
-void Team::remove_player(const int goals, const int cards, const int playerID){
+void Team::remove_player(const int playerID, const int goals, const int cards){
     //Do the cards he had get subtracted from the team's total? Goals? etc.
     m_playersByID.remove(playerID);
-    m_playersByScore.remove(goals, cards, playerID);
+    m_playersByScore.remove(playerID, goals, cards);
     update_top_player();
+    this->m_numPlayers--;
 }
 
 bool Team::is_valid() const{
@@ -145,8 +146,8 @@ void Team::knockout_setID() {
     this->m_id *= -1;
 }
 
-void Team::remove_player_by_score(const int goals, const int cards, const int id) {
-    m_playersByScore.remove(goals, cards, id);
+void Team::remove_player_by_score(const int id, const int goals, const int cards) {
+    m_playersByScore.remove(id, goals, cards);
 }
 
 void Team::insert_player_by_score(Player* player, const int id, const int goals, const int cards) {

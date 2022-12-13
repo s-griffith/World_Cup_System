@@ -4,32 +4,26 @@
 #include "Node.h"
 
 /*
-* Class Tree : Complex Node
-* This class is used to create the separate nodes in the tree, sorted based on three keys:
+* Class Complex Node : Node
+* This class is used to create separate nodes in the tree, sorted based on three keys:
 *       the number of goals the player scored, the number of cards they received and their player ID
 */
 template <class T>
 class ComplexNode : Node<T> {
 public:
-    //Constructor
+    //Constructors
     ComplexNode();
-
-    //The copy constructor, the assignment operator and the default destructor
-    ComplexNode(const ComplexNode&) = default;
-    ComplexNode& operator=(const ComplexNode& other) = default;
     ~ComplexNode() = default;
-
-    //Pointers to the parent node and the two child nodes
-    ComplexNode<T>* m_parent;
-    ComplexNode<T>* m_left;
-    ComplexNode<T>* m_right;
+    ComplexNode(const ComplexNode&);
+    ComplexNode& operator=(const ComplexNode& other);
 
 private:
-    //The goals the player scored and the cards they received
-    int m_goals;
-    int m_cards;
-    
-    //maybe add sort()?
+
+    /*
+     * Left-Right Rotation
+     * @return - none
+     */
+    ComplexNode* ll_rotation(ComplexNode* node);
 
     /*
      * Right-Right Rotation
@@ -50,23 +44,16 @@ private:
     ComplexNode* lr_rotation(ComplexNode* node);
 
     /*
-     * Left-Right Rotation
+     * Update balance factor of the current node
      * @return - none
-     */
-    ComplexNode* ll_rotation(ComplexNode* node);
-
-
+    */
+    void update_bf();
+    
     /*
      * Update height of the current node
      * @return - none
     */
     void update_height();
-
-    /*
-     * Update balance factor of the current node
-     * @return - none
-    */
-    void update_bf();
 
     //Helper functions to print
     void inorderWalkNode(bool flag);
@@ -82,56 +69,20 @@ private:
 
     template <class ComplexNode, class N>
     friend class Tree;
+
+    //Pointers to the parent node and the two child nodes
+    ComplexNode<T>* m_parent;
+    ComplexNode<T>* m_left;
+    ComplexNode<T>* m_right;
+    //The goals the player scored and the cards they received
+    int m_goals;
+    int m_cards;
+    
 };
 
 
-template <class T>
-void ComplexNode<T>::printNode() {
-    int parent, left, right;
-    if (m_parent == nullptr) {
-        parent = -1;
-    }
-    else {
-        parent = m_parent->m_id;
-    }
-    if (m_left == nullptr) {
-        left = -1;
-    }
-    else {
-        left = m_left->m_id;
-    }
-    if (m_right == nullptr) {
-        right = -1;
-    }
-    else {
-        right = m_right->m_id;
-    }
-    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << std::endl;
-}
+//-----------------------------------------Constructors--------------------------
 
-template <class T>
-void ComplexNode<T>::printData() {
-    std::cout << "ID = " << Node<T>::m_id << std::endl;
-}
-
-template <class T>
-void ComplexNode<T>::inorderWalkNode(bool flag) {
-    if (this != nullptr) {
-        m_left->inorderWalkNode(flag);
-        if (flag) {
-            this->printNode();
-        }
-        else {
-            this->printData();
-        }
-        m_right->inorderWalkNode(flag);
-    }
-}
-
-
-//--------------------------------------------Constructors---------------------------------------------------
-
-//Node Constructor
 template <class T>
 ComplexNode<T>::ComplexNode() :
         Node<T>(),
@@ -143,8 +94,19 @@ ComplexNode<T>::ComplexNode() :
 {}
 
 
-//--------------------------------------------Rotations---------------------------------------------------
+template<class T>
+ComplexNode<T>::ComplexNode(const ComplexNode&) {
 
+}
+
+
+template<class T>
+ComplexNode<T>& ComplexNode<T>::operator=(const ComplexNode& other) {
+
+}
+
+
+//--------------------------------------------Rotations---------------------------------------------------
 
 //Left-Left tree rotation, on the node with balance factor of +2
 template <class T>
@@ -177,6 +139,7 @@ typename ComplexNode<T>::ComplexNode* ComplexNode<T>::ll_rotation(ComplexNode<T>
     m_parent->m_right = this;
     return tmpToReturn;
 }
+
 
 //Right-Right tree rotation, on the node with balance factor of -2
 template <class T>
@@ -224,8 +187,8 @@ typename ComplexNode<T>::ComplexNode* ComplexNode<T>::lr_rotation(ComplexNode<T>
     return tmp;
 }
 
-//----------------------------------------------Node Stats---------------------------------------------------
 
+//----------------------------------------------Node Stats---------------------------------------------------
 
 //Update the balance factor of the specific node
 template <class T>
@@ -258,6 +221,55 @@ void ComplexNode<T>::update_height()
     }
     else {
         Node<T>::m_height = heightRight;
+    }
+}
+
+
+//-----------------------------------------FUNCTIONS FOR TESTING--------------------------
+
+template <class T>
+void ComplexNode<T>::printNode() {
+    int parent, left, right;
+    if (m_parent == nullptr) {
+        parent = -1;
+    }
+    else {
+        parent = m_parent->m_id;
+    }
+    if (m_left == nullptr) {
+        left = -1;
+    }
+    else {
+        left = m_left->m_id;
+    }
+    if (m_right == nullptr) {
+        right = -1;
+    }
+    else {
+        right = m_right->m_id;
+    }
+    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " 
+            << left << ", Right = " << right << std::endl;
+}
+
+
+template <class T>
+void ComplexNode<T>::printData() {
+    std::cout << "ID = " << Node<T>::m_id << std::endl;
+}
+
+
+template <class T>
+void ComplexNode<T>::inorderWalkNode(bool flag) {
+    if (this != nullptr) {
+        m_left->inorderWalkNode(flag);
+        if (flag) {
+            this->printNode();
+        }
+        else {
+            this->printData();
+        }
+        m_right->inorderWalkNode(flag);
     }
 }
 

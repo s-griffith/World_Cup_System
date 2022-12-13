@@ -11,6 +11,9 @@
 //AVL tree template class
 template <class N, class T>
 class Tree {
+protected:
+//Try to get m_node here
+
 public:
     //The tree's root node
     N* m_node;
