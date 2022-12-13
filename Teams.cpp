@@ -107,12 +107,15 @@ StatusType Team::add_player(Player* player, const int id, const int goals, const
     return StatusType::SUCCESS;
 }
 
-void Team::remove_player(const int playerID, const int goals, const int cards){
+void Team::remove_player(const int playerID, const int goals, const int cards, const bool goalKeeper){
     //Do the cards he had get subtracted from the team's total? Goals? etc.
     m_playersByID.remove(playerID);
     m_playersByScore.remove(playerID, goals, cards);
     update_top_player();
-    this->m_numPlayers--;
+    if (goalKeeper) {
+        m_numGoalkeepers--;
+    }
+    m_numPlayers--;
 }
 
 bool Team::is_valid() const{
@@ -152,6 +155,7 @@ void Team::remove_player_by_score(const int id, const int goals, const int cards
 
 void Team::insert_player_by_score(Player* player, const int id, const int goals, const int cards) {
     m_playersByScore.insert(player, id, goals, cards);
+    update_top_player();
 }
 
 void Team::print_team() {
@@ -162,7 +166,6 @@ void Team::print_team() {
 void Team::update_team_stats(const int goals, const int cards){
     update_num_goals(goals);
     update_num_cards(cards);
-    update_top_player();
 }
 
 void Team::add_game() {
