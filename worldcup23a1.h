@@ -40,7 +40,7 @@ private:
     MultiTree<Player*> m_playersByScore;
 
 	Tree<GenericNode<Team*>, Team*> knockout_rounds(Tree<GenericNode<Team*>, Team*> teams);
-	void knockout_games(Team* teams, int numTeams, const int size);
+	int knockout_games(Team* teams, int numTeams, const int size);
 	int compete(Team& team1, Team& team2);
 public:
 	// <DO-NOT-MODIFY> {

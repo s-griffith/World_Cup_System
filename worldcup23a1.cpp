@@ -30,11 +30,11 @@ StatusType world_cup_t::add_team(int teamId, int points)
         newTeam = new Team(teamId, points);
         m_teamsByID.insert(newTeam, teamId);
     }
-    catch (std::bad_alloc& e) {
+    catch (const std::bad_alloc& e) {
         delete newTeam;
         return StatusType::ALLOCATION_ERROR;
     }
-    catch(InvalidID& e) {
+    catch(const InvalidID& e) {
         delete newTeam;
         return StatusType::FAILURE;
     }
@@ -54,7 +54,7 @@ StatusType world_cup_t::remove_team(int teamId)
         m_teamsByID.remove(teamId);
         delete team;
     }
-    catch(NodeNotFound& e) {
+    catch(const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
     return StatusType::SUCCESS;
@@ -238,7 +238,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
         team1 = m_qualifiedTeams.search_and_return_data(teamId1);
         team2 = m_qualifiedTeams.search_and_return_data(teamId2);
     }
-    catch (NodeNotFound& e) {
+    catch (const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
     this->compete(*team1, *team2);
@@ -282,21 +282,29 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     if (teamId1 == teamId2 || newTeamId <= 0 || teamId1 <= 0 || teamId2 <= 0) {
         return StatusType::INVALID_INPUT;
     }
+    bool alreadyExists = true;
     try {
         m_teamsByID.search_specific_id(newTeamId);
     }
-    catch (NodeNotFound& e){
-        if (newTeamId != teamId1 && newTeamId != teamId2) {
+    catch (const NodeNotFound& e){
+        alreadyExists = false;
+    }
+    if (newTeamId != teamId1 && newTeamId != teamId2 && alreadyExists) {
             return StatusType::FAILURE;
-        }
     }
     Team* team1;
     Team* team2;
     try {
         team1 = m_teamsByID.search_and_return_data(teamId1);
-        team2 = m_teamsByID.search_and_return_data(teamId2);
+    
     }
-    catch (NodeNotFound& e) {
+    catch (const NodeNotFound& e) {
+        return StatusType::FAILURE;
+    }
+    try {
+            team2 = m_teamsByID.search_and_return_data(teamId2);
+    }
+    catch (const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
     Team* nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
@@ -322,7 +330,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         try {
             m_qualifiedTeams.insert(nTeam, newTeamId);
         }
-        catch (std::bad_alloc& e) {
+        catch (const std::bad_alloc& e) {
             return StatusType::ALLOCATION_ERROR;
         }
     }
@@ -459,7 +467,9 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     //In a recursive function, go over every pair in the array and send to play match.
     //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
-    knockout_games(teams, num, num);
+    do {
+        num = knockout_games(teams, num, num);
+    } while (num > 1);
     Team* temp = teams;
     while (temp == nullptr) {
         temp = ++teams;
@@ -494,7 +504,7 @@ int world_cup_t::compete(Team& team1, Team& team2) {
     return winnerID;
 }
 
-void world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
+int world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
     if (numTeams <= 1) { //stop because there's an uneven number of teams
         return; //what to return here
     }
@@ -533,5 +543,5 @@ void world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
             (teams+currIndex1)->knockout_setID();
         }
     }
-    return;
+    return size;
 }
