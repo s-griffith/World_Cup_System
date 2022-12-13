@@ -2,16 +2,16 @@
 
 //-------------------------------------Constructors----------------------------
 Team::Team(const int teamID, const int points) :
-    m_id(teamID),
-    m_points(points),
-    m_numPlayers(0),
-    m_numGoalkeepers(0),
-    m_numGoals(0),
-    m_numCards(0),
-    m_numGames(0),
-    m_playersByID(),
-    m_playersByScore(),
-    m_topScorer(nullptr)
+        m_id(teamID),
+        m_points(points),
+        m_numPlayers(0),
+        m_numGoalkeepers(0),
+        m_numGoals(0),
+        m_numCards(0),
+        m_numGames(0),
+        m_playersByID(),
+        m_playersByScore(),
+        m_topScorer(nullptr)
 {}
 
 Team& Team::operator=(const Team& other) {
@@ -68,7 +68,7 @@ void Team::unite_teams(Team* team1, Team* team2) {
     this->m_playersByScore.mergeNodes(team1->m_playersByScore.m_node);
     this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
     this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node);
-    
+
     this->m_topScorer = m_playersByScore.search_and_return_max();
     //Qualified teams
 }
@@ -101,7 +101,7 @@ StatusType Team::add_player(Player* player, const int id, const int goals, const
     update_num_cards(cards);
     m_numPlayers++;
     if (goalkeeper) {
-         m_numGoalkeepers++;
+        m_numGoalkeepers++;
     }
     update_top_player();
     return StatusType::SUCCESS;
@@ -168,11 +168,11 @@ void Team::update_team_stats(const int goals, const int cards){
 void Team::add_game() {
     m_numGames++;
 }
-    
+
 void Team::update_points(const int k) {
     m_points += k;
 }
-    
+
 void Team::update_num_goals(const int goals) {
     m_numGoals += goals;
 }

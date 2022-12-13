@@ -1,3 +1,6 @@
+//Teams.h:
+
+
 #ifndef TEAMS_H
 #define TEAMS_H
 
@@ -42,7 +45,7 @@ public:
     StatusType add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* otherTree);
     void remove_player(const int playerID, const int goals, const int cards);
     bool is_valid() const;
-   // Team knockout_copy();
+    // Team knockout_copy();
     void knockout_setID();
     void knockout_unite(Team& winner, Team& loser);
     void remove_player_by_score(const int id, const int goals, const int cards);

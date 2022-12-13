@@ -1,12 +1,15 @@
+//world_cup.cpp
+
+
 #include "worldcup23a1.h"
 
 world_cup_t::world_cup_t() :
-    m_totalNumPlayers(0),
-    m_overallTopScorer(nullptr),
-    m_teamsByID(),
-    m_qualifiedTeams(),
-    m_playersByID(),
-    m_playersByScore()
+        m_totalNumPlayers(0),
+        m_overallTopScorer(nullptr),
+        m_teamsByID(),
+        m_qualifiedTeams(),
+        m_playersByID(),
+        m_playersByScore()
 {}
 
 world_cup_t::~world_cup_t() //I feel like this should be default
@@ -25,7 +28,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
     Team* newTeam;
     try  {
         newTeam = new Team(teamId, points);
-	    m_teamsByID.insert(newTeam, teamId);
+        m_teamsByID.insert(newTeam, teamId);
     }
     catch (std::bad_alloc& e) {
         delete newTeam;
@@ -117,7 +120,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         m_totalNumPlayers++;
         return StatusType::SUCCESS;
     }
-	return StatusType::FAILURE;
+    return StatusType::FAILURE;
 }
 
 StatusType world_cup_t::remove_player(int playerId)
@@ -152,11 +155,11 @@ StatusType world_cup_t::remove_player(int playerId)
     //Remove one from the counter of all players in game
     m_totalNumPlayers--;
     delete tmpPlayer;
-	return StatusType::SUCCESS;
+    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
-                                        int scoredGoals, int cardsReceived)
+                                            int scoredGoals, int cardsReceived)
 {
     if (playerId <= 0 || gamesPlayed < 0 || scoredGoals < 0 || cardsReceived < 0) {
         return StatusType::INVALID_INPUT;
@@ -201,7 +204,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
         return StatusType::FAILURE;
     }
     this->compete(*team1, *team2);
-	return StatusType::SUCCESS;
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_num_played_games(int playerId)
@@ -335,7 +338,7 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
 {
-	if (output == nullptr || teamId == 0) {
+    if (output == nullptr || teamId == 0) {
         return StatusType::INVALID_INPUT;
     }
     //If the players of a certain team is requested
@@ -360,7 +363,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         return StatusType::FAILURE;
     }
     m_playersByID.get_all_data(output);
-	return StatusType::SUCCESS;
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
@@ -410,7 +413,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     catch (const std::bad_alloc& e) {
         delete[] teams;
         throw e;
-    }   
+    }
     //Fill in teams according to their order
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
     if (num == 1) {
@@ -425,7 +428,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     int winnerID = temp->get_teamID();
     delete[] teams;
-	return output_t<int>(winnerID);
+    return output_t<int>(winnerID);
 }
 
 
@@ -477,7 +480,7 @@ void world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
     if (winnerID == first->get_teamID()) {
         first->knockout_unite(*first, *second);
         (teams+currIndex2)->knockout_setID();
-        }
+    }
     else if (winnerID == second->get_teamID()) {
         first->knockout_unite(*second, *first);
         (teams+currIndex1)->knockout_setID();
