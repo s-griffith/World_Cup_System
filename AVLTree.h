@@ -110,7 +110,7 @@ public:
      */
     void mergeNodes(N* node);
 
-    void inorderWalk(bool flag);
+    //void inorderWalk(bool flag);
     void print_tree();
 };
 
