@@ -507,7 +507,7 @@ int world_cup_t::compete(Team& team1, Team& team2) {
 
 int world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
     if (numTeams <= 1) { //stop because there's an uneven number of teams
-        return; //what to return here
+        return numTeams; //what to return here
     }
     int currIndex1 = 0;
     Team* first = teams;
@@ -522,27 +522,31 @@ int world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
         second = teams + currIndex2;
     }
     if (currIndex2 >= size) { //This happens only when there is a single team left in the array, so continue the process with the other pairs
-        return;
+        return numTeams;
     }
-    knockout_games(teams+currIndex2, numTeams-2, size-currIndex2); //might need to be currIndex-1
+    return knockout_games(teams+currIndex2, numTeams-2, size-currIndex2); //might need to be currIndex-1
     int winnerID = compete(*first, *second);
     if (winnerID == first->get_teamID()) {
         first->knockout_unite(*first, *second);
+        numTeams--;
         (teams+currIndex2)->knockout_setID();
     }
     else if (winnerID == second->get_teamID()) {
         first->knockout_unite(*second, *first);
+        numTeams--;
         (teams+currIndex1)->knockout_setID();
     }
     else {
         if (first->get_teamID() > second->get_teamID()) {
             first->knockout_unite(*first, *second);
+            numTeams--;
             (teams+currIndex2)->knockout_setID();
         }
         else {
             first->knockout_unite(*second, *first);
+            numTeams--;
             (teams+currIndex1)->knockout_setID();
         }
     }
-    return size;
+    return numTeams;
 }
