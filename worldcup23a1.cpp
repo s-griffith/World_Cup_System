@@ -76,6 +76,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
     }
     catch (const NodeNotFound& e) {
         Team* tmpTeam;
+        Player* tmpPlayer;
         //Check if there already is a team with this ID.
         //If there is then continue after "catch", otherwise return failure.
         try {
@@ -86,8 +87,13 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         }
         //Update the number of games the player played - add get_games() to teams***********************************************************************
         int playerGames = gamesPlayed - tmpTeam->get_games();
-        //The inputs are okay - continue adding player:
-        Player* tmpPlayer = new Player(playerId, playerGames, goals, cards, goalKeeper, tmpTeam);
+        try {
+            //The inputs are okay - continue adding player:
+            tmpPlayer = new Player(playerId, playerGames, goals, cards, goalKeeper, tmpTeam);
+        }
+        catch (const std::bad_alloc& e) {
+            return StatusType::ALLOCATION_ERROR;
+        }
         try {
             m_playersByID.insert(tmpPlayer, playerId);
             //Update top scorers
@@ -137,21 +143,21 @@ StatusType world_cup_t::remove_player(int playerId)
     }
     //Remove player from team players by score tree
     Team* tmpTeam = tmpPlayer->get_team();
-    tmpTeam->remove_player(playerId ,tmpPlayer->get_goals(), tmpPlayer->get_cards());
-    //Remove team from tree of qualified teams
-    if (!(tmpTeam->is_valid())) {
-        try {
+    try {
+        tmpTeam->remove_player(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards(), tmpPlayer->get_goalkeeper());
+        //Remove player from tree of all players
+        m_playersByID.remove(playerId);
+        //Remove player from overall game tree of players by score
+        m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+        //Remove team from tree of qualified teams
+        if (!(tmpTeam->is_valid())) {
             m_qualifiedTeams.remove(tmpTeam->get_teamID());
         }
-        catch (const NodeNotFound& e) {}
     }
-    //Remove player from overall game tree of players by score
-    m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+    catch (const NodeNotFound& e) {}
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
     tmpTeam->update_top_player();
-    //Remove player from tree of all players
-    m_playersByID.remove(playerId);
     //Remove one from the counter of all players in game
     m_totalNumPlayers--;
     delete tmpPlayer;
@@ -173,17 +179,26 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     }
     //Pointer to the team the player plays in
     Team* tmpTeam = tmpPlayer->get_team();
-    tmpTeam->remove_player_by_score(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
-    //Remove player from tree of all scorers
-    m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+    try {
+        tmpTeam->remove_player_by_score(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+        //Remove player from tree of all scorers
+        m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+    }
+    catch (const NodeNotFound& e) {}
     tmpPlayer->update_gamesPlayed(gamesPlayed);
     tmpPlayer->update_cards(cardsReceived);
     tmpPlayer->update_goals(scoredGoals);
-    //Update overall game player by score tree and the overall game top scorer
-    m_playersByScore.insert(tmpPlayer, tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
+    try {
+        //Update overall game player by score tree and the overall game top scorer
+        m_playersByScore.insert(tmpPlayer, tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
+        //Update team - update the team players by score tree
+        tmpTeam->insert_player_by_score(tmpPlayer, playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+    }
+    catch (const InvalidID& e) {}
+    catch (const std::bad_alloc& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
     m_overallTopScorer = m_playersByScore.search_and_return_max();
-    //Update team - update the team players by score tree
-    tmpTeam->insert_player_by_score(tmpPlayer, playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
     //Update the teams total stats and the top scored player of the team
     tmpTeam->update_team_stats(scoredGoals, cardsReceived);
     return StatusType::SUCCESS;

@@ -40,7 +40,7 @@ public:
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
     StatusType add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* otherTree);
-    void remove_player(const int playerID, const int goals, const int cards);
+    void remove_player(const int playerID, const int goals, const int cards, const bool goalKeeper);
     bool is_valid() const;
     // Team knockout_copy();
     void knockout_setID();
