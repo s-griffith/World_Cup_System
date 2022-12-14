@@ -172,6 +172,27 @@ void Team::knockout_setID() {
     this->m_id *= -1;
 }
 
+int Team::knockout_count(const int maxTeamID) {
+    Team* current = this;
+    int counter = 0;
+    while (current != nullptr && current->m_id <= maxTeamID) {
+        counter++;
+        current = current->m_closestTeamRight;
+    }
+    return counter;
+}
+
+void Team::knockout_insert(Team* teams, const int maxID) {
+    Team* current = this;
+    int index = 0;
+    while (current != nullptr && current->m_id <= maxID) {
+        *(teams+index) = *(current);
+        current = current->m_closestTeamRight;
+        index++;
+    }
+}
+
+
 void Team::remove_player_by_score(const int id, const int goals, const int cards) {
     m_playersByScore.remove(id, goals, cards);
 }

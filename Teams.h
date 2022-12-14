@@ -3,6 +3,7 @@
 
 class Player;
 
+
 #include "Player.h"
 #include "AVLTree.h"
 #include <memory>
@@ -47,6 +48,8 @@ public:
     bool is_valid() const;
     // Team knockout_copy();
     void knockout_setID();
+    int knockout_count(const int maxTeamID);
+    void knockout_insert(Team* teams, const int maxID);
     void knockout_unite(Team& winner, Team& loser);
     void remove_player_by_score(const int id, const int goals, const int cards);
     void insert_player_by_score(Player* player, const int id, const int goals, const int cards);
