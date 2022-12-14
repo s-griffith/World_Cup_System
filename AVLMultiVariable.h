@@ -9,17 +9,33 @@
 /*
 * Class MultiTree : Tree
 * This class is used to create a tree based on ComplexNode that is sorted by three keys:
-*       the number of goals the player scored, the number of cards they received and their player ID
+*       the number of goals the player scored, the number of cards they received, and their player ID
 */
 template <class T>
 class MultiTree : public Tree<ComplexNode<T>, T> {
 public:
 
-    //Constructors
+    /*
+    * Constructor of MultiTree class
+    * @param - none
+    * @return - A new instance of MultiTree
+    */
     MultiTree();
+
+    /*
+    * Copy Constructor and Assignment Operator of MultiTree class
+    * world_cup does not allow two of the same player or team (repeating ID's).
+    * Therefore the system does not allow a copy constructor or assignment operator.
+    */
+    MultiTree(const MultiTree& other) = delete;
+    MultiTree& operator=(const MultiTree& other) = delete;
+
+    /*
+    * Destructor of MultiTree class
+    * @param - none
+    * @return - void
+    */
     ~MultiTree() = default;
-    MultiTree(const MultiTree& other);
-    MultiTree& operator=(const MultiTree& other);
 
     /*
      * Insert new node with data, according to the id, goals, and cards given
@@ -31,7 +47,7 @@ public:
     /*
      * Remove node according to the id, goals, and cards given
      * @param - The ID, goals, and cards of the node that needs to be removed
-     * @return - none
+     * @return - void
      */
     void remove(const int id, const int goals, const int cards);
 
@@ -63,16 +79,52 @@ public:
      */
     ComplexNode<T>& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode);
 
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Recursively inserts the nodes of the previous tree into the new tree
+     * @param - The current node
+     * @return - void
+     */
     void mergeNodes(ComplexNode<T>* node);
+
+    /*
+     * Helper function for get_all_players in world_cup:
+     * Recursively inserts the player ID's of the data of the tree into a given array
+     * @param - an array
+     * @return - void
+     */
     void get_all_data(int* const array) const;
+
+    /*
+     * Helper function for get_closest_player in world_cup:
+     * Updates the closest player pointers of the given player
+     * @param - PlayerID, goals, cards
+     * @return - void
+     */
     void update_closest(const int playerId, const int goals, const int cards);
+
+    /*
+     * Helper function for testing:
+     * Prints the tree, node by node
+     * @param - none
+     * @return - void
+     */
+    void print_tree();
+
+private:
+
+    /*
+     * Helper functions for update_closest:
+     * Finds the right and left closest players
+     * @param - ComplexNode of the current player
+     * @return - ComplexNode of the closest player
+     */
     typename ComplexNode<T>::ComplexNode* findLeftClosest(ComplexNode<T>* currentPlayerNode);
     typename ComplexNode<T>::ComplexNode* findRightClosest(ComplexNode<T>* currentPlayerNode);
-    //Helper function to print the tree - useful for testing
-    void print_tree();
 };
 
-//-----------------------------------------Constructors--------------------------
+
+//-----------------------------------------Constructor--------------------------
 
 template<class T>
 MultiTree<T>::MultiTree() :
@@ -80,19 +132,7 @@ MultiTree<T>::MultiTree() :
 {}
 
 
-template<class T>
-MultiTree<T>::MultiTree(const MultiTree& other) {
-
-}
-
-
-template<class T>
-MultiTree<T>& MultiTree<T>::operator=(const MultiTree& other) {
-
-}
-
-
-//-----------------------------------------Insert and Remove--------------------------
+//----------------------------------Insert and Remove---------------------------------
 
 template<class T>
 void MultiTree<T>::insert(T data, const int id, const int goals, const int cards) {
@@ -111,7 +151,8 @@ void MultiTree<T>::insert(T data, const int id, const int goals, const int cards
     while (x != nullptr) {
         parent = x;
         if (x->m_id == id) {
-            throw InvalidID(); //node with that id already exists - invalid operation
+            //A node with that id already exists - invalid operation
+            throw InvalidID(); 
         }
         //maybe make this into a switch case
         if (goals < x->m_goals) {
@@ -200,10 +241,10 @@ void MultiTree<T>::remove(const int id, const int goals, const int cards) {
 }
 
 
-//-----------------------------------------Search Functions--------------------------
+//-----------------------------------------Search Functions-----------------------------------------
 
 template<class T>
-T& MultiTree<T>::search_and_return_max() { //if this makes problems, get rid of reference at return
+T& MultiTree<T>::search_and_return_max() {
     ComplexNode<T>* node = this->m_node;
     while(node->m_right != nullptr) {
         node = node->m_right;
@@ -245,6 +286,9 @@ ComplexNode<T>& MultiTree<T>::search_recursively(const int id, const int goals, 
     return search_recursively(id, goals, cards, currentNode->m_left);
 }
 
+
+//-----------------------------------------Helper Functions for world_cup-----------------------------------------
+
 template<class T>
 void MultiTree<T>::mergeNodes(ComplexNode<T>* node) {
     if (node == NULL) {
@@ -258,6 +302,7 @@ void MultiTree<T>::mergeNodes(ComplexNode<T>* node) {
     this->mergeNodes(node->m_left);
 }
 
+
 template <class T>
 void MultiTree<T>::get_all_data(int* const array) const
 {
@@ -265,6 +310,7 @@ void MultiTree<T>::get_all_data(int* const array) const
         this->m_node->get_data_inorder(array, 0);
     }
 }
+
 
 template<class T>
 void MultiTree<T>::update_closest(const int playerId, const int goals, const int cards)
@@ -347,12 +393,14 @@ typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(ComplexNode
     return nullptr;
 }
 
+
 //-----------------------------------------Helper Function for Testing--------------------------
 
 template<class T>
 void MultiTree<T>::print_tree() {
     this->m_node->inorderWalkNode(1);
 }
+
 
 //----------------------------------------------------------------------------------------------
 
