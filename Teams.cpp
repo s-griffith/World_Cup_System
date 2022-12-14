@@ -11,7 +11,9 @@ Team::Team(const int teamID, const int points) :
         m_numGames(0),
         m_playersByID(),
         m_playersByScore(),
-        m_topScorer(nullptr)
+        m_topScorer(nullptr),
+        m_closestTeamRight(nullptr),
+        m_closestTeamLeft(nullptr)
 {}
 
 Team& Team::operator=(const Team& other) {
@@ -53,6 +55,14 @@ const Player* Team::get_top_scorer() const {
 
 int Team::get_teamID() const  {
     return m_id;
+}
+
+Team* Team::get_closest_left() {
+    return m_closestTeamLeft;
+}
+
+Team* Team::get_closest_right() {
+    return m_closestTeamRight;
 }
 
 //-------------------------------------Helper Functions for WorldCup----------------------------
@@ -202,4 +212,38 @@ void Team::update_top_player() {
 
 void Team::update_team_id(Team* team) {
     m_playersByID.m_node->inorderWalkTeamID(team);
+}
+
+void Team::update_closest_left(Team* team1) {
+    m_closestTeamLeft = team1;
+}
+
+void Team::update_closest_right(Team* team2) {
+    m_closestTeamRight = team2;
+}
+
+
+//Get the ID of the closest player to the current player
+int Team::get_closest(Team* team1, Team* team2)
+{
+    int diff1 = 0, diff2 = 0;
+    if (m_id >= team1->m_id) {
+        diff1 = m_id - team1->m_id;
+    }
+    else {
+        diff1 = team1->m_id - m_id;
+    }
+    if (m_id >= team2->m_id) {
+        diff2 = m_id - team2->m_id;
+    }
+    else {
+        diff2 = team2->m_id - m_id;
+    }
+    if (diff1 < diff2) {
+        return 1;
+    }
+    if (diff2 < diff1) {
+        return 2;
+    }
+    return 0;
 }

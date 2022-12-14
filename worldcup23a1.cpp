@@ -34,6 +34,13 @@ StatusType world_cup_t::add_team(int teamId, int points)
     try  {
         newTeam = new Team(teamId, points);
         m_teamsByID.insert(newTeam, teamId);
+        m_teamsByID.update_closest(newTeam->get_teamID());
+        if (newTeam->get_closest_left() != nullptr) {
+            m_teamsByID.update_closest(newTeam->get_closest_left()->get_teamID());
+        }
+        if (newTeam->get_closest_right() != nullptr) {
+            m_teamsByID.update_closest(newTeam->get_closest_right()->get_teamID());
+        }
     }
     catch (const std::bad_alloc& e) {
         delete newTeam;
@@ -57,7 +64,15 @@ StatusType world_cup_t::remove_team(int teamId)
         if (team->get_num_players()) {
             return StatusType::FAILURE;
         }
+        Team* closestLeft = team->get_closest_left();
+        Team* closestRight = team->get_closest_right();
         m_teamsByID.remove(teamId);
+        if (closestRight != nullptr) {
+            closestRight->update_closest_left(closestLeft);
+        }
+        if (closestLeft != nullptr) {
+            closestLeft->update_closest_right(closestRight);
+        }
         delete team;
     }
     catch(const NodeNotFound& e) {
@@ -318,7 +333,13 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    Team* nTeam(new Team(newTeamId, team1->get_points() + team2->get_points()));
+    Team* nTeam = nullptr;
+    try {
+        nTeam = new Team(newTeamId, team1->get_points() + team2->get_points());
+    }
+    catch (const std::bad_alloc& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
     nTeam->Team::unite_teams(team1, team2);
     nTeam->update_team_id(nTeam);
     try {
@@ -329,6 +350,10 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         m_qualifiedTeams.remove(teamId2);
     }
     catch (const NodeNotFound& e) {}
+    Team* closestLeftTeam1 = team1->get_closest_left();
+    Team* closestRightTeam1 = team1->get_closest_right();
+    Team* closestLeftTeam2 = team2->get_closest_left();
+    Team* closestRightTeam2 = team2->get_closest_right();
     m_teamsByID.remove(teamId1);
     m_teamsByID.remove(teamId2);
     try {
@@ -344,6 +369,19 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         catch (const std::bad_alloc& e) {
             return StatusType::ALLOCATION_ERROR;
         }
+    }
+    m_teamsByID.update_closest(nTeam->get_teamID());
+    if (closestLeftTeam1 != nullptr) {
+        m_teamsByID.update_closest(closestLeftTeam1->get_teamID());
+    }
+    if (closestRightTeam1 != nullptr) {
+        m_teamsByID.update_closest(closestRightTeam1->get_teamID());
+    }
+    if (closestLeftTeam2 != nullptr) {
+        m_teamsByID.update_closest(closestLeftTeam2->get_teamID());
+    }
+    if (closestRightTeam2 != nullptr) {
+        m_teamsByID.update_closest(closestRightTeam2->get_teamID());
     }
     delete team1;
     delete team2;

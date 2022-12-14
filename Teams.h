@@ -34,6 +34,9 @@ public:
     int get_games() const;
     const Player* get_top_scorer() const;
     int get_teamID() const;
+    Team* get_closest_left();
+    Team* get_closest_right();
+
     void print_team();
     //Helper functions for World Cup
     void unite_teams(Team* team1, Team* team2);
@@ -53,6 +56,9 @@ public:
     void update_num_goals(const int goals);
     void update_num_cards(const int cards);
     void update_top_player();
+    void update_closest_left(Team* team1);
+    void update_closest_right(Team* team2);
+    int get_closest(Team* team1, Team* team2);
 
 private:
     int m_id;
@@ -67,6 +73,8 @@ private:
     //AVL Tree organized by best-scoring players
     MultiTree<Player*> m_playersByScore;
     Player* m_topScorer;
+    Team* m_closestTeamRight;
+    Team* m_closestTeamLeft;
 };
 
 #endif //TEAMS_H

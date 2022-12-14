@@ -112,6 +112,11 @@ public:
 
     //void inorderWalk(bool flag);
     void print_tree();
+
+    void update_closest(const int teamId);
+    N* findLeftClosest(N* currentTeam);
+    N* findRightClosest(N* currentTeam);
+
 };
 
 //--------------------------------------------Tree Class---------------------------------------------------
@@ -511,5 +516,88 @@ void Tree<N, T>::mergeNodes(N* node) {
     catch (const InvalidID& e) {}
     this->mergeNodes(node->m_left);
 }
+
+
+template<class N, class T>
+void Tree<N, T>::update_closest(const int teamId)
+{
+    //Search for specific node
+    N* currentTeam = &(this->search_specific_id(teamId));
+    //Get closest node to the left of the other tree node
+    N* closestLeft = findLeftClosest(currentTeam);
+    if (closestLeft != nullptr) {
+        currentTeam->m_data->update_closest_left(closestLeft->m_data);
+    }
+    else {
+        currentTeam->m_data->update_closest_left(nullptr);
+    }
+    //Get closest node to the right of the other tree node
+    N* closestRight = findRightClosest(currentTeam);
+    if (closestRight != nullptr) {
+        currentTeam->m_data->update_closest_right(closestRight->m_data);
+    }
+    else {
+        currentTeam->m_data->update_closest_right(nullptr);
+    }
+}
+
+
+template<class N, class T>
+N* Tree<N, T>::findLeftClosest(N* currentTeam)
+{
+    N* closestLeft = currentTeam;
+    if (closestLeft->m_left != nullptr) {
+        closestLeft = closestLeft->m_left;
+        while (closestLeft->m_right != nullptr) {
+            closestLeft = closestLeft->m_right;
+        }
+    }
+    if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)) {
+        if (closestLeft->m_id == currentTeam->m_id) {
+            closestLeft = currentTeam->m_parent;
+        }
+        else {
+            //Check which node is closer: the child to the left or the parent
+            int tmpId = currentTeam->m_data->get_closest(closestLeft->m_data, currentTeam->m_parent->m_data);
+            if (tmpId == currentTeam->m_parent->m_id) {
+                closestLeft = currentTeam->m_parent;
+            }
+        }
+    }
+    if (closestLeft->m_id != currentTeam->m_id) {
+        return closestLeft;
+    }
+    return nullptr;
+}
+
+
+template<class N, class T>
+N* Tree<N, T>::findRightClosest(N* currentTeam)
+{
+    N* closestRight = currentTeam;
+    if (closestRight->m_right != nullptr) {
+        closestRight = closestRight->m_right;
+        while (closestRight->m_left != nullptr) {
+            closestRight = closestRight->m_left;
+        }
+    }
+    if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam)) {
+        if (closestRight->m_id == currentTeam->m_id) {
+            closestRight = currentTeam->m_parent;
+        }
+        else {
+            //Check which node is closer: the child to the right or the parent
+            int tmpId = currentTeam->m_data->get_closest(closestRight->m_data, currentTeam->m_parent->m_data);
+            if (tmpId == currentTeam->m_parent->m_id) {
+                closestRight = currentTeam->m_parent;
+            }
+        }
+    }
+    if (closestRight->m_id != currentTeam->m_id) {
+        return closestRight;
+    }
+    return nullptr;
+}
+
 
 #endif //AVLTREE_h
