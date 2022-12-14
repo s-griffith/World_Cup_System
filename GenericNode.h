@@ -306,9 +306,9 @@ int GenericNode<T>::inorderWalkCount(int counter, const int minID, const int max
         }
         return counter += 1 + m_right->inorderWalkCount(counter, minID, maxID);
     }
-    else if (this->m_id > maxID) {
-        return counter += m_left->inorderWalkCount(counter, minID, maxID); //Creates infinite loop
-    }
+   // else if (this->m_id > maxID) {
+    //    return counter += m_left->inorderWalkCount(counter, minID, maxID); //Creates infinite loop
+    //}
     return counter;
 
 
