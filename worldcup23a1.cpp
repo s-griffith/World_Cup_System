@@ -224,17 +224,17 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         return StatusType::ALLOCATION_ERROR;
     }
     m_overallTopScorer = m_playersByScore.search_and_return_max();
-    Player* closestLeft = tmpPlayer->get_closest_left();
-    Player* closestRight = tmpPlayer->get_closest_right();
     //Update the teams total stats and the top scored player of the team
     tmpTeam->update_team_stats(scoredGoals, cardsReceived);
+    Player* closestLeft = tmpPlayer->get_closest_left();
+    Player* closestRight = tmpPlayer->get_closest_right();
+    m_playersByScore.update_closest(tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
     if (closestRight != nullptr) {
         m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), closestRight->get_cards());
     }
     if (closestLeft != nullptr) {
         m_playersByScore.update_closest(closestLeft->get_playerId(), closestLeft->get_goals(), closestLeft->get_cards());
     }
-    m_playersByScore.update_closest(tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
     return StatusType::SUCCESS;
 }
 
@@ -399,6 +399,10 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     if (output == nullptr || teamId == 0) {
         return StatusType::INVALID_INPUT;
     }
+    //If there are no players in the game, return failure
+    if (m_totalNumPlayers == 0) {
+        return StatusType::FAILURE;
+    }
     //If the players of a certain team is requested
     if (teamId > 0) {
         Team* tmpTeam;
@@ -416,10 +420,6 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         return StatusType::SUCCESS;
     }
     //If the total players of the games is requested
-    //If there are no players in the game, return failure
-    if (m_totalNumPlayers == 0) {
-        return StatusType::FAILURE;
-    }
     m_playersByScore.get_all_data(output);
     return StatusType::SUCCESS;
 }
