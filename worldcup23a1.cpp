@@ -34,13 +34,6 @@ StatusType world_cup_t::add_team(int teamId, int points)
     try  {
         newTeam = new Team(teamId, points);
         m_teamsByID.insert(newTeam, teamId);
-        m_teamsByID.update_closest(newTeam->get_teamID());
-        if (newTeam->get_closest_left() != nullptr) {
-            m_teamsByID.update_closest(newTeam->get_closest_left()->get_teamID());
-        }
-        if (newTeam->get_closest_right() != nullptr) {
-            m_teamsByID.update_closest(newTeam->get_closest_right()->get_teamID());
-        }
     }
     catch (const std::bad_alloc& e) {
         delete newTeam;
@@ -64,15 +57,7 @@ StatusType world_cup_t::remove_team(int teamId)
         if (team->get_num_players()) {
             return StatusType::FAILURE;
         }
-        Team* closestLeft = team->get_closest_left();
-        Team* closestRight = team->get_closest_right();
         m_teamsByID.remove(teamId);
-        if (closestRight != nullptr) {
-            closestRight->update_closest_left(closestLeft);
-        }
-        if (closestLeft != nullptr) {
-            closestLeft->update_closest_right(closestRight);
-        }
         delete team;
     }
     catch(const NodeNotFound& e) {
@@ -145,6 +130,13 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             catch (const NodeNotFound& e) {
                 try {
                     m_qualifiedTeams.insert(tmpTeam, teamId);
+                    m_qualifiedTeams.update_closest(tmpTeam->get_teamID());
+                    if (tmpTeam->get_closest_left() != nullptr) {
+                        m_qualifiedTeams.update_closest(tmpTeam->get_closest_left()->get_teamID());
+                    }
+                    if (tmpTeam->get_closest_right() != nullptr) {
+                        m_qualifiedTeams.update_closest(tmpTeam->get_closest_right()->get_teamID());
+                    }
                 }
                 catch (const std::bad_alloc& e) {
                     return StatusType::ALLOCATION_ERROR;
@@ -186,6 +178,12 @@ StatusType world_cup_t::remove_player(int playerId)
         //Remove team from tree of qualified teams
         if (!(tmpTeam->is_valid())) {
             m_qualifiedTeams.remove(tmpTeam->get_teamID());
+            if (tmpTeam->get_closest_left() != nullptr) {
+                tmpTeam->get_closest_left()->update_closest_right(tmpTeam->get_closest_right());
+            }
+            if (tmpTeam->get_closest_right() != nullptr) {
+                tmpTeam->get_closest_right()->update_closest_left(tmpTeam->get_closest_left());                
+            }
         }
     }
     catch (const NodeNotFound& e) {}
@@ -344,18 +342,26 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     nTeam->update_team_id(nTeam);
     try {
         m_qualifiedTeams.remove(teamId1);
+        if (team1->get_closest_left() != nullptr) {
+            team1->get_closest_left()->update_closest_right(team1->get_closest_right());
+        }
+        if (team1->get_closest_right() != nullptr) {
+            team1->get_closest_right()->update_closest_left(team1->get_closest_left());                
+        }
     }
     catch (const NodeNotFound& e) {}
     try {
         m_qualifiedTeams.remove(teamId2);
+        if (team2->get_closest_left() != nullptr) {
+            team2->get_closest_left()->update_closest_right(team2->get_closest_right());
+        }
+        if (team2->get_closest_right() != nullptr) {
+            team2->get_closest_right()->update_closest_left(team2->get_closest_left());                
+        }
     }
     catch (const NodeNotFound& e) {}
     m_teamsByID.remove(teamId1);
     m_teamsByID.remove(teamId2);
-    Team* closestLeftTeam1 = team1->get_closest_left();
-    Team* closestRightTeam1 = team1->get_closest_right();
-    Team* closestLeftTeam2 = team2->get_closest_left();
-    Team* closestRightTeam2 = team2->get_closest_right();
     try {
         m_teamsByID.insert(nTeam, newTeamId);
     }
@@ -365,23 +371,17 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     if (nTeam->is_valid()) {
         try {
             m_qualifiedTeams.insert(nTeam, newTeamId);
+            m_qualifiedTeams.update_closest(nTeam->get_teamID());
+            if (nTeam->get_closest_left() != nullptr) {
+                m_qualifiedTeams.update_closest(nTeam->get_closest_left()->get_teamID());
+            }
+            if (nTeam->get_closest_right() != nullptr) {
+                m_qualifiedTeams.update_closest(nTeam->get_closest_right()->get_teamID());
+            }
         }
         catch (const std::bad_alloc& e) {
             return StatusType::ALLOCATION_ERROR;
         }
-    }
-    m_teamsByID.update_closest(nTeam->get_teamID());
-    if (closestLeftTeam1 != nullptr && closestLeftTeam1->get_teamID() != team2->get_teamID()) {
-        m_teamsByID.update_closest(closestLeftTeam1->get_teamID());
-    }
-    if (closestRightTeam1 != nullptr && closestRightTeam1->get_teamID() != team2->get_teamID()) {
-        m_teamsByID.update_closest(closestRightTeam1->get_teamID());
-    }
-    if (closestLeftTeam2 != nullptr && closestLeftTeam2->get_teamID() != team1->get_teamID()) {
-        m_teamsByID.update_closest(closestLeftTeam2->get_teamID());
-    }
-    if (closestRightTeam2 != nullptr && closestRightTeam2->get_teamID() != team1->get_teamID()) {
-        m_teamsByID.update_closest(closestRightTeam2->get_teamID());
     }
     delete team1;
     delete team2;
@@ -499,10 +499,11 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
         return output_t<int>(StatusType::FAILURE);
     }
     //Find number of teams invovled
-    m_qualifiedTeams.print_tree();
-    std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
+   // m_qualifiedTeams.print_tree();
+
+    //std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
-    std::cout << "Num of teams " << num << std::endl;
+    //std::cout << "Num of teams " << num << std::endl;
     //If there are no qualified teams, return failure
     if (num == 0) {
         return output_t<int>(StatusType::FAILURE);
@@ -518,6 +519,9 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     //Fill in teams according to their order
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
+   /* for (int i = 0; i < num; i++) {
+        std::cout << "Array index " << i << " is " << (teams+i)->get_teamID() << std::endl;
+    } */
     if (num == 1) {
         int winner = teams->get_teamID();
         delete[] teams;
@@ -525,9 +529,10 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     //In a recursive function, go over every pair in the array and send to play match.
     //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
+    int numTeams = num;
     do {
-        num = knockout_games(teams, num, num);
-    } while (num > 1);
+        numTeams = knockout_games(teams, numTeams, num);
+    } while (numTeams > 1);
     Team* temp = teams;
     while (temp->get_teamID() < 0) {
         temp++;
@@ -541,7 +546,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
 //-------------------------------------------Helper Functions----------------------------------------------
 
 int world_cup_t::compete(Team& team1, Team& team2) {
-    int point1 = team1.get_points() + team1.get_goals() - team1.get_cards();
+    int point1 = team1.get_points() + team1.get_goals() - team1.get_cards();\
     int point2 = team2.get_points() + team2.get_goals() - team2.get_cards();
     int winnerID = 0;
     if (point1 > point2) {
@@ -563,9 +568,13 @@ int world_cup_t::compete(Team& team1, Team& team2) {
 }
 
 int world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
+    //std::cout << "numTeams: " << numTeams << " size: " << size << std::endl;
     if (numTeams <= 1) { //stop because there's an uneven number of teams
         return numTeams; //what to return here
     }
+    //for (int i = 0; i < size; i++) {
+      //  std::cout << "Team at index " << i << " is " << (teams+i)->get_teamID() << std::endl;
+    //}
     int currIndex1 = 0;
     Team* first = teams;
     while (first->get_teamID() < 0 && currIndex1 < size) {
@@ -579,9 +588,11 @@ int world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
         second = teams + currIndex2;
     }
     if (currIndex2 >= size) { //This happens only when there is a single team left in the array, so continue the process with the other pairs
-        return numTeams;
+        return 1;
     }
-    knockout_games(teams+currIndex2, numTeams-2, size-currIndex2); //might need to be currIndex-1
+   // std::cout << "number of teams before knockout: " << numTeams << std::endl;
+    numTeams = 2 + knockout_games(teams+currIndex2+1, numTeams-2, size-currIndex2-1); //might need to be currIndex-1
+  //  std::cout << "number of teams after knockout: " << numTeams << std::endl;
     int winnerID = compete(*first, *second);
     if (winnerID == first->get_teamID()) {
         first->knockout_unite(*first, *second);

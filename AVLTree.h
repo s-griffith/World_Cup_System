@@ -555,9 +555,11 @@ N* Tree<N, T>::findLeftClosest(N* currentTeam)
     else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)) {
         closestLeft = currentTeam->m_parent;
     }
-    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam) && (currentTeam->m_parent->m_parent != nullptr)) {
-        closestLeft = currentTeam->m_parent->m_parent;
-    }
+    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam)) {
+        if ((currentTeam->m_parent->m_parent != nullptr) && (currentTeam->m_parent->m_parent->m_left != currentTeam->m_parent)) {
+            closestLeft = currentTeam->m_parent->m_parent;
+        }
+    } 
     if (closestLeft->m_id != currentTeam->m_id) {
         return closestLeft;
     }
@@ -578,8 +580,10 @@ N* Tree<N, T>::findRightClosest(N* currentTeam)
     else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam)) {
         closestRight = currentTeam->m_parent;
     }
-    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)  && (currentTeam->m_parent->m_parent != nullptr)) {
-        closestRight = currentTeam->m_parent->m_parent;
+    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)) {
+        if ((currentTeam->m_parent->m_parent != nullptr) && (currentTeam->m_parent->m_parent->m_right != currentTeam->m_parent)) {
+            closestRight = currentTeam->m_parent->m_parent;
+        }
     }
     if (closestRight->m_id != currentTeam->m_id) {
         return closestRight;

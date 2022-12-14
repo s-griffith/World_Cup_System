@@ -154,20 +154,9 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     winner.m_numGoalkeepers += loser.m_numGoalkeepers;
     winner.m_numGoals += loser.m_numGoals;
     winner.m_numPlayers += loser.m_numPlayers;
+    winner.m_points += loser.m_points;
 }
 
-/*Team Team::knockout_copy() {
-    Team copy;
-    copy.m_id = m_id;
-    copy.m_numCards = m_numCards;
-    copy.m_numGames = m_numGames;
-    copy.m_numGoalkeepers = m_numGoalkeepers;
-    copy.m_numGoals = m_numGoals;
-    copy.m_numPlayers = m_numPlayers;
-    copy.m_points = m_points;
-    return copy;
-}
-*/
 void Team::knockout_setID() {
     this->m_id *= -1;
 }
@@ -178,6 +167,9 @@ int Team::knockout_count(const int maxTeamID) {
     while (current != nullptr && current->m_id <= maxTeamID) {
         counter++;
         current = current->m_closestTeamRight;
+        //if (current != nullptr) {
+         //   std::cout << "closest right is " << current->m_id << std::endl;
+       // }
     }
     return counter;
 }
