@@ -58,7 +58,6 @@ public:
     void update_top_player();
     void update_closest_left(Team* team1);
     void update_closest_right(Team* team2);
-    int get_closest(Team* team1, Team* team2);
 
 private:
     int m_id;

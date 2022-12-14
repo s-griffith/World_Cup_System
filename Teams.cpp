@@ -24,6 +24,8 @@ Team& Team::operator=(const Team& other) {
     m_numGoals = other.m_numGoals;
     m_numPlayers = other.m_numPlayers;
     m_points = other.m_points;
+    m_closestTeamRight = other.m_closestTeamLeft;
+    m_closestTeamLeft = other.m_closestTeamLeft;
     return *this;
 }
 
@@ -220,30 +222,4 @@ void Team::update_closest_left(Team* team1) {
 
 void Team::update_closest_right(Team* team2) {
     m_closestTeamRight = team2;
-}
-
-
-//Get the ID of the closest player to the current player
-int Team::get_closest(Team* team1, Team* team2)
-{
-    int diff1 = 0, diff2 = 0;
-    if (m_id >= team1->m_id) {
-        diff1 = m_id - team1->m_id;
-    }
-    else {
-        diff1 = team1->m_id - m_id;
-    }
-    if (m_id >= team2->m_id) {
-        diff2 = m_id - team2->m_id;
-    }
-    else {
-        diff2 = team2->m_id - m_id;
-    }
-    if (diff1 < diff2) {
-        return 1;
-    }
-    if (diff2 < diff1) {
-        return 2;
-    }
-    return 0;
 }

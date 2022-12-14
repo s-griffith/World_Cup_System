@@ -546,23 +546,17 @@ template<class N, class T>
 N* Tree<N, T>::findLeftClosest(N* currentTeam)
 {
     N* closestLeft = currentTeam;
-    if (closestLeft->m_left != nullptr) {
-        closestLeft = closestLeft->m_left;
+    if (currentTeam->m_left != nullptr) {
+        closestLeft = currentTeam->m_left;
         while (closestLeft->m_right != nullptr) {
             closestLeft = closestLeft->m_right;
         }
     }
-    if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)) {
-        if (closestLeft->m_id == currentTeam->m_id) {
-            closestLeft = currentTeam->m_parent;
-        }
-        else {
-            //Check which node is closer: the child to the left or the parent
-            int tmpId = currentTeam->m_data->get_closest(closestLeft->m_data, currentTeam->m_parent->m_data);
-            if (tmpId == currentTeam->m_parent->m_id) {
-                closestLeft = currentTeam->m_parent;
-            }
-        }
+    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)) {
+        closestLeft = currentTeam->m_parent;
+    }
+    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam) && (currentTeam->m_parent->m_parent != nullptr)) {
+        closestLeft = currentTeam->m_parent->m_parent;
     }
     if (closestLeft->m_id != currentTeam->m_id) {
         return closestLeft;
@@ -575,23 +569,17 @@ template<class N, class T>
 N* Tree<N, T>::findRightClosest(N* currentTeam)
 {
     N* closestRight = currentTeam;
-    if (closestRight->m_right != nullptr) {
-        closestRight = closestRight->m_right;
+    if (currentTeam->m_right != nullptr) {
+        closestRight = currentTeam->m_right;
         while (closestRight->m_left != nullptr) {
             closestRight = closestRight->m_left;
         }
     }
-    if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam)) {
-        if (closestRight->m_id == currentTeam->m_id) {
-            closestRight = currentTeam->m_parent;
-        }
-        else {
-            //Check which node is closer: the child to the right or the parent
-            int tmpId = currentTeam->m_data->get_closest(closestRight->m_data, currentTeam->m_parent->m_data);
-            if (tmpId == currentTeam->m_parent->m_id) {
-                closestRight = currentTeam->m_parent;
-            }
-        }
+    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_left == currentTeam)) {
+        closestRight = currentTeam->m_parent;
+    }
+    else if ((currentTeam->m_parent != nullptr) && (currentTeam->m_parent->m_right == currentTeam)  && (currentTeam->m_parent->m_parent != nullptr)) {
+        closestRight = currentTeam->m_parent->m_parent;
     }
     if (closestRight->m_id != currentTeam->m_id) {
         return closestRight;

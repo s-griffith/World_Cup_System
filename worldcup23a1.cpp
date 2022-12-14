@@ -350,12 +350,12 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         m_qualifiedTeams.remove(teamId2);
     }
     catch (const NodeNotFound& e) {}
+    m_teamsByID.remove(teamId1);
+    m_teamsByID.remove(teamId2);
     Team* closestLeftTeam1 = team1->get_closest_left();
     Team* closestRightTeam1 = team1->get_closest_right();
     Team* closestLeftTeam2 = team2->get_closest_left();
     Team* closestRightTeam2 = team2->get_closest_right();
-    m_teamsByID.remove(teamId1);
-    m_teamsByID.remove(teamId2);
     try {
         m_teamsByID.insert(nTeam, newTeamId);
     }
@@ -371,16 +371,16 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         }
     }
     m_teamsByID.update_closest(nTeam->get_teamID());
-    if (closestLeftTeam1 != nullptr) {
+    if (closestLeftTeam1 != nullptr && closestLeftTeam1->get_teamID() != team2->get_teamID()) {
         m_teamsByID.update_closest(closestLeftTeam1->get_teamID());
     }
-    if (closestRightTeam1 != nullptr) {
+    if (closestRightTeam1 != nullptr && closestRightTeam1->get_teamID() != team2->get_teamID()) {
         m_teamsByID.update_closest(closestRightTeam1->get_teamID());
     }
-    if (closestLeftTeam2 != nullptr) {
+    if (closestLeftTeam2 != nullptr && closestLeftTeam2->get_teamID() != team1->get_teamID()) {
         m_teamsByID.update_closest(closestLeftTeam2->get_teamID());
     }
-    if (closestRightTeam2 != nullptr) {
+    if (closestRightTeam2 != nullptr && closestRightTeam2->get_teamID() != team1->get_teamID()) {
         m_teamsByID.update_closest(closestRightTeam2->get_teamID());
     }
     delete team1;
