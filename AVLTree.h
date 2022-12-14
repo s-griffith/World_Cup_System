@@ -308,6 +308,13 @@ void Tree<N, T>::print_tree() {
 template <class N, class T>
 void Tree<N, T>::remove(const int id)
 {
+    if (m_node->m_right == nullptr && m_node->m_left == nullptr && m_node->m_parent == nullptr) {
+        m_node->m_data = nullptr;
+        m_node->m_height = -1;
+        m_node->m_bf = 0;
+        m_node->m_id = 0;
+        return;
+    }
     N* toRemove = &(search_specific_id(id));
     N* nodeToFix = make_node_leaf(toRemove);
     delete toRemove;

@@ -38,6 +38,8 @@ public:
 
     void inorderWalkTeamID(Team* team);
 
+    int get_height() const;
+
 protected:
 
     //Pointers to the parent node and the two child nodes
@@ -86,7 +88,7 @@ protected:
      * Recursively inserts all players in a tree into a given array, starting with the root of the tree
      * @return - none
     */
-    void get_data_inorder(int* const array, int index) const;
+    int get_data_inorder(int* const array, int index) const;
 
     /*
      * Helper function for knockout in world_cup:
@@ -138,6 +140,7 @@ GenericNode<T>::GenericNode() :
 template<class T>
 int GenericNode<T>::numOfTeams(const int minTeamID, const int maxTeamID) {
     GenericNode<Team*>* first = this->getFirstTeam(minTeamID, maxTeamID);
+    //std::cout << "First is " << first->getID() << std::endl;
     if (first == nullptr) {
         return 0;
     }
@@ -149,6 +152,12 @@ template<class T>
 void GenericNode<T>::addTeams(Team* teams, const int minTeamId, const int maxTeamId) {
     GenericNode<Team*>* first = this->getFirstTeam(minTeamId, maxTeamId);
     first->inorderWalkInsert(teams, minTeamId, maxTeamId, 0);
+}
+
+
+template<class T>
+int GenericNode<T>::get_height() const {
+    return this->m_height;
 }
 
 
@@ -270,21 +279,21 @@ void GenericNode<T>::update_height()
 
 //---------------------------------Private Helper Functions for world_cup---------------------------------------------
 
+//Need to delete
 template <class T>
-void GenericNode<T>::get_data_inorder(int* const array, int index) const
+int GenericNode<T>::get_data_inorder(int* const array, int index) const
 {
-    if (m_left != nullptr) {
-        m_left->get_data_inorder(array, index);
+    if (this != nullptr) {
+        index = m_left->get_data_inorder(array, index);
+        array[index++] = this->m_id;
+        index = m_right->get_data_inorder(array, index);
     }
-    array[index++] = Node<T>::m_id;
-    if (m_right != nullptr) {
-        m_right->get_data_inorder(array, index);
-    }
+    return index;
 }
 
 
 template <class T>
-int GenericNode<T>::inorderWalkCount(int counter, const int minID, const int maxID) const {
+int GenericNode<T>::inorderWalkCount(int counter, const int minID, const int maxID) const { //This isn't catching all examples - check this
     if (this != nullptr && this->m_id <= maxID && this->m_id >= minID) {
         if (this->m_id == maxID) {
             return 1;
@@ -297,7 +306,16 @@ int GenericNode<T>::inorderWalkCount(int counter, const int minID, const int max
         }
         return counter += 1 + m_right->inorderWalkCount(counter, minID, maxID);
     }
+    else if (this->m_id > maxID) {
+        return counter += m_left->inorderWalkCount(counter, minID, maxID); //Creates infinite loop
+    }
     return counter;
+
+
+
+
+
+
 }
 
 
@@ -324,7 +342,14 @@ template<class T>
 typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int minTeamId, const int maxTeamId){
     GenericNode<Team*>* x = this;
     GenericNode<Team*>* y = nullptr;
-    while (x != nullptr && x->m_id <= maxTeamId) {
+    while (x != nullptr) {
+        if (x->m_id > minTeamId) {
+            if (x->m_left != nullptr) {
+                if (x->m_left->m_id < minTeamId) {
+                    return x;
+                }
+            }
+        }
         y = x;
         if (x->m_id == minTeamId) {
             return x; //node with that id already exists - invalid operation

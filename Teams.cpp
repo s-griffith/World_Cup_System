@@ -72,7 +72,6 @@ void Team::unite_teams(Team* team1, Team* team2) {
     this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node);
 
     this->m_topScorer = m_playersByScore.search_and_return_max();
-    //Qualified teams
 }
 
 int Team::get_closest_team_player(const int playerId) {
@@ -97,7 +96,7 @@ int Team::get_closest_team_player(const int playerId) {
 }
 
 void Team::get_all_team_players(int* const output) {
-    m_playersByID.get_all_data(output);
+    m_playersByScore.get_all_data(output);
 }
 
 StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* playerByScoreNode){

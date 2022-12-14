@@ -63,9 +63,11 @@ public:
      */
     ComplexNode<T>& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode);
 
+    void mergeNodes(ComplexNode<T>* node);
+    void get_all_data(int* const array) const;
     void update_closest(const int playerId, const int goals, const int cards);
-    typename ComplexNode<T>::ComplexNode* findLeftClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode);
-    typename ComplexNode<T>::ComplexNode* findRightClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode);
+    typename ComplexNode<T>::ComplexNode* findLeftClosest(ComplexNode<T>* currentPlayerNode);
+    typename ComplexNode<T>::ComplexNode* findRightClosest(ComplexNode<T>* currentPlayerNode);
     //Helper function to print the tree - useful for testing
     void print_tree();
 };
@@ -181,6 +183,15 @@ void MultiTree<T>::insert(T data, const int id, const int goals, const int cards
 
 template<class T>
 void MultiTree<T>::remove(const int id, const int goals, const int cards) {
+    if (this->m_node->m_right == nullptr && this->m_node->m_left == nullptr && this->m_node->m_parent == nullptr) {
+        this->m_node->m_data = nullptr;
+        this->m_node->m_height = -1;
+        this->m_node->m_bf = 0;
+        this->m_node->m_id = 0;
+        this->m_node->m_goals = 0;
+        this->m_node->m_cards = 0;
+        return;
+    }
     ComplexNode<T>* toRemove = &(search_specific_id(id, goals, cards));
     ComplexNode<T>* nodeToFix = Tree<ComplexNode<T>, T>::make_node_leaf(toRemove);
     delete toRemove;
@@ -234,6 +245,26 @@ ComplexNode<T>& MultiTree<T>::search_recursively(const int id, const int goals, 
     return search_recursively(id, goals, cards, currentNode->m_left);
 }
 
+template<class T>
+void MultiTree<T>::mergeNodes(ComplexNode<T>* node) {
+    if (node == NULL) {
+        return;
+    }
+    this->mergeNodes(node->m_right);
+    try {
+        this->insert(node->m_data, node->m_id, node->m_data->get_goals(), node->m_data->get_cards());
+    }
+    catch (const InvalidID& e) {}
+    this->mergeNodes(node->m_left);
+}
+
+template <class T>
+void MultiTree<T>::get_all_data(int* const array) const
+{
+    if (this != nullptr) {
+        this->m_node->get_data_inorder(array, 0);
+    }
+}
 
 template<class T>
 void MultiTree<T>::update_closest(const int playerId, const int goals, const int cards)
@@ -260,7 +291,7 @@ void MultiTree<T>::update_closest(const int playerId, const int goals, const int
 
 
 template <class T>
-typename ComplexNode<T>::ComplexNode* MultiTree<T>::findLeftClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode)
+typename ComplexNode<T>::ComplexNode* MultiTree<T>::findLeftClosest(ComplexNode<T>* currentPlayerNode)
 {
     typename ComplexNode<T>::ComplexNode* closestLeft = currentPlayerNode;
     if (closestLeft->m_left != nullptr) {
@@ -289,7 +320,7 @@ typename ComplexNode<T>::ComplexNode* MultiTree<T>::findLeftClosest(typename Com
 
 
 template <class T>
-typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(typename ComplexNode<T>::ComplexNode* currentPlayerNode)
+typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(ComplexNode<T>* currentPlayerNode)
 {
     typename ComplexNode<T>::ComplexNode* closestRight = currentPlayerNode;
     if (closestRight->m_right != nullptr) {
