@@ -11,58 +11,108 @@
 template <class T>
 class ComplexNode : Node<T> {
 public:
-    //Constructors
+
+    /*
+    * Constructor of ComplexNode class
+    * @param - none
+    * @return - A new instance of ComplexNode
+    */ 
     ComplexNode();
+
+    /*
+    * Copy Constructor and Assignment Operator of ComplexNode class
+    * world_cup does not allow two of the same player or team (repeating ID's).
+    * Therefore the system does not allow a copy constructor or assignment operator.
+    */
+    ComplexNode(const ComplexNode&) = delete;
+    ComplexNode& operator=(const ComplexNode& other) = delete;
+
+    /*
+    * Destructor of ComplexNode class
+    * @param - none
+    * @return - void
+    */
     ~ComplexNode() = default;
-    ComplexNode(const ComplexNode&);
-    ComplexNode& operator=(const ComplexNode& other);
 
 private:
 
     /*
      * Left-Right Rotation
-     * @return - none
+     * @param - Node with balance factor of +2
+     * @return - pointer to ComplexNode
      */
     ComplexNode* ll_rotation(ComplexNode* node);
 
     /*
      * Right-Right Rotation
-     * @return - none
+     * @param - Node with balance factor of -2
+     * @return - pointer to ComplexNode
      */
     ComplexNode* rr_rotation(ComplexNode* node);
 
     /*
      * Right-Left Rotation
-     * @return - none
-     */
+     * @param - Node with balance factor of -2
+     * @return - pointer to ComplexNode
+    */
     ComplexNode* rl_rotation(ComplexNode* node);
 
     /*
      * Left-Left Rotation
-     * @return - none
-     */
+     * @param - Node with balance factor of +2
+     * @return - pointer to ComplexNode
+    */
     ComplexNode* lr_rotation(ComplexNode* node);
 
     /*
      * Update balance factor of the current node
-     * @return - none
+     * @param - none
+     * @return - void
     */
     void update_bf();
     
     /*
      * Update height of the current node
-     * @return - none
+     * @param - none
+     * @return - void
     */
     void update_height();
 
+    /*
+     * Helper function for get_all_players in world_cup:
+     * Recursively inserts the player ID's of the data of the tree into a given array
+     * @param - an array, current index
+     * @return - void
+     */
     int get_data_inorder(int* const array, int index) const;
 
-    //Helper functions to print
+    /*
+     * Helper functions for testing:
+     * Prints a tree, node by node
+     * @param - none
+     * @return - void
+     */
     void inorderWalkNode(bool flag);
     void printNode();
     void printData();
 
-    //Friend classes
+    /*
+     * The internal fields of ComplexNode:
+     *   Pointers to the parent node and two child nodes
+     *   The goals the player represented by ComplexNode scored
+     *   The cards the player represented by ComplexNode received
+     */
+    ComplexNode<T>* m_parent;
+    ComplexNode<T>* m_left;
+    ComplexNode<T>* m_right;
+    int m_goals;
+    int m_cards;
+
+    /*
+     * The following classes are friend classes in order to allow full access to private fields and functions of
+     * ComplexNode.
+     * This allows ComplexNode to be a mostly private class, while allowing the system to run smoothly.
+    */
     template <class M>
     friend class MultiTree;
 
@@ -71,19 +121,11 @@ private:
 
     template <class ComplexNode, class N>
     friend class Tree;
-
-    //Pointers to the parent node and the two child nodes
-    ComplexNode<T>* m_parent;
-    ComplexNode<T>* m_left;
-    ComplexNode<T>* m_right;
-    //The goals the player scored and the cards they received
-    int m_goals;
-    int m_cards;
     
 };
 
 
-//-----------------------------------------Constructors--------------------------
+//-----------------------------------------Constructor--------------------------
 
 template <class T>
 ComplexNode<T>::ComplexNode() :
@@ -96,19 +138,7 @@ ComplexNode<T>::ComplexNode() :
 {}
 
 
-template<class T>
-ComplexNode<T>::ComplexNode(const ComplexNode&) {
-
-}
-
-
-template<class T>
-ComplexNode<T>& ComplexNode<T>::operator=(const ComplexNode& other) {
-
-}
-
-
-//--------------------------------------------Rotations---------------------------------------------------
+//-----------------------------------------Rotations--------------------------------------------
 
 //Left-Left tree rotation, on the node with balance factor of +2
 template <class T>
@@ -225,6 +255,9 @@ void ComplexNode<T>::update_height()
         Node<T>::m_height = heightRight;
     }
 }
+
+
+//-----------------------------------------Helper Function for world_cup-----------------------------------------
 
 template <class T>
 int ComplexNode<T>::get_data_inorder(int* const array, int index) const
