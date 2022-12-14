@@ -1,42 +1,9 @@
-To Do:
+To Do - Dry 2:
 
-AVLTree:
--Search max/min value (Sarah) ?
--AVLTree sub-class that organizes the tree by 3 variables - needs search - Sarah
+Lior:
+-Question 2
+-Question 4
 
-AVLTree - sub-class:
--Player Tree by ID needs a pointer to that player's location in large tree of all players by goals
-
-WorldCup:
--AddPlayer() - Sarah
--UpdatePlayerStats - Lior inside Players class, call Teams function with shared ptr for Players
--World_cup() constructor - Sarah
--destructor default
--addTeam() - Sarah
--removeTeam() - Sarah
--addPlayer() - Lior - send to teams with correct items
--removePlayer() - Lior - ""
--play_math() - Sarah
--getNumPlayedGames & getTeamPoints - Lior
--uniteTeams() - Sarah - make sure works even when both teams have no players in their trees
--getTopScorer() - Lior
--getAllPlayersCount - Lior
--getAllPlayers - Lior
--get_closest_player - Lior
--knockout - Sarah
-
-
-
-Changes in Teams:
-- Add function:
-
-int Team::get_closest_team_player(const int playerId) {
-    std::shared_ptr<Player> tmpPlayer;
-    try {
-        tmpPlayer = m_playersByID.get_closest_node(playerId);
-    }
-    catch (const NodeNotFound& e) {
-        throw e;
-    }
-    return tmpPlayer.get_playerId();
-}
+Sarah:
+-Question 1
+-Question 3
