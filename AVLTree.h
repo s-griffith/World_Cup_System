@@ -10,41 +10,50 @@
 
 /*
 * Class Tree
-* This class is used to create an AVL tree sorted by a single key.
-* It is used as a base class for other types of trees.
+* This class is used to create a basic AVL tree sorted by a single key.
 */
 template <class N, class T>
 class Tree {
-protected:
-//Try to get m_node here
-
 public:
+
     //The tree's root node
     N* m_node;
 
-    //Constructors
+    /*
+    * Constructor of Tree class
+    * @param - none
+    * @return - A new instance of Tree
+    */    
     Tree();
+
+    /*
+    * Copy Constructor and Assignment Operator of Tree class
+    * world_cup does not allow two of the same player or team (repeating ID's).
+    * Therefore the system does not allow a copy constructor or assignment operator.
+    */
+    Tree(const Tree& other) = delete;
+    Tree& operator=(const Tree& other) = delete;
+
+    /*
+    * Destructor of Tree class
+    * @param - none
+    * @return - void
+    */
     virtual ~Tree();
-    Tree(const Tree& other);
-    Tree& operator=(const Tree& other);
 
     /*
      * Recursively destroy full tree
+     * @param - current node
      * @return - none
      */
-    virtual void destroy_tree(N* currentNode);
+    void destroy_tree(N* currentNode);
 
     /*
      * Recursively release the data of the full tree
+     * @param - current node
      * @return - none
      */
     void erase_data(N* currentNode);
-
-    /*
-     * Recursively copy full tree
-     * @return - none
-     */
-    void copy_tree(N* currentNode, N* otherNode);
 
     /*
      * Insert new node with data, according to the id given
@@ -70,7 +79,7 @@ public:
     /*
      * Search for a node with specific data, according to the id given
      * @param - The ID of the requested node
-     * @return - a reference to the node that holds the data
+     * @return - a reference to the node containing the data
      */
     virtual N& search_specific_id(const int id) const;
 
@@ -89,10 +98,12 @@ public:
     virtual T& search_and_return_data(const int id) const;
 
     /*
-    * Make the node a leaf without breaking the sorted tree
-    * @return - a pointer to the node from which the tree is no longer balanced
-    */
-    N* make_node_leaf(N* node);
+     * Helper function for unite_teams in world_cup:
+     * Recursively inserts nodes into the given tree, starting with the given node
+     * @param - A pointer to the starting node
+     * @return - none
+     */
+    void mergeNodes(N* node);
 
     /*
     * Helper function for get_all_players in world_cup:
@@ -103,25 +114,46 @@ public:
     void get_all_data(int* const array) const;
 
     /*
-     * Helper function for unite_teams in world_cup:
-     * Recursively inserts nodes into the given tree, starting with the given node
-     * @param - A pointer to the starting node
-     * @return - none
+     * Helper function for get_closest_player in world_cup:
+     * Updates the closest player pointers of the given player
+     * @param - PlayerID, goals, cards
+     * @return - void
      */
-    void mergeNodes(N* node);
+    void update_closest(const int teamId);
 
-    //void inorderWalk(bool flag);
+    /*
+     * Helper function for testing:
+     * Prints the tree, node by node
+     * @param - none
+     * @return - void
+     */
     void print_tree();
 
-    void update_closest(const int teamId);
+protected:
+
+    /*
+    * Make the node a leaf without breaking the sorted tree
+    * @param - the node that needs to be made into a leaf
+    * @return - a pointer to the node from which the tree is no longer balanced
+    */
+    N* make_node_leaf(N* node);
+
+private:
+
+    /*
+     * Helper functions for update_closest:
+     * Finds the right and left closest players
+     * @param - Node (N) of the current player
+     * @return - Node (N) of the closest player
+     */
     N* findLeftClosest(N* currentTeam);
     N* findRightClosest(N* currentTeam);
 
 };
 
-//--------------------------------------------Tree Class---------------------------------------------------
 
-//Tree Constructor
+//-------------------------------Constructor, Destructors, and Helpers--------------------------------------
+
 template <class N, class T>
 Tree<N, T>::Tree()
 {
@@ -136,55 +168,13 @@ Tree<N, T>::Tree()
 }
 
 
-//Tree Destructor
 template <class N, class T>
 Tree<N, T>::~Tree()
 {
     destroy_tree(m_node);
 }
 
-//Tree Copy Constructor
-template <class N, class T>
-Tree<N, T>::Tree(const Tree<N, T>& other)
-{
-    //Create empty beginning node
-    try {
-        m_node = new N;
-    }
-    catch (const std::bad_alloc& e) {
-        delete m_node;
-        throw std::bad_alloc();
-    }
-    m_node->m_data = other.m_node->m_data;
-    m_node->m_height = other.m_node->m_height;
-    m_node->m_bf = other.m_node->m_bf;
-    m_node->m_id = other.m_node->m_id;
-    //Copy existing tree to new tree
-    copy_tree(m_node, other.m_node);
-}
 
-
-//Tree Assignment Operator
-template <class N, class T>
-typename Tree<N, T>::Tree& Tree<N, T>::operator=(const Tree<N, T>& other)
-{
-    if (this == &other) {
-        return *this;
-    }
-    //Copy the other tree to a new tree
-    Tree<N, T> newTree(other);
-    //Create temporary tree variable
-    N* tmp = newTree.m_node;
-    //Copy the current tree to the temporary tree
-    newTree.m_node = m_node;
-    //Copy the other tree to the current tree
-    m_node = tmp;
-    return *this;
-    //The temporary tree, pointing to the old current tree will now be destroyed
-}
-
-
-//Destroy tree recursively
 template <class N, class T>
 void Tree<N, T>::destroy_tree(N* currentNode)
 {
@@ -204,7 +194,8 @@ void Tree<N, T>::destroy_tree(N* currentNode)
     }
 }
 
-//Free data in tree recursively
+
+//Free tree's data recursively
 template <class N, class T>
 void Tree<N, T>::erase_data(N* currentNode)
 {
@@ -215,43 +206,8 @@ void Tree<N, T>::erase_data(N* currentNode)
     }
 }
 
-//Copy tree recursively
-template <class N, class T>
-void Tree<N, T>::copy_tree(N* currentNode, N* otherNode)
-{
-    if (otherNode->m_left != nullptr) {
-        //Create empty new node
-        try {
-            currentNode->m_left = new N;
-            currentNode->m_left->m_parent = currentNode;
-            currentNode->m_left->m_data = otherNode->m_left->m_data;
-            currentNode->m_left->m_height = otherNode->m_left->m_height;
-            currentNode->m_left->m_bf = otherNode->m_left->m_bf;
-            currentNode->m_left->m_id = otherNode->m_left->m_id;
-            copy_tree(currentNode->m_left, otherNode->m_left);
-        }
-        catch (const std::bad_alloc& e) {
-            delete currentNode->m_left;
-            throw std::bad_alloc();
-        }
-    }
-    if (otherNode->m_right != nullptr) {
-        //Create empty new node
-        try {
-            currentNode->m_right = new N;
-            currentNode->m_right->m_parent = currentNode;
-            currentNode->m_right->m_data = otherNode->m_right->m_data;
-            currentNode->m_right->m_height = otherNode->m_right->m_height;
-            currentNode->m_right->m_bf = otherNode->m_right->m_bf;
-            currentNode->m_right->m_id = otherNode->m_right->m_id;
-            copy_tree(currentNode->m_right, otherNode->m_right);
-        }
-        catch (const std::bad_alloc& e) {
-            delete currentNode->m_right;
-            throw std::bad_alloc();
-        }
-    }
-}
+
+//----------------------------------Insert, Remove, and Rebalance---------------------------------
 
 template<class N, class T>
 void Tree<N, T>::insert(T data, const int id) {
@@ -268,7 +224,8 @@ void Tree<N, T>::insert(T data, const int id) {
     while (x != nullptr) {
         y = x;
         if (x->m_id == id) {
-            throw InvalidID(); //node with that id already exists - invalid operation
+            //node with that id already exists - invalid operation
+            throw InvalidID(); 
         }
         if (id < x->m_id) {
             x = x->m_left;
@@ -303,13 +260,6 @@ void Tree<N, T>::insert(T data, const int id) {
 }
 
 
-template<class N, class T>
-void Tree<N, T>::print_tree() {
-    m_node->inorderWalkNode(1);
-}
-
-
-//Remove node according to the id provided
 template <class N, class T>
 void Tree<N, T>::remove(const int id)
 {
@@ -328,7 +278,6 @@ void Tree<N, T>::remove(const int id)
 }
 
 
-//Re-balance tree after node removal
 template <class N, class T>
 void Tree<N, T>::rebalance_tree(N* currentNode) {
     if (currentNode == nullptr) {
@@ -365,8 +314,9 @@ void Tree<N, T>::rebalance_tree(N* currentNode) {
     rebalance_tree(currentNode->m_parent);
 }
 
-//Combine??
-//Search and return node with specific ID
+
+//-----------------------------------------Search Functions-----------------------------------------
+
 template <class N, class T>
 N& Tree<N, T>::search_specific_id(const int id) const
 {
@@ -374,16 +324,6 @@ N& Tree<N, T>::search_specific_id(const int id) const
 }
 
 
-//Combine??
-//Search and return node with specific ID
-template <class N, class T>
-T& Tree<N, T>::search_and_return_data(const int id) const
-{
-    return search_recursively(id, m_node).m_data;
-}
-
-
-//Search and return node with specific ID recursively
 template <class N, class T>
 N& Tree<N, T>::search_recursively(const int id, N* currentNode) const
 {
@@ -399,7 +339,65 @@ N& Tree<N, T>::search_recursively(const int id, N* currentNode) const
     return search_recursively(id, currentNode->m_left);
 }
 
-//Make the current node a leaf (maintaining sort)
+
+template <class N, class T>
+T& Tree<N, T>::search_and_return_data(const int id) const
+{
+    return search_recursively(id, m_node).m_data;
+}
+
+
+//-----------------------------------------Helper Functions for world_cup-----------------------------------------
+
+template<class N, class T>
+void Tree<N, T>::mergeNodes(N* node) {
+    if (node == NULL) {
+        return;
+    }
+    this->mergeNodes(node->m_right);
+    try {
+        this->insert(node->m_data, node->m_id);
+    }
+    catch (const InvalidID& e) {}
+    this->mergeNodes(node->m_left);
+}
+
+
+template <class N, class T>
+void Tree<N, T>::get_all_data(int* const array) const
+{
+    if (this != nullptr) {
+        m_node->get_data_inorder(array, 0);
+    }
+}
+
+
+template<class N, class T>
+void Tree<N, T>::update_closest(const int teamId)
+{
+    //Search for specific node
+    N* currentTeam = &(this->search_specific_id(teamId));
+    //Get closest node to the left of the other tree node
+    N* closestLeft = findLeftClosest(currentTeam);
+    if (closestLeft != nullptr) {
+        currentTeam->m_data->update_closest_left(closestLeft->m_data);
+    }
+    else {
+        currentTeam->m_data->update_closest_left(nullptr);
+    }
+    //Get closest node to the right of the other tree node
+    N* closestRight = findRightClosest(currentTeam);
+    if (closestRight != nullptr) {
+        currentTeam->m_data->update_closest_right(closestRight->m_data);
+    }
+    else {
+        currentTeam->m_data->update_closest_right(nullptr);
+    }
+}
+
+
+//-----------------------------------------Internal Helper Functions-----------------------------------------
+
 template <class N, class T>
 N* Tree<N, T>::make_node_leaf(N* node)
 {
@@ -495,52 +493,6 @@ N* Tree<N, T>::make_node_leaf(N* node)
     return parentToReturn;
 }
 
-template <class N, class T>
-void Tree<N, T>::get_all_data(int* const array) const
-{
-    if (this != nullptr) {
-        m_node->get_data_inorder(array, 0);
-    }
-}
-
-
-template<class N, class T>
-void Tree<N, T>::mergeNodes(N* node) {
-    if (node == NULL) {
-        return;
-    }
-    this->mergeNodes(node->m_right);
-    try {
-        this->insert(node->m_data, node->m_id);
-    }
-    catch (const InvalidID& e) {}
-    this->mergeNodes(node->m_left);
-}
-
-
-template<class N, class T>
-void Tree<N, T>::update_closest(const int teamId)
-{
-    //Search for specific node
-    N* currentTeam = &(this->search_specific_id(teamId));
-    //Get closest node to the left of the other tree node
-    N* closestLeft = findLeftClosest(currentTeam);
-    if (closestLeft != nullptr) {
-        currentTeam->m_data->update_closest_left(closestLeft->m_data);
-    }
-    else {
-        currentTeam->m_data->update_closest_left(nullptr);
-    }
-    //Get closest node to the right of the other tree node
-    N* closestRight = findRightClosest(currentTeam);
-    if (closestRight != nullptr) {
-        currentTeam->m_data->update_closest_right(closestRight->m_data);
-    }
-    else {
-        currentTeam->m_data->update_closest_right(nullptr);
-    }
-}
-
 
 template<class N, class T>
 N* Tree<N, T>::findLeftClosest(N* currentTeam)
@@ -591,5 +543,15 @@ N* Tree<N, T>::findRightClosest(N* currentTeam)
     return nullptr;
 }
 
+
+//-----------------------------------------Helper Function for Testing--------------------------
+
+template<class N, class T>
+void Tree<N, T>::print_tree() {
+    m_node->inorderWalkNode(1);
+}
+
+
+//----------------------------------------------------------------------------------------------
 
 #endif //AVLTREE_h
