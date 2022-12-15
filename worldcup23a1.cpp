@@ -498,9 +498,9 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
         return output_t<int>(StatusType::FAILURE);
     }
     //Find number of teams invovled
-   // m_qualifiedTeams.print_tree();
+  //  m_qualifiedTeams.print_tree();
 
- //   std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
+   // std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
    // std::cout << "Num of teams " << num << std::endl;
     //If there are no qualified teams, return failure
@@ -538,7 +538,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
     Team* first = teams;
     do {
-        first = knockout_games(teams);
+        first = knockout_games(first);
     } while (first->get_closest_right() != nullptr);
     int winnerID = first->get_teamID();
     delete[] teams;
