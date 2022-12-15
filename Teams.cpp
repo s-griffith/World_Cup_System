@@ -152,6 +152,11 @@ StatusType Team::add_player(Player* player, const int id, const int goals, const
 }
 
 void Team::remove_player(const int playerID, const int goals, const int cards, const bool goalKeeper){
+       /* std::cout << "Start print in team by score, player ID:" << playerID << std::endl;
+        m_playersByScore.print_tree();
+        std::cout << "Start print in team by id:" << std::endl;
+        m_playersByID.print_tree();
+        std::cout << "Endprint" << std::endl; */
     m_playersByID.remove(playerID);
     m_playersByScore.remove(playerID, goals, cards);
     if (goalKeeper) {

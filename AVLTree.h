@@ -302,13 +302,25 @@ void Tree<N, T>::rebalance_tree(N* currentNode) {
                 m_node = currentNode->rr_rotation(m_node);
             }
         }
-        if (currentNode->m_parent->m_left != nullptr) {
-            currentNode->m_parent->m_left->update_height();
-            currentNode->m_parent->m_left->update_bf();
+        if (currentNode->m_parent != nullptr) {
+            if (currentNode->m_parent->m_left != nullptr) {
+                currentNode->m_parent->m_left->update_height();
+                currentNode->m_parent->m_left->update_bf();
+            }
+            if (currentNode->m_parent->m_right != nullptr) {
+                currentNode->m_parent->m_right->update_height();
+                currentNode->m_parent->m_right->update_bf();
+            }
         }
-        if (currentNode->m_parent->m_right != nullptr) {
-            currentNode->m_parent->m_right->update_height();
-            currentNode->m_parent->m_right->update_bf();
+        else {
+            if (currentNode->m_left != nullptr) {
+                currentNode->m_left->update_height();
+                currentNode->m_left->update_bf();
+            }
+            if (currentNode->m_right != nullptr) {
+                currentNode->m_right->update_height();
+                currentNode->m_right->update_bf();
+            }
         }
     }
     rebalance_tree(currentNode->m_parent);

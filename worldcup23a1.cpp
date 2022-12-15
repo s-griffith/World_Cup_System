@@ -58,6 +58,7 @@ StatusType world_cup_t::remove_team(int teamId)
             return StatusType::FAILURE;
         }
         m_teamsByID.remove(teamId);
+
         delete team;
     }
     catch(const NodeNotFound& e) {
@@ -224,12 +225,20 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     }
     //Pointer to the team the player plays in
     Team* tmpTeam = tmpPlayer->get_team();
-    Player* closestLeftPrevious = tmpPlayer->get_closest_left();
-    Player* closestRightPrevious = tmpPlayer->get_closest_right();
     try {
+        Player* closestLeftPrevious = tmpPlayer->get_closest_left();
+        Player* closestRightPrevious = tmpPlayer->get_closest_right();
         tmpTeam->remove_player_by_score(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
         //Remove player from tree of all scorers
         m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
+        if (closestRightPrevious != nullptr) {
+            m_playersByScore.update_closest(closestRightPrevious->get_playerId(), closestRightPrevious->get_goals(), closestRightPrevious->get_cards());
+        }
+        if (closestLeftPrevious != nullptr) {
+            m_playersByScore.update_closest(closestLeftPrevious->get_playerId(), closestLeftPrevious->get_goals(), closestLeftPrevious->get_cards());
+        }
+        tmpPlayer->update_closest_left(nullptr);
+        tmpPlayer->update_closest_right(nullptr);
     }
     catch (const NodeNotFound& e) {}
     tmpPlayer->update_gamesPlayed(gamesPlayed);
@@ -248,10 +257,10 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
     m_overallTopScorer = m_playersByScore.search_and_return_max();
     //Update the teams total stats and the top scored player of the team
     tmpTeam->update_team_stats(scoredGoals, cardsReceived);
-    Player* closestLeft = tmpPlayer->get_closest_left();
-    Player* closestRight = tmpPlayer->get_closest_right();
     try {
         m_playersByScore.update_closest(tmpPlayer->get_playerId(), tmpPlayer->get_goals(), tmpPlayer->get_cards());
+        Player* closestLeft = tmpPlayer->get_closest_left();
+        Player* closestRight = tmpPlayer->get_closest_right();
         if (closestRight != nullptr) {
             m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), closestRight->get_cards());
         }
@@ -260,12 +269,6 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         }
     }
     catch (const NodeNotFound& e) {}
-    if (closestRightPrevious != nullptr) {
-        closestRightPrevious->update_closest_left(closestLeftPrevious);
-    }
-    if (closestLeftPrevious != nullptr) {
-        closestLeftPrevious->update_closest_right(closestRightPrevious);
-    }
     return StatusType::SUCCESS;
 }
 
