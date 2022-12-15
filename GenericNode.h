@@ -5,18 +5,32 @@
 
 /*
 * Class Tree : Generic Node
-* This class is used to create the separate nodes in the tree - of the general kind (no extra keys or pointers)
+* This class is used to create the separate nodes in a basic AVL tree.
 */
 template <class T>
 class GenericNode : Node<T> {
 public:
 
-    //Constructor
+    /*
+    * Constructor of GenericNode class
+    * @param - none
+    * @return - A new instance of GenericNode
+    */ 
     GenericNode();
 
-    //The copy constructor, the assignment operator and the default destructor------------------------need to implement these!!!
-    GenericNode(const GenericNode&) = default;
-    GenericNode& operator=(const GenericNode& other) = default;
+    /*
+    * Copy Constructor and Assignment Operator of GenericNode class
+    * world_cup does not allow two of the same player or team (repeating ID's).
+    * Therefore the system does not allow a copy constructor or assignment operator.
+    */
+    GenericNode(const GenericNode&) = delete;
+    GenericNode& operator=(const GenericNode& other) = delete;
+
+    /*
+    * Destructor of GenericNode class
+    * @param - none
+    * @return - void
+    */
     ~GenericNode() = default;
 
     /*
@@ -34,59 +48,65 @@ public:
      * @return - none
      */
     void addTeams(Team* teams, const int minTeamId, const int maxTeamId);
+
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Updates the new team ID of each player
+     * @param - a pointer to the new team containing the players
+     * @return - none
+     */
     void inorderWalkTeamID(Team* team);
 
+    /*
+    * Returns the height of a node
+    * @param - none
+    * @return - void
+    */
     int get_height() const;
 
-protected:
-
-    //Pointers to the parent node and the two child nodes
-    GenericNode* m_parent;
-    GenericNode* m_left;
-    GenericNode* m_right;
+private:
 
     /*
      * Left-Right Rotation
-     * @return - none
+     * @param - Node with balance factor of +2
+     * @return - pointer to ComplexNode
      */
     GenericNode* ll_rotation(GenericNode* node);
 
     /*
      * Right-Right Rotation
-     * @return - none
+     * @param - Node with balance factor of -2
+     * @return - pointer to ComplexNode
      */
     GenericNode* rr_rotation(GenericNode* node);
 
     /*
      * Right-Left Rotation
-     * @return - none
-     */
+     * @param - Node with balance factor of -2
+     * @return - pointer to ComplexNode
+    */
     GenericNode* rl_rotation(GenericNode* node);
 
     /*
      * Left-Left Rotation
-     * @return - none
-     */
+     * @param - Node with balance factor of +2
+     * @return - pointer to ComplexNode
+    */
     GenericNode* lr_rotation(GenericNode* node);
 
     /*
      * Update balance factor of the current node
-     * @return - none
+     * @param - none
+     * @return - void
     */
     void update_bf();
     
     /*
      * Update height of the current node
-     * @return - none
+     * @param - none
+     * @return - void
     */
     void update_height();
-
-    /*
-     * Helper function for get_all_players in world_cup:
-     * Recursively inserts all players in a tree into a given array, starting with the root of the tree
-     * @return - none
-    */
-    int get_data_inorder(int* const array, int index) const;
 
     /*
      * Helper function for knockout in world_cup:
@@ -96,14 +116,30 @@ protected:
      */
     typename GenericNode<T>::GenericNode* getFirstTeam(const int minTeamId, const int maxTeamId);
 
-    //Helper functions to print
+    /*
+     * Helper functions for testing:
+     * Prints a tree, node by node
+     * @param - none
+     * @return - void
+     */    
     void inorderWalkNode(bool flag);
     void printNode();
     void printData();
     
-    //Friend classes
+    /*
+     * The internal fields of GenericNode: pointers to the parent node and two child nodes
+     */
+    GenericNode* m_parent;
+    GenericNode* m_left;
+    GenericNode* m_right;
+
+    /*
+     * The following class is a friend class in order to allow full access to private fields and functions of
+     * GenericNode, allowing GenericNode to be a mostly private class, while allowing the system to run smoothly.
+    */
     template <class N, class M>
     friend class Tree;
+
 };
 
 //--------------------------------------------Constructors---------------------------------------------------
@@ -133,6 +169,16 @@ template<class T>
 void GenericNode<T>::addTeams(Team* teams, const int minTeamId, const int maxTeamId) {
     GenericNode<T>* first = this->getFirstTeam(minTeamId, maxTeamId);
     first->m_data->knockout_insert(teams, maxTeamId);
+}
+
+
+template <class T>
+void GenericNode<T>::inorderWalkTeamID(Team* team) {
+    if (this != nullptr) {
+        m_left->inorderWalkTeamID(team);
+        this->m_data->update_team(team);
+        m_right->inorderWalkTeamID(team);
+    }
 }
 
 
@@ -176,6 +222,7 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::ll_rotation(GenericNode<T>
     return tmpToReturn;
 }
 
+
 //Right-Right tree rotation, on the node with balance factor of -2
 template <class T>
 typename GenericNode<T>::GenericNode* GenericNode<T>::rr_rotation(GenericNode<T>* node)
@@ -212,6 +259,7 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::rl_rotation(GenericNode<T>
     return tmp;
 }
 
+
 //Left-Right tree rotation, on the node with balance factor of +2
 template <class T>
 typename GenericNode<T>::GenericNode* GenericNode<T>::lr_rotation(GenericNode<T>* node)
@@ -220,6 +268,7 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::lr_rotation(GenericNode<T>
     tmp = ll_rotation(tmp);
     return tmp;
 }
+
 
 //----------------------------------------------Node Stats---------------------------------------------------
 
@@ -258,20 +307,7 @@ void GenericNode<T>::update_height()
 }
 
 
-//---------------------------------Private Helper Functions for world_cup---------------------------------------------
-
-//Need to delete
-template <class T>
-int GenericNode<T>::get_data_inorder(int* const array, int index) const
-{
-    if (this != nullptr) {
-        index = m_left->get_data_inorder(array, index);
-        array[index++] = this->m_id;
-        index = m_right->get_data_inorder(array, index);
-    }
-    return index;
-}
-
+//---------------------------------Private Helper Function for world_cup---------------------------------------------
 
 template<class T>
 typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int minTeamId, const int maxTeamId){
@@ -287,7 +323,8 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int min
         }
         y = x;
         if (x->m_id == minTeamId) {
-            return x; //node with that id already exists - invalid operation
+            //A node with that id already exists - invalid operation
+            return x;
         }
         if (minTeamId < x->m_id) {
             x = x->m_left;
@@ -350,14 +387,6 @@ void GenericNode<T>::inorderWalkNode(bool flag) {
     }
 }
 
-template <class T>
-void GenericNode<T>::inorderWalkTeamID(Team* team) {
-    if (this != nullptr) {
-        m_left->inorderWalkTeamID(team);
-        this->m_data->update_team(team);
-        m_right->inorderWalkTeamID(team);
-    }
-}
 
 //-----------------------------------------------------------------------------------------------------------
 
