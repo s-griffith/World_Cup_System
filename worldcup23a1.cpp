@@ -500,7 +500,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     //Find number of teams invovled
    // m_qualifiedTeams.print_tree();
 
-    //std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
+ //   std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
    // std::cout << "Num of teams " << num << std::endl;
     //If there are no qualified teams, return failure
@@ -518,14 +518,17 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     //Fill in teams according to their order
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
-    //Make last team point to nullptr:
+    for (int i = 0; i < num-1; i++) {
+        (teams+i)->update_closest_right(teams+i+1);
+        (teams+i+1)->update_closest_left(teams+i);
+    }
     (teams+num-1)->update_closest_right(nullptr);
     teams->update_closest_left(nullptr);
-    //Team* tmp = teams;
-     //while (tmp != nullptr) {
-        //std::cout << "Team: " << tmp->get_teamID() << std::endl;
-      //  tmp = tmp->get_closest_right();
-    //}
+  /*  Team* tmp = teams;
+    while (tmp != nullptr) {
+        std::cout << "Team: " << tmp->get_teamID() << std::endl;
+        tmp = tmp->get_closest_right();
+    } */
     if (num == 1) {
         int winner = teams->get_teamID();
         delete[] teams;
