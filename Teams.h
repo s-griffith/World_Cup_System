@@ -13,7 +13,7 @@ class Player;
 
 class Team {
 public:
-    Team() = default; //maybe can get rid of this at the end
+    Team(); //maybe can get rid of this at the end
     //Creates an empty team with no players
     Team(const int teamID, const int points);
 

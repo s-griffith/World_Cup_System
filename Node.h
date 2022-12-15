@@ -70,6 +70,7 @@ protected:
 
 template <class T>
 Node<T>::Node() :
+    m_data(nullptr),
     m_height(-1),
     m_bf(0),
     m_id(0)

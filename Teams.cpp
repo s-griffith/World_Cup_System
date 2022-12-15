@@ -16,6 +16,21 @@ Team::Team(const int teamID, const int points) :
         m_closestTeamLeft(nullptr)
 {}
 
+Team::Team() :
+        m_id(0),
+        m_points(0),
+        m_numPlayers(0),
+        m_numGoalkeepers(0),
+        m_numGoals(0),
+        m_numCards(0),
+        m_numGames(0),
+        m_playersByID(),
+        m_playersByScore(),
+        m_topScorer(nullptr),
+        m_closestTeamRight(nullptr),
+        m_closestTeamLeft(nullptr)
+{}
+
 Team& Team::operator=(const Team& other) {
     m_id = other.m_id;
     m_numCards = other.m_numCards;

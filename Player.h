@@ -16,6 +16,7 @@ public:
     * @return - A new instance of Player.
     */
     Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, Team* tmpTeam);
+    Player() = delete;
 
     /*
     * Use the default methods for the copy constructor, destructor and the assignment operator

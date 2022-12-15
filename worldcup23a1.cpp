@@ -187,6 +187,8 @@ StatusType world_cup_t::remove_player(int playerId)
             if (tmpTeam->get_closest_right() != nullptr) {
                 tmpTeam->get_closest_right()->update_closest_left(tmpTeam->get_closest_left());                
             }
+            tmpTeam->update_closest_left(nullptr);
+            tmpTeam->update_closest_right(nullptr);
         }
     }
     catch (const NodeNotFound& e) {}
@@ -479,12 +481,13 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
+    /*
     std::cout << "Print 1001 player list" << std::endl;
     Player* tmp = m_playersByID.search_and_return_data(1001);
     while (tmp->get_closest_right() != nullptr) {
         std::cout << tmp->get_playerId() << "-" << std::endl;
         tmp = tmp->get_closest_right();
-    }
+    }*/
     if (playerId <= 0 || teamId <= 0) {
         return output_t<int>(StatusType::INVALID_INPUT);
     }
