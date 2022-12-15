@@ -24,8 +24,8 @@ Team& Team::operator=(const Team& other) {
     m_numGoals = other.m_numGoals;
     m_numPlayers = other.m_numPlayers;
     m_points = other.m_points;
-    m_closestTeamRight = other.m_closestTeamLeft;
-    m_closestTeamLeft = other.m_closestTeamLeft;
+    m_closestTeamRight = nullptr;
+    m_closestTeamLeft = nullptr;
     return *this;
 }
 
@@ -75,7 +75,6 @@ void Team::unite_teams(Team* team1, Team* team2) {
     this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
-
     //this->m_playersByID.mergeNodesExtraPointer(team1->m_playersByID.m_node);
     this->m_playersByID.mergeNodes(team1->m_playersByID.m_node);
     this->m_playersByScore.mergeNodes(team1->m_playersByScore.m_node);
@@ -111,10 +110,9 @@ void Team::get_all_team_players(int* const output) {
     m_playersByScore.get_all_data(output);
 }
 
-StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* playerByScoreNode){
+StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper){
     try {
         m_playersByID.insert(player, id);
-    //    m_playersByID.update_additional_pointer(id, playerByScoreNode);
         m_playersByScore.insert(player, id, goals, cards);
     }
     catch (const InvalidID& e) {
@@ -157,9 +155,6 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     winner.m_points += loser.m_points;
 }
 
-void Team::knockout_setID() {
-    this->m_id *= -1;
-}
 
 int Team::knockout_count(const int maxTeamID) {
     Team* current = this;

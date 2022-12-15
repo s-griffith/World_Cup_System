@@ -8,6 +8,7 @@ class Team;
 
 class Player {
 public:
+
     /*
     * Constructor of Player class
     * @param name - The player's ID, the number of games, goals and cards of the player,
@@ -15,6 +16,13 @@ public:
     * @return - A new instance of Player.
     */
     Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, Team* tmpTeam);
+
+    /*
+    * Use the default methods for the copy constructor, destructor and the assignment operator
+    */
+    Player(const Player& other) = delete;
+    ~Player() = default;
+    Player& operator=(const Player& other) = delete;
 
     /*
     * Return the player's ID
@@ -93,13 +101,6 @@ public:
     */
     int get_closest(Player* player1, Player* player2);
     int check_diff(const int current, const int p1, const int p2);
-
-    /*
-    * Use the default methods for the copy constructor, destructor and the assignment operator
-    */
-    Player(const Player& other) = default;
-    ~Player() = default;
-    Player& operator=(const Player& other) = default;
 
 private:
     int m_playerId;

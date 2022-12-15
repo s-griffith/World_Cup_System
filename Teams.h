@@ -20,7 +20,7 @@ public:
     Team(const Team& other) = delete; //bc two teams can't have the same id
     Team& operator=(const Team& other);
 
-    ~Team() = default; //check this!
+    ~Team() = default;
 
 
     void update_team_id(Team* team);
@@ -43,11 +43,9 @@ public:
     void unite_teams(Team* team1, Team* team2);
     int get_closest_team_player(const int playerId);
     void get_all_team_players(int* const output);
-    StatusType add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper, ComplexNode<Player*>* otherTree);
+    StatusType add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper);
     void remove_player(const int playerID, const int goals, const int cards, const bool goalKeeper);
     bool is_valid() const;
-    // Team knockout_copy();
-    void knockout_setID();
     int knockout_count(const int maxTeamID);
     void knockout_insert(Team* teams, const int maxID);
     void knockout_unite(Team& winner, Team& loser);
