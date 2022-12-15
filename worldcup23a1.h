@@ -40,7 +40,7 @@ private:
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
     MultiTree<Player*> m_playersByScore;
 
-	int knockout_games(Team* teams, int numTeams, const int size);
+	Team* knockout_games(Team* teams);
 	int compete(Team& team1, Team& team2);
 public:
 	// <DO-NOT-MODIFY> {

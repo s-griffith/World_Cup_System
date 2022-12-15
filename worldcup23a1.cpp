@@ -113,8 +113,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                 m_playersByScore.update_closest(tmpPlayer->get_closest_right()->get_playerId(), tmpPlayer->get_closest_right()->get_goals(), tmpPlayer->get_closest_right()->get_cards());
             }
             m_overallTopScorer = m_playersByScore.search_and_return_max();
-            //Add player to team trees + update team stats + update top team scorer
-            tmpTeam->add_player(tmpPlayer, playerId, goals, cards, goalKeeper, &(m_playersByScore.search_specific_id(playerId, goals, cards)));
+            tmpTeam->add_player(tmpPlayer, playerId, goals, cards, goalKeeper);
         }
         catch (const std::bad_alloc& e) {
             return StatusType::ALLOCATION_ERROR;
@@ -503,7 +502,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
 
     //std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
-    //std::cout << "Num of teams " << num << std::endl;
+   // std::cout << "Num of teams " << num << std::endl;
     //If there are no qualified teams, return failure
     if (num == 0) {
         return output_t<int>(StatusType::FAILURE);
@@ -519,9 +518,14 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     //Fill in teams according to their order
     m_qualifiedTeams.m_node->addTeams(teams, minTeamId, maxTeamId);
-   /* for (int i = 0; i < num; i++) {
-        std::cout << "Array index " << i << " is " << (teams+i)->get_teamID() << std::endl;
-    } */
+    //Make last team point to nullptr:
+    (teams+num-1)->update_closest_right(nullptr);
+    teams->update_closest_left(nullptr);
+    //Team* tmp = teams;
+     //while (tmp != nullptr) {
+        //std::cout << "Team: " << tmp->get_teamID() << std::endl;
+      //  tmp = tmp->get_closest_right();
+    //}
     if (num == 1) {
         int winner = teams->get_teamID();
         delete[] teams;
@@ -529,15 +533,11 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     //In a recursive function, go over every pair in the array and send to play match.
     //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
-    int numTeams = num;
+    Team* first = teams;
     do {
-        numTeams = knockout_games(teams, numTeams, num);
-    } while (numTeams > 1);
-    Team* temp = teams;
-    while (temp->get_teamID() < 0) {
-        temp++;
-    }
-    int winnerID = temp->get_teamID();
+        first = knockout_games(teams);
+    } while (first->get_closest_right() != nullptr);
+    int winnerID = first->get_teamID();
     delete[] teams;
     return output_t<int>(winnerID);
 }
@@ -567,54 +567,46 @@ int world_cup_t::compete(Team& team1, Team& team2) {
     return winnerID;
 }
 
-int world_cup_t::knockout_games(Team* teams, int numTeams, const int size) {
-    //std::cout << "numTeams: " << numTeams << " size: " << size << std::endl;
-    if (numTeams <= 1) { //stop because there's an uneven number of teams
-        return numTeams; //what to return here
+Team* world_cup_t::knockout_games(Team* teams) { //return first
+    if (teams->get_closest_right() == nullptr) {
+        return teams;
     }
-    //for (int i = 0; i < size; i++) {
-      //  std::cout << "Team at index " << i << " is " << (teams+i)->get_teamID() << std::endl;
-    //}
-    int currIndex1 = 0;
-    Team* first = teams;
-    while (first->get_teamID() < 0 && currIndex1 < size) {
-        currIndex1++;
-        first = teams + currIndex1;
+    Team* second = teams->get_closest_right();
+    if (second->get_closest_right() != nullptr) {
+        knockout_games(second->get_closest_right());
     }
-    int currIndex2 = currIndex1+1;
-    Team* second = teams+currIndex2;
-    while (second->get_teamID() < 0 && currIndex2 < size) {
-        currIndex2++;
-        second = teams + currIndex2;
-    }
-    if (currIndex2 >= size) { //This happens only when there is a single team left in the array, so continue the process with the other pairs
-        return 1;
-    }
-   // std::cout << "number of teams before knockout: " << numTeams << std::endl;
-    numTeams = 2 + knockout_games(teams+currIndex2+1, numTeams-2, size-currIndex2-1); //might need to be currIndex-1
-  //  std::cout << "number of teams after knockout: " << numTeams << std::endl;
-    int winnerID = compete(*first, *second);
-    if (winnerID == first->get_teamID()) {
-        first->knockout_unite(*first, *second);
-        numTeams--;
-        (teams+currIndex2)->knockout_setID();
+    int winnerID = compete(*teams, *second);
+    if (winnerID == teams->get_teamID()) {
+        teams->knockout_unite(*teams, *second);
+        teams->update_closest_right(second->get_closest_right());
+        if (second->get_closest_right() != nullptr) {
+            second->get_closest_right()->update_closest_left(teams);
+        }
     }
     else if (winnerID == second->get_teamID()) {
-        first->knockout_unite(*second, *first);
-        numTeams--;
-        (teams+currIndex1)->knockout_setID();
+        teams->knockout_unite(*second, *teams);
+        second->update_closest_left(teams->get_closest_left());
+        if (teams->get_closest_left() != nullptr) {
+            teams->get_closest_left()->update_closest_right(second);
+        }
+        teams = second;
     }
     else {
-        if (first->get_teamID() > second->get_teamID()) {
-            first->knockout_unite(*first, *second);
-            numTeams--;
-            (teams+currIndex2)->knockout_setID();
+        if (teams->get_teamID() > second->get_teamID()) {
+            teams->knockout_unite(*teams, *second);
+            teams->update_closest_right(second->get_closest_right());
+            if (second->get_closest_right() != nullptr) {
+                second->get_closest_right()->update_closest_left(teams);
+            }
         }
         else {
-            first->knockout_unite(*second, *first);
-            numTeams--;
-            (teams+currIndex1)->knockout_setID();
+            teams->knockout_unite(*second, *teams);
+            second->update_closest_left(teams->get_closest_left());
+            if (teams->get_closest_left() != nullptr) {
+                teams->get_closest_left()->update_closest_right(second);
+            }
+            teams = second;
         }
     }
-    return numTeams;
+    return teams;
 }
