@@ -22,7 +22,7 @@ public:
     * Use the default methods for the copy constructor, destructor and the assignment operator
     */
     Player(const Player& other) = delete;
-    ~Player() = default;
+    ~Player();
     Player& operator=(const Player& other) = delete;
 
     /*

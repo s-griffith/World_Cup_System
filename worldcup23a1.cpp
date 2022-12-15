@@ -198,6 +198,8 @@ StatusType world_cup_t::remove_player(int playerId)
     if (closestLeft != nullptr) {
         closestLeft->update_closest_right(closestRight);
     }
+    tmpPlayer->update_closest_right(nullptr);
+    tmpPlayer->update_closest_left(nullptr);
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
     tmpTeam->update_top_player();

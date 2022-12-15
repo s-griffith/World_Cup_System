@@ -44,6 +44,11 @@ Team& Team::operator=(const Team& other) {
     return *this;
 }
 
+Team::~Team() {
+    m_closestTeamRight = nullptr;
+    m_closestTeamLeft = nullptr;
+    m_topScorer = nullptr;
+}
 
 //-------------------------------------Getters----------------------------
 int Team::get_points() const {

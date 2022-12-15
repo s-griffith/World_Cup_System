@@ -20,7 +20,7 @@ public:
     Team(const Team& other) = delete; //bc two teams can't have the same id
     Team& operator=(const Team& other);
 
-    ~Team() = default;
+    ~Team();
 
 
     void update_team_id(Team* team);

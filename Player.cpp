@@ -15,6 +15,12 @@ Player::Player(const int playerId, const int gamesPlayed, const int goals, const
     m_closestRight(nullptr)
 {}
 
+Player::~Player() {
+    m_team = nullptr;
+    m_closestLeft = nullptr;
+    m_closestRight = nullptr;
+}
+
 //Return the player's id
 int Player::get_playerId() const
 {
