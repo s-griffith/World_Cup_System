@@ -193,10 +193,10 @@ StatusType world_cup_t::remove_player(int playerId)
     }
     catch (const NodeNotFound& e) {}
     if (closestRight != nullptr) {
-            closestRight->update_closest_left(closestLeft);
+        closestRight->update_closest_left(closestLeft);
     }
     if (closestLeft != nullptr) {
-            closestLeft->update_closest_right(closestRight);
+        closestLeft->update_closest_right(closestRight);
     }
     //Change top scorer of all players and of team players
     m_overallTopScorer = m_playersByScore.search_and_return_max();
@@ -364,6 +364,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         if (team1->get_closest_right() != nullptr) {
             team1->get_closest_right()->update_closest_left(team1->get_closest_left());                
         }
+        team1->update_closest_right(nullptr);
+        team1->update_closest_left(nullptr);
     }
     catch (const NodeNotFound& e) {}
     try {
@@ -374,6 +376,8 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         if (team2->get_closest_right() != nullptr) {
             team2->get_closest_right()->update_closest_left(team2->get_closest_left());                
         }
+        team2->update_closest_right(nullptr);
+        team2->update_closest_left(nullptr);
     }
     catch (const NodeNotFound& e) {}
     m_teamsByID.remove(teamId1);
@@ -481,13 +485,6 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
-    /*
-    std::cout << "Print 1001 player list" << std::endl;
-    Player* tmp = m_playersByID.search_and_return_data(1001);
-    while (tmp->get_closest_right() != nullptr) {
-        std::cout << tmp->get_playerId() << "-" << std::endl;
-        tmp = tmp->get_closest_right();
-    }*/
     if (playerId <= 0 || teamId <= 0) {
         return output_t<int>(StatusType::INVALID_INPUT);
     }
