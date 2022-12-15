@@ -60,7 +60,7 @@ public:
     /*
     * Returns the height of a node
     * @param - none
-    * @return - void
+    * @return - height
     */
     int get_height() const;
 
@@ -307,7 +307,7 @@ void GenericNode<T>::update_height()
 }
 
 
-//---------------------------------Private Helper Function for world_cup---------------------------------------------
+//---------------------------------Private Helper Functions for world_cup---------------------------------------------
 
 template<class T>
 typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int minTeamId, const int maxTeamId){
