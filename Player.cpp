@@ -98,35 +98,44 @@ void Player::update_closest_right(Player* closestRight)
 //Get the ID of the closest player to the current player
 int Player::get_closest(Player* player1, Player* player2)
 {
-    //Return the player with the closest goal count
-    int diff = check_diff(m_goals, player1->m_goals, player2->m_goals);
-    if (diff == 1) {
+    if (player1 != nullptr && player2 == nullptr) {
         return player1->m_playerId;
     }
-    else if (diff == 2) {
+    else if (player1 == nullptr && player2 != nullptr) {
         return player2->m_playerId;
     }
-    //Return the player with the closest card count
-    diff = check_diff(m_cards, player1->m_cards, player2->m_cards);
-    if (diff == 1) {
-        return player1->m_playerId;
-    }
-    else if (diff == 2) {
+    else if (player1 != nullptr && player2 != nullptr) {
+        //Return the player with the closest goal count
+        int diff = check_diff(m_goals, player1->m_goals, player2->m_goals);
+        if (diff == 1) {
+            return player1->m_playerId;
+        }
+        else if (diff == 2) {
+            return player2->m_playerId;
+        }
+        //Return the player with the closest card count
+        diff = check_diff(m_cards, player1->m_cards, player2->m_cards);
+        if (diff == 1) {
+            return player1->m_playerId;
+        }
+        else if (diff == 2) {
+            return player2->m_playerId;
+        }
+        //Return the player with the closest player id
+        diff = check_diff(m_playerId, player1->m_playerId, player2->m_playerId);
+        if (diff == 1) {
+            return player1->m_playerId;
+        }
+        else if (diff == 2) {
+            return player2->m_playerId;
+        }
+        //Return the player with the bigger player id
+        if (player1->m_playerId > m_playerId) {
+            return player1->m_playerId;
+        }
         return player2->m_playerId;
     }
-    //Return the player with the closest player id
-    diff = check_diff(m_playerId, player1->m_playerId, player2->m_playerId);
-    if (diff == 1) {
-        return player1->m_playerId;
-    }
-    else if (diff == 2) {
-        return player2->m_playerId;
-    }
-    //Return the player with the bigger player id
-    if (player1->m_playerId > m_playerId) {
-        return player1->m_playerId;
-    }
-    return player2->m_playerId;
+    return -1;
 }
 
 

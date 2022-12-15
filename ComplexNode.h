@@ -32,7 +32,7 @@ public:
     * @param - none
     * @return - void
     */
-    ~ComplexNode() = default;
+    virtual ~ComplexNode() = default;
 
 private:
 

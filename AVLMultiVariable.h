@@ -346,16 +346,12 @@ typename ComplexNode<T>::ComplexNode* MultiTree<T>::findLeftClosest(ComplexNode<
             closestLeft = closestLeft->m_right;
         }
     }
-    if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_right == currentPlayerNode)) {
-        if (closestLeft->m_id == currentPlayerNode->m_id) {
-            closestLeft = currentPlayerNode->m_parent;
-        }
-        else {
-            //Check which node is closer: the child to the left or the parent
-            int tmpId = currentPlayerNode->m_data->get_closest(closestLeft->m_data, currentPlayerNode->m_parent->m_data);
-            if (tmpId == currentPlayerNode->m_parent->m_id) {
-                closestLeft = currentPlayerNode->m_parent;
-            }
+    else if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_right == currentPlayerNode)) {
+        closestLeft = currentPlayerNode->m_parent;
+    }
+    else if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_left == currentPlayerNode)) {
+        if ((currentPlayerNode->m_parent->m_parent != nullptr) && (currentPlayerNode->m_parent->m_parent->m_left != currentPlayerNode->m_parent)) {
+            closestLeft = currentPlayerNode->m_parent->m_parent;
         }
     }
     if (closestLeft->m_id != currentPlayerNode->m_id) {
@@ -375,16 +371,12 @@ typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(ComplexNode
             closestRight = closestRight->m_left;
         }
     }
-    if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_left == currentPlayerNode)) {
-        if (closestRight->m_id == currentPlayerNode->m_id) {
-            closestRight = currentPlayerNode->m_parent;
-        }
-        else {
-            //Check which node is closer: the child to the right or the parent
-            int tmpId = currentPlayerNode->m_data->get_closest(closestRight->m_data, currentPlayerNode->m_parent->m_data);
-            if (tmpId == currentPlayerNode->m_parent->m_id) {
-                closestRight = currentPlayerNode->m_parent;
-            }
+    else if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_left == currentPlayerNode)) {
+        closestRight = currentPlayerNode->m_parent;
+    }
+    else if ((currentPlayerNode->m_parent != nullptr) && (currentPlayerNode->m_parent->m_right == currentPlayerNode)) {
+        if ((currentPlayerNode->m_parent->m_parent != nullptr) && (currentPlayerNode->m_parent->m_parent->m_right != currentPlayerNode->m_parent)) {
+            closestRight = currentPlayerNode->m_parent->m_parent;
         }
     }
     if (closestRight->m_id != currentPlayerNode->m_id) {

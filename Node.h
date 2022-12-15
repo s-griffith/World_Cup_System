@@ -29,7 +29,7 @@ public:
     * @param - none
     * @return - void
     */
-    virtual ~Node() = default;
+    virtual ~Node();
 
     /*
     * Returns the ID of a node
@@ -75,6 +75,11 @@ Node<T>::Node() :
     m_id(0)
 {}
 
+template <class T>
+Node<T>::~Node()
+{
+    m_data = nullptr;
+}
 
 template <class T>
 int Node<T>::getID() const {

@@ -94,16 +94,19 @@ int Team::get_closest_team_player(const int playerId) {
     catch (const NodeNotFound& e) {
         throw e;
     }
-    if (tmpPlayer->get_closest_left() == nullptr) {
-        closest_id = tmpPlayer->get_closest_right()->get_playerId();
+    if ((tmpPlayer != nullptr) && (tmpPlayer->get_closest_left() != nullptr || tmpPlayer->get_closest_right() != nullptr)) {
+        if (tmpPlayer->get_closest_left() == nullptr && tmpPlayer->get_closest_right() != nullptr) {
+            closest_id = tmpPlayer->get_closest_right()->get_playerId();
+        }
+        else if (tmpPlayer->get_closest_right() == nullptr && tmpPlayer->get_closest_left() != nullptr) {
+            closest_id = tmpPlayer->get_closest_left()->get_playerId();
+        }
+        else {
+            closest_id = tmpPlayer->get_closest(tmpPlayer->get_closest_left(), tmpPlayer->get_closest_right());
+        }
+        return closest_id;
     }
-    else if (tmpPlayer->get_closest_right() == nullptr) {
-        closest_id = tmpPlayer->get_closest_left()->get_playerId();
-    }
-    else {
-        closest_id = tmpPlayer->get_closest(tmpPlayer->get_closest_left(), tmpPlayer->get_closest_right());
-    }
-    return closest_id;
+    return -1;
 }
 
 void Team::get_all_team_players(int* const output) {

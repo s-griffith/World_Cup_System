@@ -343,7 +343,14 @@ N& Tree<N, T>::search_recursively(const int id, N* currentNode) const
 template <class N, class T>
 T& Tree<N, T>::search_and_return_data(const int id) const
 {
-    return search_recursively(id, m_node).m_data;
+    N* tmpNode;
+    try {
+        tmpNode = &(search_recursively(id, m_node));
+    }
+    catch (const NodeNotFound& e) {
+        throw e;
+    }
+    return tmpNode->m_data;
 }
 
 
