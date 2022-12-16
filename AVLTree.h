@@ -129,14 +129,6 @@ public:
      */
     void unite_update_games(const int numTeamGames);
 
-    /*
-     * Helper function for testing:
-     * Prints the tree, node by node
-     * @param - none
-     * @return - void
-     */
-    void print_tree();
-
 protected:
 
     /*
@@ -584,14 +576,6 @@ N* Tree<N, T>::findRightClosest(N* currentTeam)
         return closestRight;
     }
     return nullptr;
-}
-
-
-//-----------------------------------------Helper Function for Testing--------------------------
-
-template<class N, class T>
-void Tree<N, T>::print_tree() {
-    m_node->inorderWalkNode(1);
 }
 
 

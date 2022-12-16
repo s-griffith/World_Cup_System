@@ -267,8 +267,3 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     winner.m_numPlayers += loser.m_numPlayers;
     winner.m_points += loser.m_points;
 }
-
-
-void Team::print_team() {
-    m_playersByScore.print_tree();
-}

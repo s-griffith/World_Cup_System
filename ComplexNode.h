@@ -87,16 +87,6 @@ private:
     int get_data_inorder(int* const array, int index) const;
 
     /*
-     * Helper functions for testing:
-     * Prints a tree, node by node
-     * @param - none
-     * @return - void
-     */
-    void inorderWalkNode(bool flag);
-    void printNode();
-    void printData();
-
-    /*
      * The internal fields of ComplexNode:
      *   Pointers to the parent node and two child nodes
      *   The goals the player represented by ComplexNode scored
@@ -270,53 +260,6 @@ int ComplexNode<T>::get_data_inorder(int* const array, int index) const
     return index;
 }
 
-//-----------------------------------------FUNCTIONS FOR TESTING--------------------------
-
-template <class T>
-void ComplexNode<T>::printNode() {
-    int parent, left, right;
-    if (m_parent == nullptr) {
-        parent = -1;
-    }
-    else {
-        parent = m_parent->m_id;
-    }
-    if (m_left == nullptr) {
-        left = -1;
-    }
-    else {
-        left = m_left->m_id;
-    }
-    if (m_right == nullptr) {
-        right = -1;
-    }
-    else {
-        right = m_right->m_id;
-    }
-    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " 
-            << left << ", Right = " << right << std::endl;
-}
-
-
-template <class T>
-void ComplexNode<T>::printData() {
-    std::cout << "ID = " << Node<T>::m_id << std::endl;
-}
-
-
-template <class T>
-void ComplexNode<T>::inorderWalkNode(bool flag) {
-    if (this != nullptr) {
-        m_left->inorderWalkNode(flag);
-        if (flag) {
-            this->printNode();
-        }
-        else {
-            this->printData();
-        }
-        m_right->inorderWalkNode(flag);
-    }
-}
 
 //-----------------------------------------------------------------------------------------------------------
 

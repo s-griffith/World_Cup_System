@@ -275,14 +275,6 @@ public:
     */
     void knockout_unite(Team& winner, Team& loser);
 
-    /*
-     * Helper function for testing:
-     * Prints the team's m_playersByScore, node by node
-     * @param - none
-     * @return - void
-     */
-    void print_team();
-
 private:
 
     /*

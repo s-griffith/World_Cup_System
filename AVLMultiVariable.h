@@ -105,14 +105,6 @@ public:
      */
     void update_closest(const int playerId, const int goals, const int cards);
 
-    /*
-     * Helper function for testing:
-     * Prints the tree, node by node
-     * @param - none
-     * @return - void
-     */
-    void print_tree();
-
 private:
 
     /*
@@ -408,15 +400,6 @@ typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(ComplexNode
     }
     return nullptr;
 }
-
-
-//-----------------------------------------Helper Function for Testing--------------------------
-
-template<class T>
-void MultiTree<T>::print_tree() {
-    this->m_node->inorderWalkNode(1);
-}
-
 
 //----------------------------------------------------------------------------------------------
 
