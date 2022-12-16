@@ -58,8 +58,6 @@ public:
      */
     T& search_and_return_max();
     
-    T& search_and_return_min();
-
     /*
      * Search for a specific node, according to the id, goals, and cards given
      * @param - The ID, goals, and cards of the requested node
@@ -218,7 +216,8 @@ void MultiTree<T>::insert(T data, const int id, const int goals, const int cards
 
 template<class T>
 void MultiTree<T>::remove(const int id, const int goals, const int cards) {
-    if (this->m_node->m_id == id && this->m_node->m_right == nullptr && this->m_node->m_left == nullptr && this->m_node->m_parent == nullptr) {
+    if (this->m_node->m_id == id && this->m_node->m_right == nullptr && this->m_node->m_left == nullptr 
+                                                                                && this->m_node->m_parent == nullptr) {
         this->m_node->m_data = nullptr;
         this->m_node->m_height = -1;
         this->m_node->m_bf = 0;
@@ -245,16 +244,6 @@ T& MultiTree<T>::search_and_return_max() {
     }
     return node->m_data;
 }
-
-template<class T>
-T& MultiTree<T>::search_and_return_min() {
-    ComplexNode<T>* node = this->m_node;
-    while(node->m_left != nullptr) {
-        node = node->m_left;
-    }
-    return node->m_data;
-}
-
 
 
 template<class T>

@@ -44,6 +44,7 @@ Team& Team::operator=(const Team& other) {
     m_points = other.m_points;
     m_closestTeamRight = nullptr;
     m_closestTeamLeft = nullptr;
+    m_topScorer = nullptr;
     return *this;
 }
 
@@ -221,7 +222,8 @@ int Team::get_closest_team_player(const int playerId) {
     catch (const NodeNotFound& e) {
         throw e;
     }
-    if ((tmpPlayer != nullptr) && (tmpPlayer->get_closest_left() != nullptr || tmpPlayer->get_closest_right() != nullptr)) {
+    if ((tmpPlayer != nullptr) && (tmpPlayer->get_closest_left() != nullptr || 
+                                                                        tmpPlayer->get_closest_right() != nullptr)) {
         if (tmpPlayer->get_closest_left() == nullptr && tmpPlayer->get_closest_right() != nullptr) {
             closest_id = tmpPlayer->get_closest_right()->get_playerId();
         }

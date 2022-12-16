@@ -159,7 +159,6 @@ int GenericNode<T>::numOfTeams(const int minTeamID, const int maxTeamID) {
     if (first == nullptr) {
         return 0;
     }
-    //std::cout << "First is " << first->m_id << std::endl;
     return (first->m_data->knockout_count(maxTeamID));
 }
 
