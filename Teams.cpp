@@ -111,8 +111,12 @@ void Team::add_game() {
     m_numGames++;
 }
 
-void Team::update_points(const int k) {
-    m_points += k;
+void Team::update_points_won() {
+    m_points += 3;
+}
+
+void Team::update_points_tie() {
+    m_points += 1;
 }
 
 void Team::update_num_goals(const int goals) {

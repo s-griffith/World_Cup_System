@@ -17,7 +17,7 @@ world_cup_t::~world_cup_t()
     if (m_totalNumPlayers > 0) {
         m_playersByID.erase_data(m_playersByID.m_node);
     }
-    if (m_teamsByID.m_node->get_height() < 0) {
+    if (m_teamsByID.m_node->get_height() > 0) {
         m_teamsByID.erase_data(m_teamsByID.m_node);
     }
     m_overallTopScorer = nullptr;
@@ -594,16 +594,16 @@ int world_cup_t::compete(Team& team1, Team& team2) {
     int point2 = team2.get_points() + team2.get_goals() - team2.get_cards();
     int winnerID = 0;
     if (point1 > point2) {
-        team1.update_points(3); //---------------------------------------------can we make a define for this-------------------
+        team1.update_points_won();
         winnerID = team1.get_teamID();
     }
     else if (point1 == point2) {
-        team1.update_points(1);
-        team2.update_points(1);
+        team1.update_points_tie();
+        team2.update_points_tie();
         winnerID = 0; //a tie - b/c no team id is equal to 0
     }
     else {
-        team2.update_points(3);
+        team2.update_points_won();
         winnerID = team2.get_teamID();
     }
     team1.add_game();

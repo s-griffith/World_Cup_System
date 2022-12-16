@@ -137,11 +137,18 @@ public:
     void add_game();
 
     /*
-    * Updates the number of points the team has
+    * Updates the number of points the team has after winning a match
     * @param - none
     * @return - void
     */
-    void update_points(const int k);
+    void update_points_won();
+
+    /*
+    * Updates the number of points the team has after tying in a match
+    * @param - none
+    * @return - void
+    */
+    void update_points_tie();
 
     /*
     * Increases the number of goals the team has
