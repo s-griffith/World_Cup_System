@@ -1,6 +1,7 @@
 #include "Teams.h"
 
-//-------------------------------------Constructors----------------------------
+//--------------------------------Constructors, Assignment Operator and Destructor----------------------------
+
 Team::Team(const int teamID, const int points) :
         m_id(teamID),
         m_points(points),
@@ -15,6 +16,7 @@ Team::Team(const int teamID, const int points) :
         m_closestTeamRight(nullptr),
         m_closestTeamLeft(nullptr)
 {}
+
 
 Team::Team() :
         m_id(0),
@@ -31,6 +33,7 @@ Team::Team() :
         m_closestTeamLeft(nullptr)
 {}
 
+
 Team& Team::operator=(const Team& other) {
     m_id = other.m_id;
     m_numCards = other.m_numCards;
@@ -44,13 +47,16 @@ Team& Team::operator=(const Team& other) {
     return *this;
 }
 
+
 Team::~Team() {
     m_closestTeamRight = nullptr;
     m_closestTeamLeft = nullptr;
     m_topScorer = nullptr;
 }
 
+
 //-------------------------------------Getters----------------------------
+
 int Team::get_points() const {
     return m_points;
 }
@@ -87,7 +93,97 @@ Team* Team::get_closest_right() {
     return m_closestTeamRight;
 }
 
+
+//-------------------------------------Update Stats Functions----------------------------
+
+void Team::update_team_id(Team* team) {
+    m_playersByID.m_node->inorderWalkTeamID(team);
+}
+
+bool Team::is_valid() const{
+    if (m_numPlayers >= 11 && m_numGoalkeepers >= 1) {
+        return true;
+    }
+    return false;
+}
+
+void Team::add_game() {
+    m_numGames++;
+}
+
+void Team::update_points(const int k) {
+    m_points += k;
+}
+
+void Team::update_num_goals(const int goals) {
+    m_numGoals += goals;
+}
+
+void Team::update_num_cards(const int cards) {
+    m_numCards += cards;
+}
+
+void Team::update_top_player() {
+    m_topScorer = m_playersByScore.search_and_return_max();
+}
+
+void Team::update_closest_right(Team* team2) {
+    m_closestTeamRight = team2;
+}
+
+void Team::update_closest_left(Team* team1) {
+    m_closestTeamLeft = team1;
+}
+
 //-------------------------------------Helper Functions for WorldCup----------------------------
+
+StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper){
+    try {
+        m_playersByID.insert(player, id);
+        m_playersByScore.insert(player, id, goals, cards);
+    }
+    catch (const InvalidID& e) {
+        return StatusType::FAILURE;
+    }
+    update_num_goals(goals);
+    update_num_cards(cards);
+    m_numPlayers++;
+    if (goalkeeper) {
+        m_numGoalkeepers++;
+    }
+    update_top_player();
+    return StatusType::SUCCESS;
+}
+
+
+void Team::remove_player(const int playerID, const int goals, const int cards, const bool goalKeeper){
+    m_playersByID.remove(playerID);
+    m_playersByScore.remove(playerID, goals, cards);
+    if (goalKeeper) {
+        m_numGoalkeepers--;
+    }
+    m_numCards -= cards;
+    m_numGoals -= goals;
+    m_numPlayers--;
+}
+
+
+void Team::remove_player_by_score(const int id, const int goals, const int cards) {
+    m_playersByScore.remove(id, goals, cards);
+}
+
+
+void Team::insert_player_by_score(Player* player, const int id, const int goals, const int cards) {
+    m_playersByScore.insert(player, id, goals, cards);
+}
+
+
+void Team::update_team_stats(const int goals, const int cards){
+    update_num_goals(goals);
+    update_num_cards(cards);
+    update_top_player();
+}
+
 
 void Team::unite_teams(Team* team1, Team* team2) {
     this->m_numCards = team1->m_numCards + team2->m_numCards;
@@ -105,6 +201,12 @@ void Team::unite_teams(Team* team1, Team* team2) {
     team2->m_playersByID.unite_update_games(team2->get_games());
     this->m_topScorer = m_playersByScore.search_and_return_max();
 }
+
+
+void Team::get_all_team_players(int* const output) {
+    m_playersByScore.get_all_data(output);
+}
+
 
 int Team::get_closest_team_player(const int playerId) {
     int closest_id = 0;
@@ -130,60 +232,6 @@ int Team::get_closest_team_player(const int playerId) {
     return -1;
 }
 
-void Team::get_all_team_players(int* const output) {
-    m_playersByScore.get_all_data(output);
-}
-
-StatusType Team::add_player(Player* player, const int id, const int goals, const int cards, const bool goalkeeper){
-    try {
-        m_playersByID.insert(player, id);
-        m_playersByScore.insert(player, id, goals, cards);
-    }
-    catch (const InvalidID& e) {
-        return StatusType::FAILURE;
-    }
-    update_num_goals(goals);
-    update_num_cards(cards);
-    m_numPlayers++;
-    if (goalkeeper) {
-        m_numGoalkeepers++;
-    }
-    update_top_player();
-    return StatusType::SUCCESS;
-}
-
-void Team::remove_player(const int playerID, const int goals, const int cards, const bool goalKeeper){
-       /* std::cout << "Start print in team by score, player ID:" << playerID << std::endl;
-        m_playersByScore.print_tree();
-        std::cout << "Start print in team by id:" << std::endl;
-        m_playersByID.print_tree();
-        std::cout << "Endprint" << std::endl; */
-    m_playersByID.remove(playerID);
-    m_playersByScore.remove(playerID, goals, cards);
-    if (goalKeeper) {
-        m_numGoalkeepers--;
-    }
-    m_numCards -= cards;
-    m_numGoals -= goals;
-    m_numPlayers--;
-}
-
-bool Team::is_valid() const{
-    if (m_numPlayers >= 11 && m_numGoalkeepers >= 1) {
-        return true;
-    }
-    return false;
-}
-
-void Team::knockout_unite(Team& winner, Team& loser) {
-    winner.m_numCards += loser.m_numCards;
-    winner.m_numGames += loser.m_numGames;
-    winner.m_numGoalkeepers += loser.m_numGoalkeepers;
-    winner.m_numGoals += loser.m_numGoals;
-    winner.m_numPlayers += loser.m_numPlayers;
-    winner.m_points += loser.m_points;
-}
-
 
 int Team::knockout_count(const int maxTeamID) {
     Team* current = this;
@@ -191,12 +239,10 @@ int Team::knockout_count(const int maxTeamID) {
     while (current != nullptr && current->m_id <= maxTeamID) {
         counter++;
         current = current->m_closestTeamRight;
-        //if (current != nullptr) {
-         //   std::cout << "closest right is " << current->m_id << std::endl;
-       // }
     }
     return counter;
 }
+
 
 void Team::knockout_insert(Team* teams, const int maxID) {
     Team* current = this;
@@ -209,54 +255,16 @@ void Team::knockout_insert(Team* teams, const int maxID) {
 }
 
 
-void Team::remove_player_by_score(const int id, const int goals, const int cards) {
-    m_playersByScore.remove(id, goals, cards);
+void Team::knockout_unite(Team& winner, Team& loser) {
+    winner.m_numCards += loser.m_numCards;
+    winner.m_numGames += loser.m_numGames;
+    winner.m_numGoalkeepers += loser.m_numGoalkeepers;
+    winner.m_numGoals += loser.m_numGoals;
+    winner.m_numPlayers += loser.m_numPlayers;
+    winner.m_points += loser.m_points;
 }
 
-void Team::insert_player_by_score(Player* player, const int id, const int goals, const int cards) {
-    m_playersByScore.insert(player, id, goals, cards);
-}
 
 void Team::print_team() {
     m_playersByScore.print_tree();
-}
-
-//-------------------------------------Update Stats Functions----------------------------
-void Team::update_team_stats(const int goals, const int cards){
-    update_num_goals(goals);
-    update_num_cards(cards);
-    update_top_player();
-}
-
-void Team::add_game() {
-    m_numGames++;
-}
-
-void Team::update_points(const int k) {
-    m_points += k;
-}
-
-void Team::update_num_goals(const int goals) {
-    m_numGoals += goals;
-}
-
-void Team::update_num_cards(const int cards) {
-    m_numCards += cards;
-}
-
-//Private helper function
-void Team::update_top_player() {
-    m_topScorer = m_playersByScore.search_and_return_max();
-}
-
-void Team::update_team_id(Team* team) {
-    m_playersByID.m_node->inorderWalkTeamID(team);
-}
-
-void Team::update_closest_left(Team* team1) {
-    m_closestTeamLeft = team1;
-}
-
-void Team::update_closest_right(Team* team2) {
-    m_closestTeamRight = team2;
 }

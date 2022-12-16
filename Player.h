@@ -6,6 +6,10 @@ class Team;
 #include "Teams.h"
 #include <memory>
 
+/*
+* Class Player
+* This class is used to represent a player in the world_cup system.
+*/
 class Player {
 public:
 
@@ -87,42 +91,42 @@ public:
     /*
     * Update the number of games the player played
     * @param - the number of new games the player played
-    * @return - none
+    * @return - void
     */
     void update_gamesPlayed(const int gamesPlayed);
 
     /*
     * Update the number of goals the player scored
     * @param - the number of new goals the player scored
-    * @return - none
+    * @return - void
     */
     void update_goals(const int scoredGoals);
 
     /*
     * Update the number of cards the player received
     * @param - the number of new cards the player received
-    * @return - none
+    * @return - void
     */
     void update_cards(const int cardsReceived);
 
     /*
     * Update the team that the player plays for
     * @param - shared pointer to the team that the player plays for
-    * @return - none
+    * @return - void
     */
     void update_team(Team* tmpTeam);
 
     /*
     * Update the pointer to the closest right to the given pointer
     * @param - pointer to the new closest right player
-    * @return - none
+    * @return - void
     */
     void update_closest_right(Player* closestRight);
 
     /*
     * Update the pointer to the closest left to the given pointer
     * @param - pointer to the new closest left player
-    * @return - none
+    * @return - void
     */
     void update_closest_left(Player* closestLeft);
 
