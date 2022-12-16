@@ -226,7 +226,7 @@ void MultiTree<T>::insert(T data, const int id, const int goals, const int cards
 
 template<class T>
 void MultiTree<T>::remove(const int id, const int goals, const int cards) {
-    if (this->m_node->m_right == nullptr && this->m_node->m_left == nullptr && this->m_node->m_parent == nullptr) {
+    if (this->m_node->m_id == id && this->m_node->m_right == nullptr && this->m_node->m_left == nullptr && this->m_node->m_parent == nullptr) {
         this->m_node->m_data = nullptr;
         this->m_node->m_height = -1;
         this->m_node->m_bf = 0;

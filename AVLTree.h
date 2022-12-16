@@ -265,7 +265,7 @@ void Tree<N, T>::insert(T data, const int id) {
 template <class N, class T>
 void Tree<N, T>::remove(const int id)
 {
-    if (m_node->m_right == nullptr && m_node->m_left == nullptr && m_node->m_parent == nullptr) {
+    if (m_node->m_id == id && m_node->m_right == nullptr && m_node->m_left == nullptr && m_node->m_parent == nullptr) {
         m_node->m_data = nullptr;
         m_node->m_height = -1;
         m_node->m_bf = 0;

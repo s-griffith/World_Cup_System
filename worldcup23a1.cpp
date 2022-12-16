@@ -521,6 +521,7 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from
 {
+   // m_qualifiedTeams.print_tree();
     if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
         return output_t<int>(StatusType::INVALID_INPUT);
     }
@@ -528,9 +529,8 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
         return output_t<int>(StatusType::FAILURE);
     }
     //Find number of teams invovled
-    //m_qualifiedTeams.print_tree();
 
-    //std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
+   // std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
    // std::cout << "Num of teams " << num << std::endl;
     //If there are no qualified teams, return failure
@@ -572,6 +572,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     } while (first->get_closest_right() != nullptr);
     int winnerID = first->get_teamID();
     delete[] teams;
+  //  m_qualifiedTeams.print_tree();
     return output_t<int>(winnerID);
 }
 
