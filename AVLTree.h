@@ -121,6 +121,12 @@ public:
      */
     void update_closest(const int teamId);
 
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Updates the number of games for each player in a given team
+     * @param - the number of games played by the team
+     * @return - void
+     */
     void unite_update_games(const int numTeamGames);
 
     /*

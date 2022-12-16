@@ -12,18 +12,29 @@ public:
     /*
     * Constructor of Player class
     * @param name - The player's ID, the number of games, goals and cards of the player,
-    *      and also if the player is a goalkeeper
+    *      and whether the player is a goalkeeper
     * @return - A new instance of Player.
     */
-    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, Team* tmpTeam);
-    Player() = delete;
+    Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper, 
+                Team* tmpTeam);
 
     /*
-    * Use the default methods for the copy constructor, destructor and the assignment operator
+    * Copy Constructor and Assignment Operator of Player class
+    * world_cup does not allow two of the same player or team (repeating ID's).
+    * Therefore the system does not allow a copy constructor or assignment operator.
+    * Additionally, we ensure that internal fields are not initialized as garbage values by deleting the default
+    *   constructor.
     */
+    Player() = delete;
     Player(const Player& other) = delete;
-    ~Player();
     Player& operator=(const Player& other) = delete;
+
+    /*
+    * Destructor of Player class
+    * @param - none
+    * @return - void
+    */
+    ~Player();
 
     /*
     * Return the player's ID
@@ -56,12 +67,21 @@ public:
     bool get_goalkeeper() const;
 
     /*
-    * Return if the player is a goalkeeper
-    * @return - bool, with true if the player is a goalkeeper, otherwise false
+    * Return the team ID of the team that the player belongs to
+    * @return - int, the team ID of the player
     */
     Team* get_team();
 
+    /*
+    * Return the closest right player of the given player
+    * @return - Player*, the closest right player
+    */
     Player* get_closest_right();
+
+    /*
+    * Return the closest left player of the given player
+    * @return - Player*, the closest left player
+    */
     Player* get_closest_left();
 
     /*
@@ -92,18 +112,48 @@ public:
     */
     void update_team(Team* tmpTeam);
 
-    void update_closest_left(Player* closestLeft);
+    /*
+    * Update the pointer to the closest right to the given pointer
+    * @param - pointer to the new closest right player
+    * @return - none
+    */
     void update_closest_right(Player* closestRight);
 
     /*
+    * Update the pointer to the closest left to the given pointer
+    * @param - pointer to the new closest left player
+    * @return - none
+    */
+    void update_closest_left(Player* closestLeft);
+
+    /*
+    * Helper function for get_closest_player in world_cup:
     * Check which player from input is "closer" to the current player according to number of goals, cards and ID
     * @param - two shared pointers to players to compare
     * @return - the ID of the closest player
     */
     int get_closest(Player* player1, Player* player2);
-    int check_diff(const int current, const int p1, const int p2);
 
 private:
+
+    /*
+    * Helper function for get_closest_player in world_cup:
+    * Check which player from input is "closer" to the current player according to number of goals, cards and ID
+    * @param - two shared pointers to players to compare
+    * @return - the ID of the closest player
+    */
+    int check_diff(const int current, const int p1, const int p2);
+
+    /*
+     * The internal fields of Player:
+     *   The player's ID
+     *   The number of games the player has played
+     *   The number of goals the player scored
+     *   The number of cards the player has
+     *   Whether or not the player is a goalkeeper
+     *   A pointer to the player's team
+     *   A pointer to the closest left and closest right players, according to goals, cards, and ID
+     */    
     int m_playerId;
     int m_gamesPlayed;
     int m_goals;

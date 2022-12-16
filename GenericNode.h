@@ -116,6 +116,12 @@ private:
      */
     typename GenericNode<T>::GenericNode* getFirstTeam(const int minTeamId, const int maxTeamId);
 
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Updates the number of games played, player by player
+     * @param - The number of games played by the player's team
+     * @return - a pointer to the team found
+     */
     void update_games_inorder(const int numTeamGames);
 
     /*
@@ -335,40 +341,8 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int min
         return nullptr;
     }
     return y;
-
-  /*  if (minTeamId < x->m_id && (x->m_left == nullptr || x->m_left->m_id <= minTeamId)) {
-        break;
-    }
-    if (minTeamId < x->m_id && (x->m_right == nullptr || x->m_right->m_id >= minTeamId)) {
-        break;
-    } */
-  /*  GenericNode<Team*>* x = this;
-    GenericNode<Team*>* y = nullptr;
-    while (x != nullptr) {
-        if (x->m_id > minTeamId) {
-            if (x->m_left != nullptr) {
-                if (x->m_left->m_id > minTeamId) {
-                    x=x->m_left;
-                }
-            }
-        }
-        y = x;
-        if (x->m_id == minTeamId) {
-            //A node with that id already exists - invalid operation
-            return x;
-        }
-        if (minTeamId < x->m_id && x->m_left != nullptr && x->m_left->m_id <= minTeamId) {
-            x = x->m_left;
-        }
-        else {
-            x = x->m_right;
-        }
-    }
-    if (y->m_id <= maxTeamId && y->m_id >= minTeamId) {
-        return y;
-    }
-    return nullptr; */
 }
+
 
 template <class T>
 void GenericNode<T>::update_games_inorder(const int numTeamGames) {

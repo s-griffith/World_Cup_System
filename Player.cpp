@@ -1,8 +1,7 @@
 #include "Player.h"
 
-//--------------------------------Player Class Member Functions------------------------------------
+//--------------------------------Constructor and Destructor------------------------------------
 
-//Constructor for Player
 Player::Player(const int playerId, const int gamesPlayed, const int goals, const int cards, const bool goalKeeper,
                Team* tmpTeam) :
     m_playerId(playerId),
@@ -15,91 +14,103 @@ Player::Player(const int playerId, const int gamesPlayed, const int goals, const
     m_closestRight(nullptr)
 {}
 
+
 Player::~Player() {
     m_team = nullptr;
     m_closestLeft = nullptr;
     m_closestRight = nullptr;
 }
 
-//Return the player's id
+
+//---------------------------------------Getters---------------------------------------------
+
 int Player::get_playerId() const
 {
     return m_playerId;
 }
 
-//Return the number of games the player played
+
 int Player::get_gamesPlayed() const
 {
     return m_gamesPlayed;
 }
 
-//Return the number of goals the player scored
+
 int Player::get_goals() const
 {
     return m_goals;
 }
 
-//Return the number of cards the player received
+
 int Player::get_cards() const
 {
     return m_cards;
 }
 
-//Return if the player is a goalkeeper
+
 bool Player::get_goalkeeper() const
 {
     return m_goalkeeper;
 }
 
-//Return the team that the player is part of
+
 Team* Player::get_team()
 {
     return m_team;
 }
+
 
 Player* Player::get_closest_right()
 {
     return m_closestRight;
 }
 
+
 Player* Player::get_closest_left()
 {
     return m_closestLeft;
 }
 
-//Update the number of games the player played
+
+//---------------------------------------Setters---------------------------------------------
+
 void Player::update_gamesPlayed(const int gamesPlayed)
 {
     m_gamesPlayed += gamesPlayed;
 }
 
-//Update the number of goals the player scored
+
 void Player::update_goals(const int scoredGoals)
 {
     m_goals += scoredGoals;
 }
 
-//Update the number of cards the player received
+
 void Player::update_cards(const int cardsReceived)
 {
     m_cards += cardsReceived;
 }
 
-//Update the team the player plays for
+
 void Player::update_team(Team* tmpTeam)
 {
     m_team = tmpTeam;
 }
+
+
+void Player::update_closest_right(Player* closestRight)
+{
+    m_closestRight = closestRight;
+}
+
 
 void Player::update_closest_left(Player* closestLeft)
 {
     m_closestLeft = closestLeft;
 }
 
-void Player::update_closest_right(Player* closestRight)
-{
-    m_closestRight = closestRight;
-}
+
+//---------------------------------------Helper Functions for world_cup---------------------------------------------
 
 //Get the ID of the closest player to the current player
 int Player::get_closest(Player* player1, Player* player2)
