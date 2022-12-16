@@ -121,6 +121,8 @@ public:
      */
     void update_closest(const int teamId);
 
+    void unite_update_games(const int numTeamGames);
+
     /*
      * Helper function for testing:
      * Prints the tree, node by node
@@ -414,6 +416,11 @@ void Tree<N, T>::update_closest(const int teamId)
     }
 }
 
+
+template<class N, class T>
+void Tree<N, T>::unite_update_games(const int numTeamGames) {
+    m_node->update_games_inorder(numTeamGames);
+}
 
 //-----------------------------------------Internal Helper Functions-----------------------------------------
 

@@ -91,7 +91,7 @@ Team* Team::get_closest_right() {
 
 void Team::unite_teams(Team* team1, Team* team2) {
     this->m_numCards = team1->m_numCards + team2->m_numCards;
-    this->m_numGames = team1->m_numGames + team2->m_numGames;
+    this->m_numGames = 0;
     this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
@@ -101,7 +101,8 @@ void Team::unite_teams(Team* team1, Team* team2) {
     //this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
     this->m_playersByID.mergeNodes(team2->m_playersByID.m_node);
     this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node);
-
+    team1->m_playersByID.unite_update_games(team1->get_games());
+    team2->m_playersByID.unite_update_games(team2->get_games());
     this->m_topScorer = m_playersByScore.search_and_return_max();
 }
 

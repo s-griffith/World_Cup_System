@@ -116,6 +116,8 @@ private:
      */
     typename GenericNode<T>::GenericNode* getFirstTeam(const int minTeamId, const int maxTeamId);
 
+    void update_games_inorder(const int numTeamGames);
+
     /*
      * Helper functions for testing:
      * Prints a tree, node by node
@@ -161,6 +163,7 @@ int GenericNode<T>::numOfTeams(const int minTeamID, const int maxTeamID) {
     if (first == nullptr) {
         return 0;
     }
+    //std::cout << "First is " << first->m_id << std::endl;
     return (first->m_data->knockout_count(maxTeamID));
 }
 
@@ -314,16 +317,8 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int min
     GenericNode<Team*>* x = this;
     GenericNode<Team*>* y = nullptr;
     while (x != nullptr) {
-        if (x->m_id > minTeamId) {
-            if (x->m_left != nullptr) {
-                if (x->m_left->m_id < minTeamId) {
-                    return x;
-                }
-            }
-        }
         y = x;
         if (x->m_id == minTeamId) {
-            //A node with that id already exists - invalid operation
             return x;
         }
         if (minTeamId < x->m_id) {
@@ -333,10 +328,55 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int min
             x = x->m_right;
         }
     }
+    while (y->m_id < minTeamId && (y->m_parent != nullptr && y->m_parent->m_id <= maxTeamId)) {
+        y = y->m_parent;
+    }
+    if (y->m_id < minTeamId) {
+        return nullptr;
+    }
+    return y;
+
+  /*  if (minTeamId < x->m_id && (x->m_left == nullptr || x->m_left->m_id <= minTeamId)) {
+        break;
+    }
+    if (minTeamId < x->m_id && (x->m_right == nullptr || x->m_right->m_id >= minTeamId)) {
+        break;
+    } */
+  /*  GenericNode<Team*>* x = this;
+    GenericNode<Team*>* y = nullptr;
+    while (x != nullptr) {
+        if (x->m_id > minTeamId) {
+            if (x->m_left != nullptr) {
+                if (x->m_left->m_id > minTeamId) {
+                    x=x->m_left;
+                }
+            }
+        }
+        y = x;
+        if (x->m_id == minTeamId) {
+            //A node with that id already exists - invalid operation
+            return x;
+        }
+        if (minTeamId < x->m_id && x->m_left != nullptr && x->m_left->m_id <= minTeamId) {
+            x = x->m_left;
+        }
+        else {
+            x = x->m_right;
+        }
+    }
     if (y->m_id <= maxTeamId && y->m_id >= minTeamId) {
         return y;
     }
-    return nullptr;
+    return nullptr; */
+}
+
+template <class T>
+void GenericNode<T>::update_games_inorder(const int numTeamGames) {
+    if (this != nullptr) {
+        m_left->update_games_inorder(numTeamGames);
+        this->m_data->update_gamesPlayed(numTeamGames);
+        m_right->update_games_inorder(numTeamGames);
+    }
 }
 
 
