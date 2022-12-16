@@ -2,6 +2,7 @@
 #define COMPLEXNODE_H
 
 #include "Node.h"
+#include "Player.h"
 
 /*
 * Class Complex Node : Node
@@ -18,6 +19,7 @@ public:
     * @return - A new instance of ComplexNode
     */ 
     ComplexNode();
+    ComplexNode(T data);
 
     /*
     * Copy Constructor and Assignment Operator of ComplexNode class
@@ -33,6 +35,8 @@ public:
     * @return - void
     */
     virtual ~ComplexNode() = default;
+
+    int unite_insert(Player** players, int index);
 
 private:
 
@@ -87,6 +91,16 @@ private:
     int get_data_inorder(int* const array, int index) const;
 
     /*
+     * Helper functions for testing:
+     * Prints a tree, node by node
+     * @param - none
+     * @return - void
+     */
+    void inorderWalkNode(bool flag);
+    void printNode();
+    void printData();
+
+    /*
      * The internal fields of ComplexNode:
      *   Pointers to the parent node and two child nodes
      *   The goals the player represented by ComplexNode scored
@@ -127,6 +141,25 @@ ComplexNode<T>::ComplexNode() :
         m_cards(0)
 {}
 
+template <class T>
+ComplexNode<T>::ComplexNode(T data) :
+        Node<T>(data),
+        m_parent(nullptr),
+        m_left(nullptr),
+        m_right(nullptr),
+        m_goals(data->get_goals()),
+        m_cards(data->get_cards())
+{}
+
+template<class T>
+int ComplexNode<T>::unite_insert(Player** players, int index) {
+    if (this != nullptr) {
+        index = m_left->unite_insert(players, index);
+        *(players+(index++)) = this->m_data;
+        index = m_right->unite_insert(players, index);
+    }
+    return index;
+}
 
 //-----------------------------------------Rotations--------------------------------------------
 
@@ -223,7 +256,7 @@ void ComplexNode<T>::update_bf()
     if (m_right != nullptr) {
         heightRight = m_right->m_height + 1;
     }
-    Node<T>::m_bf = heightLeft - heightRight;
+    this->m_bf = heightLeft - heightRight;
 }
 
 
@@ -239,15 +272,15 @@ void ComplexNode<T>::update_height()
         heightRight = m_right->m_height + 1;
     }
     if (heightLeft >= heightRight) {
-        Node<T>::m_height = heightLeft;
+        this->m_height = heightLeft;
     }
     else {
-        Node<T>::m_height = heightRight;
+        this->m_height = heightRight;
     }
 }
 
 
-//-----------------------------------------Helper Function for world_cup-----------------------------------------
+//--------------------------------------Private Helper Function for world_cup---------------------------------------
 
 template <class T>
 int ComplexNode<T>::get_data_inorder(int* const array, int index) const
@@ -260,6 +293,52 @@ int ComplexNode<T>::get_data_inorder(int* const array, int index) const
     return index;
 }
 
+
+template <class T>
+void ComplexNode<T>::printNode() {
+    int parent, left, right;
+    if (m_parent == nullptr) {
+        parent = -1;
+    }
+    else {
+        parent = m_parent->m_id;
+    }
+    if (m_left == nullptr) {
+        left = -1;
+    }
+    else {
+        left = m_left->m_id;
+    }
+    if (m_right == nullptr) {
+        right = -1;
+    }
+    else {
+        right = m_right->m_id;
+    }
+    std::cout << "ID = " << Node<T>::m_id << ", Parent = " << parent << ", Left = " 
+            << left << ", Right = " << right << std::endl;
+}
+
+
+template <class T>
+void ComplexNode<T>::printData() {
+    std::cout << "ID = " << Node<T>::m_id << std::endl;
+}
+
+
+template <class T>
+void ComplexNode<T>::inorderWalkNode(bool flag) {
+    if (this != nullptr) {
+        m_left->inorderWalkNode(flag);
+        if (flag) {
+            this->printNode();
+        }
+        else {
+            this->printData();
+        }
+        m_right->inorderWalkNode(flag);
+    }
+}
 
 //-----------------------------------------------------------------------------------------------------------
 

@@ -366,6 +366,9 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
+    //std::cout << "Num of players team1: " << team1->get_num_players() << std::endl;
+    //std::cout << "Num of players team2: " << team2->get_num_players() << std::endl;
+
     //Create a new team using the constructor
     Team* nTeam = nullptr;
     try {

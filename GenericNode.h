@@ -17,6 +17,7 @@ public:
     * @return - A new instance of GenericNode
     */ 
     GenericNode();
+    GenericNode(T data);
 
     /*
     * Copy Constructor and Assignment Operator of GenericNode class
@@ -56,6 +57,8 @@ public:
      * @return - none
      */
     void inorderWalkTeamID(Team* team);
+
+    int unite_insert(Player** players, int index);
 
     /*
     * Returns the height of a node
@@ -125,6 +128,16 @@ private:
     void update_games_inorder(const int numTeamGames);
     
     /*
+     * Helper functions for testing:
+     * Prints a tree, node by node
+     * @param - none
+     * @return - void
+     */    
+    void inorderWalkNode(bool flag);
+    void printNode();
+    void printData();
+
+    /*
      * The internal fields of GenericNode: pointers to the parent node and two child nodes
      */
     GenericNode* m_parent;
@@ -145,6 +158,14 @@ private:
 template <class T>
 GenericNode<T>::GenericNode() :
         Node<T>(),
+        m_parent(nullptr),
+        m_left(nullptr),
+        m_right(nullptr)
+{}
+
+template <class T>
+GenericNode<T>::GenericNode(T data) :
+        Node<T>(data),
         m_parent(nullptr),
         m_left(nullptr),
         m_right(nullptr)
@@ -177,6 +198,16 @@ void GenericNode<T>::inorderWalkTeamID(Team* team) {
         this->m_data->update_team(team);
         m_right->inorderWalkTeamID(team);
     }
+}
+
+template<class T>
+int GenericNode<T>::unite_insert(Player** players, int index) {
+    if (this != nullptr) {
+        index = m_left->unite_insert(players, index);
+        *(players+(index++)) = this->m_data;
+        index = m_right->unite_insert(players, index);
+    }
+    return index;
 }
 
 
@@ -281,7 +312,7 @@ void GenericNode<T>::update_bf()
     if (m_right != nullptr) {
         heightRight = m_right->m_height + 1;
     }
-    Node<T>::m_bf = heightLeft - heightRight;
+    this->m_bf = heightLeft - heightRight;
 }
 
 
@@ -297,10 +328,10 @@ void GenericNode<T>::update_height()
         heightRight = m_right->m_height + 1;
     }
     if (heightLeft >= heightRight) {
-        Node<T>::m_height = heightLeft;
+        this->m_height = heightLeft;
     }
     else {
-        Node<T>::m_height = heightRight;
+        this->m_height = heightRight;
     }
 }
 
@@ -342,6 +373,52 @@ void GenericNode<T>::update_games_inorder(const int numTeamGames) {
     }
 }
 
+//------------------------------------Printing Functions for Testing-------------------------------------------------
+
+template <class T>
+void GenericNode<T>::printNode() {
+    int parent, left, right;
+    if (m_parent == nullptr) {
+        parent = -1;
+    }
+    else {
+        parent = m_parent->m_id;
+    }
+    if (m_left == nullptr) {
+        left = -1;
+    }
+    else {
+        left = m_left->m_id;
+    }
+    if (m_right == nullptr) {
+        right = -1;
+    }
+    else {
+        right = m_right->m_id;
+    }
+    std::cout << "ID = " << this->m_id << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << ", Height = " << this->m_height << ", BF = " << this->m_bf << std::endl;
+}
+
+
+template <class T>
+void GenericNode<T>::printData() {
+    std::cout << "Data = " << this->m_data << std::endl;
+}
+
+
+template <class T>
+void GenericNode<T>::inorderWalkNode(bool flag) {
+    if (this != nullptr) {
+        m_left->inorderWalkNode(flag);
+        if (flag) {
+            this->printNode();
+        }
+        else {
+            this->printData();
+        }
+        m_right->inorderWalkNode(flag);
+    }
+}
 
 //-----------------------------------------------------------------------------------------------------------
 

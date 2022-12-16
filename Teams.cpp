@@ -196,15 +196,109 @@ void Team::unite_teams(Team* team1, Team* team2) {
     this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
     this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
     this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
-    //this->m_playersByID.mergeNodesExtraPointer(team1->m_playersByID.m_node);
-    this->m_playersByID.mergeNodes(team1->m_playersByID.m_node);
+    int num1 = team1->m_numPlayers;
+    int newNum = team1->m_numPlayers + team2->m_numPlayers;
+    Player** playersID1 = new Player*[num1*sizeof(Player*)];
+    Player** playersID2 = new Player*[team2->m_numPlayers*sizeof(Player*)];
+    Player** playersScore1 = new Player*[num1*sizeof(Player*)];
+    Player** playersScore2 = new Player*[team2->m_numPlayers*sizeof(Player*)];
+    team1->m_playersByID.m_node->unite_insert(playersID1, 0);
+    team2->m_playersByID.m_node->unite_insert(playersID2, 0);
+    team1->m_playersByScore.m_node->unite_insert(playersScore1, 0);
+    team2->m_playersByScore.m_node->unite_insert(playersScore2, 0);
+    Player** nPlayersID = new Player*[newNum*sizeof(Player*)];
+    Player** nPlayersScore = new Player*[newNum*sizeof(Player*)];
+    //std::cout << "By score Team1: \n";
+    /*for (int i = 0; i < team1->m_numPlayers;  i++) {
+        std::cout << "Player: " << playersScore1[i]->get_playerId() << std::endl;
+    }
+    std::cout << "By ID Team1: \n";
+    for (int i = 0; i < team1->m_numPlayers ; i++) {
+        std::cout << "Player: " << playersID1[i]->get_playerId() << std::endl;
+    }
+        std::cout << "By score Team2: \n";
+    for (int i = 0; i < team2->m_numPlayers;  i++) {
+        std::cout << "Player: " << playersScore2[i]->get_playerId() << std::endl;
+    }
+    std::cout << "By ID Team2: \n";
+    for (int i = 0; i < team2->m_numPlayers ; i++) {
+        std::cout << "Player: " << playersID2[i]->get_playerId() << std::endl;
+    }*/
+    mergeByID(nPlayersID, playersID1, playersID2, num1, team2->m_numPlayers);
+    delete[] playersID1;
+    delete[] playersID2;
+    mergeByScore(nPlayersScore, playersScore1, playersScore2, num1, team2->m_numPlayers);
+    delete[] playersScore1;
+    delete[] playersScore2;
+    /*std::cout << "By score after unite_insert: \n";
+    for (int i = 0; i < newNum;  i++) {
+        std::cout << "Player: " << nPlayersScore[i]->get_playerId() << std::endl;
+    }
+    std::cout << "By ID after unite_insert: \n";
+    for (int i = 0; i < newNum ; i++) {
+        std::cout << "Player: " << nPlayersID[i]->get_playerId() << std::endl;
+    }*/
+    this->m_playersByID.insertInorder(nPlayersID, 0, newNum-1);
+    this->m_playersByScore.insertInorder(nPlayersScore, 0, newNum-1);
+  //  std::cout << "After insert, total numPlayers is " << this->m_numPlayers << std::endl;
+    delete[] nPlayersID;
+    delete[] nPlayersScore;
+    /*this->m_playersByID.mergeNodes(team1->m_playersByID.m_node);
     this->m_playersByScore.mergeNodes(team1->m_playersByScore.m_node);
-    //this->m_playersByID.mergeNodesExtraPointer(team2->m_playersByID.m_node);
     this->m_playersByID.mergeNodes(team2->m_playersByID.m_node);
-    this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node);
+    this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node); */
     team1->m_playersByID.unite_update_games(team1->get_games());
     team2->m_playersByID.unite_update_games(team2->get_games());
     this->m_topScorer = m_playersByScore.search_and_return_max();
+    //std::cout << "After By ID" << std::endl;
+    //m_playersByID.print_tree();
+    /*std::cout << "By score\n";
+    m_playersByScore.print_tree(); */
+}
+
+
+void Team::mergeByID(Player** nPlayers, Player** players1, Player** players2, const int len1, const int len2) {
+    int index1 = 0, index2 = 0, indexMerged = 0;
+    while(index1 < len1 && index2 < len2) {
+        if(players1[index1]->get_playerId() < players2[index2]->get_playerId()) {
+            nPlayers[indexMerged++] = players1[index1++];
+        }
+        else {
+            nPlayers[indexMerged++] = players2[index2++];
+        }
+    }
+    for(int i = index1; i < len1; i++) {
+        nPlayers[indexMerged++] = players1[index1++];
+    }
+    for(int i = index2; i < len2; i++) {
+        nPlayers[indexMerged++] = players2[index2++];
+    }
+}
+
+void Team::mergeByScore(Player** nPlayers, Player** players1, Player** players2, const int len1, const int len2) {
+    int index1 = 0, index2 = 0, indexMerged = 0;
+    while(index1 < len1 && index2 < len2) {
+        if(players1[index1]->get_goals() < players2[index2]->get_goals()) {
+            nPlayers[indexMerged++] = players1[index1++];
+        }
+        else if (players1[index1]->get_goals() == players2[index2]->get_goals() && players1[index1]->get_cards() 
+                                                                                    > players2[index2]->get_cards()) {
+            nPlayers[indexMerged++] = players1[index1++];
+        }
+        else if (players1[index1]->get_goals() == players2[index2]->get_goals() && players1[index1]->get_cards() ==
+                 players2[index2]->get_cards() && players1[index1]->get_playerId() > players2[index2]->get_playerId()) {
+            nPlayers[indexMerged++] = players1[index1++];
+                }
+        else {
+            nPlayers[indexMerged++] = players2[index2++];
+        }
+    }
+    for(int i = index1; i < len1; i++) {
+        nPlayers[indexMerged++] = players1[index1++];
+    }
+    for(int i = index2; i < len2; i++) {
+        nPlayers[indexMerged++] = players2[index2++];
+    }
 }
 
 
@@ -268,4 +362,9 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     winner.m_numGoals += loser.m_numGoals;
     winner.m_numPlayers += loser.m_numPlayers;
     winner.m_points += loser.m_points;
+}
+
+
+void Team::print_team() {
+    m_playersByScore.print_tree();
 }

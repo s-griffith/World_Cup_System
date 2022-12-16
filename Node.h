@@ -14,7 +14,8 @@ public:
     * @param - none
     * @return - A new instance of Node
     */     
-   Node();
+    Node();
+    Node(T data);
 
     /*
     * Copy Constructor and Assignment Operator of Node class
@@ -74,6 +75,14 @@ Node<T>::Node() :
     m_height(-1),
     m_bf(0),
     m_id(0)
+{}
+
+template <class T>
+Node<T>::Node(T data) :
+    m_data(data),
+    m_height(-1),
+    m_bf(0),
+    m_id(data->get_playerId())
 {}
 
 template <class T>

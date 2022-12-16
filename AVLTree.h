@@ -128,6 +128,16 @@ public:
      * @return - void
      */
     void unite_update_games(const int numTeamGames);
+    void insertInorder(T* data, const int start, const int end);
+    N* insertInorderRecursive(T* data, const int start, const int end);
+
+    /*
+     * Helper function for testing:
+     * Prints the tree, node by node
+     * @param - none
+     * @return - void
+     */
+    void print_tree();
 
 protected:
 
@@ -576,6 +586,42 @@ N* Tree<N, T>::findRightClosest(N* currentTeam)
         return closestRight;
     }
     return nullptr;
+}
+
+template<class N, class T>
+void Tree<N, T>::insertInorder(T* data, const int start, const int end) {
+    N* tmp = this->m_node;
+    m_node = insertInorderRecursive(data, start, end);
+    delete tmp;
+}
+
+template<class N, class T>
+N* Tree<N, T>::insertInorderRecursive(T* data, const int start, const int end) {
+    //Stop recursion
+    if (start > end)
+        return nullptr;
+    //Get the middle player and make root
+    int mid = (start + end)/2;
+    N* root = new N(data[mid]);
+    //Construct left subtree
+    root->m_left =  insertInorderRecursive(data, start, mid-1);
+    if (root->m_left != nullptr) {
+        root->m_left->m_parent = root;
+    }
+    //Construct right subtree
+    root->m_right = insertInorderRecursive(data, mid+1, end);
+    if (root->m_right != nullptr) {
+        root->m_right->m_parent = root;
+    }
+    root->update_bf();
+    root->update_height();
+    return root;
+}
+
+
+template<class N, class T>
+void Tree<N, T>::print_tree() {
+    m_node->inorderWalkNode(1);
 }
 
 

@@ -233,6 +233,10 @@ public:
     */
     void unite_teams(Team* team1, Team* team2);
 
+    void mergeByID(Player** nPlayers, Player** players1, Player** players2, const int len1, const int len2);
+
+    void mergeByScore(Player** nPlayers, Player** players1, Player** players2, const int len1, const int len2);
+
     /*
     * Helper function for get_all_players in world_cup:
     * Inserts all of the players into a given array
@@ -274,6 +278,14 @@ public:
     * @return - void
     */
     void knockout_unite(Team& winner, Team& loser);
+
+    /*
+     * Helper function for testing:
+     * Prints the team's m_playersByScore, node by node
+     * @param - none
+     * @return - void
+     */
+    void print_team();
 
 private:
 
