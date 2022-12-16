@@ -1,6 +1,5 @@
 //world_cup.cpp
 
-
 #include "worldcup23a1.h"
 
 world_cup_t::world_cup_t() :
@@ -12,7 +11,8 @@ world_cup_t::world_cup_t() :
         m_playersByScore()
 {}
 
-world_cup_t::~world_cup_t() //I feel like this should be default
+
+world_cup_t::~world_cup_t()
 {
     if (m_totalNumPlayers > 0) {
         m_playersByID.erase_data(m_playersByID.m_node);
@@ -45,6 +45,7 @@ StatusType world_cup_t::add_team(int teamId, int points)
     return StatusType::SUCCESS;
 }
 
+
 StatusType world_cup_t::remove_team(int teamId)
 {
     if (teamId <= 0) {
@@ -65,6 +66,7 @@ StatusType world_cup_t::remove_team(int teamId)
     return StatusType::SUCCESS;
 }
 
+
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
@@ -75,7 +77,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         return StatusType::INVALID_INPUT;
     }
     //Check if there already is a player with this ID.
-    //If not then continue in "catch", otherwise return failure.
+    //If not, then continue in "catch", otherwise return failure.
     try {
         m_playersByID.search_and_return_data(playerId);
     }
@@ -106,10 +108,12 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             try {
                 m_playersByScore.update_closest(playerId, goals, cards);
                 if (tmpPlayer->get_closest_left() != nullptr) {
-                    m_playersByScore.update_closest(tmpPlayer->get_closest_left()->get_playerId(), tmpPlayer->get_closest_left()->get_goals(), tmpPlayer->get_closest_left()->get_cards());
+                    m_playersByScore.update_closest(tmpPlayer->get_closest_left()->get_playerId(), 
+                                tmpPlayer->get_closest_left()->get_goals(), tmpPlayer->get_closest_left()->get_cards());
                 }
                 if (tmpPlayer->get_closest_right() != nullptr) {
-                    m_playersByScore.update_closest(tmpPlayer->get_closest_right()->get_playerId(), tmpPlayer->get_closest_right()->get_goals(), tmpPlayer->get_closest_right()->get_cards());
+                    m_playersByScore.update_closest(tmpPlayer->get_closest_right()->get_playerId(), 
+                            tmpPlayer->get_closest_right()->get_goals(), tmpPlayer->get_closest_right()->get_cards());
                 }
             }
             catch (const NodeNotFound& e) {}
@@ -150,6 +154,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
     }
     return StatusType::FAILURE;
 }
+
 
 StatusType world_cup_t::remove_player(int playerId)
 {
@@ -207,6 +212,7 @@ StatusType world_cup_t::remove_player(int playerId)
     return StatusType::SUCCESS;
 }
 
+
 StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
                                             int scoredGoals, int cardsReceived)
 {
@@ -229,10 +235,12 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         //Remove player from tree of all scorers
         m_playersByScore.remove(playerId, tmpPlayer->get_goals(), tmpPlayer->get_cards());
         if (closestRightPrevious != nullptr) {
-            m_playersByScore.update_closest(closestRightPrevious->get_playerId(), closestRightPrevious->get_goals(), closestRightPrevious->get_cards());
+            m_playersByScore.update_closest(closestRightPrevious->get_playerId(), closestRightPrevious->get_goals(), 
+                    closestRightPrevious->get_cards());
         }
         if (closestLeftPrevious != nullptr) {
-            m_playersByScore.update_closest(closestLeftPrevious->get_playerId(), closestLeftPrevious->get_goals(), closestLeftPrevious->get_cards());
+            m_playersByScore.update_closest(closestLeftPrevious->get_playerId(), closestLeftPrevious->get_goals(), 
+                    closestLeftPrevious->get_cards());
         }
         tmpPlayer->update_closest_left(nullptr);
         tmpPlayer->update_closest_right(nullptr);
@@ -259,15 +267,18 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         Player* closestLeft = tmpPlayer->get_closest_left();
         Player* closestRight = tmpPlayer->get_closest_right();
         if (closestRight != nullptr) {
-            m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), closestRight->get_cards());
+            m_playersByScore.update_closest(closestRight->get_playerId(), closestRight->get_goals(), 
+                    closestRight->get_cards());
         }
         if (closestLeft != nullptr) {
-            m_playersByScore.update_closest(closestLeft->get_playerId(), closestLeft->get_goals(), closestLeft->get_cards());
+            m_playersByScore.update_closest(closestLeft->get_playerId(), closestLeft->get_goals(), 
+                    closestLeft->get_cards());
         }
     }
     catch (const NodeNotFound& e) {}
     return StatusType::SUCCESS;
 }
+
 
 StatusType world_cup_t::play_match(int teamId1, int teamId2)
 {
@@ -276,6 +287,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     }
     Team* team1;
     Team* team2;
+    //Search for the teams in the qualified teams tree. If they're not there, they cannot play - return failure.
     try {
         team1 = m_qualifiedTeams.search_and_return_data(teamId1);
         team2 = m_qualifiedTeams.search_and_return_data(teamId2);
@@ -286,6 +298,7 @@ StatusType world_cup_t::play_match(int teamId1, int teamId2)
     this->compete(*team1, *team2);
     return StatusType::SUCCESS;
 }
+
 
 output_t<int> world_cup_t::get_num_played_games(int playerId)
 {
@@ -304,6 +317,7 @@ output_t<int> world_cup_t::get_num_played_games(int playerId)
     return output_t<int>(totalGames);
 }
 
+
 output_t<int> world_cup_t::get_team_points(int teamId)
 {
     if (teamId <= 0) {
@@ -319,11 +333,13 @@ output_t<int> world_cup_t::get_team_points(int teamId)
     return output_t<int>(tmpTeam->get_points());
 }
 
+
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
-{ //Do we need to delete team1 if team2 and team1 merge into team2????
+{
     if (teamId1 == teamId2 || newTeamId <= 0 || teamId1 <= 0 || teamId2 <= 0) {
         return StatusType::INVALID_INPUT;
     }
+    //Search for the new team in the tree. If it's already there and is not equal to team1 or team2, return failure.
     bool alreadyExists = true;
     try {
         m_teamsByID.search_specific_id(newTeamId);
@@ -336,6 +352,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     }
     Team* team1;
     Team* team2;
+    //Find team1 and team2 in the tree. If they don't exist, return failure.
     try {
         team1 = m_teamsByID.search_and_return_data(teamId1);
     
@@ -349,6 +366,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
+    //Create a new team using the constructor
     Team* nTeam = nullptr;
     try {
         nTeam = new Team(newTeamId, team1->get_points() + team2->get_points());
@@ -358,6 +376,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     }
     nTeam->Team::unite_teams(team1, team2);
     nTeam->update_team_id(nTeam);
+    //Remove the old teams from the appropriate places. Change the closest pointers accordingly.
     try {
         m_qualifiedTeams.remove(teamId1);
         if (team1->get_closest_left() != nullptr) {
@@ -384,6 +403,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     catch (const NodeNotFound& e) {}
     m_teamsByID.remove(teamId1);
     m_teamsByID.remove(teamId2);
+    //Insert the new team into the appropriate trees. Update the closest pointers accordingly.
     try {
         m_teamsByID.insert(nTeam, newTeamId);
     }
@@ -404,12 +424,12 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         catch (const std::bad_alloc& e) {
             return StatusType::ALLOCATION_ERROR;
         }
-        catch (const NodeNotFound& e) {}
     }
     delete team1;
     delete team2;
     return StatusType::SUCCESS;
 }
+
 
 output_t<int> world_cup_t::get_top_scorer(int teamId)
 {
@@ -436,6 +456,7 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
     return output_t<int>(m_overallTopScorer->get_playerId());
 }
 
+
 output_t<int> world_cup_t::get_all_players_count(int teamId)
 {
     if (teamId == 0) {
@@ -453,6 +474,7 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
     }
     return output_t<int>(m_totalNumPlayers);
 }
+
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
 {
@@ -483,6 +505,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     m_playersByScore.get_all_data(output);
     return StatusType::SUCCESS;
 }
+
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
@@ -515,9 +538,9 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     return output_t<int>(closestPlayerId);
 }
 
-output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check where need to send allocation error from
+
+output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 {
-   // m_qualifiedTeams.print_tree();
     if (maxTeamId < 0 || minTeamId < 0 || maxTeamId < minTeamId) {
         return output_t<int>(StatusType::INVALID_INPUT);
     }
@@ -525,10 +548,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
         return output_t<int>(StatusType::FAILURE);
     }
     //Find number of teams invovled
-
-   // std::cout << "minTeamId is " << minTeamId << " Max is " << maxTeamId << std::endl;
     int num = m_qualifiedTeams.m_node->numOfTeams(minTeamId, maxTeamId);
-   // std::cout << "Num of teams " << num << std::endl;
     //If there are no qualified teams, return failure
     if (num == 0) {
         return output_t<int>(StatusType::FAILURE);
@@ -550,25 +570,19 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) //check
     }
     (teams+num-1)->update_closest_right(nullptr);
     teams->update_closest_left(nullptr);
-    //Team* tmp = teams;
-    //while (tmp != nullptr) {
-        //std::cout << "Team: " << tmp->get_teamID() << std::endl;
-      //  tmp = tmp->get_closest_right();
-    //}
     if (num == 1) {
         int winner = teams->get_teamID();
         delete[] teams;
         return output_t<int>(winner);
     }
     //In a recursive function, go over every pair in the array and send to play match.
-    //Throughout the recursive function, combine teams where needed and set the open space equal to nullptr
+    //Throughout, combine teams where needed and set the open space equal to nullptr
     Team* first = teams;
     do {
         first = knockout_games(first);
     } while (first->get_closest_right() != nullptr);
     int winnerID = first->get_teamID();
     delete[] teams;
-  //  m_qualifiedTeams.print_tree();
     return output_t<int>(winnerID);
 }
 
@@ -597,15 +611,20 @@ int world_cup_t::compete(Team& team1, Team& team2) {
     return winnerID;
 }
 
-Team* world_cup_t::knockout_games(Team* teams) { //return first
+Team* world_cup_t::knockout_games(Team* teams) {
+    //If there is only one team in the array, return
     if (teams->get_closest_right() == nullptr) {
         return teams;
     }
+    //Find the first pair of the array
     Team* second = teams->get_closest_right();
+    //If there are more teams in the array, call the function recursively in order to find the next pair
     if (second->get_closest_right() != nullptr) {
         knockout_games(second->get_closest_right());
     }
+    //Play the match between the pair of teams found
     int winnerID = compete(*teams, *second);
+    //Unite the teams according to who won and lost
     if (winnerID == teams->get_teamID()) {
         teams->knockout_unite(*teams, *second);
         teams->update_closest_right(second->get_closest_right());

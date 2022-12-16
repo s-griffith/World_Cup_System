@@ -27,20 +27,32 @@ class world_cup_t {
 private:
     //Total number of players throughout the entire game
     int m_totalNumPlayers;
+
     //Shared pointer to the player with the top stats (goals + cards + ID)
     Player* m_overallTopScorer;
+
     //Tree of shared pointers of the type team, with all the teams in the game sorted by their ID
     Tree<GenericNode<Team*>, Team*> m_teamsByID;
+
     //Tree of shared pointers of the type team, with all the teams in the game with more than 11 players, and at least
     //      one goalkeeper, sorted by the team ID
     Tree<GenericNode<Team*>, Team*> m_qualifiedTeams;
+
     //Tree of shared pointers of the type player, with all the players in the game sorted by their ID
     Tree<GenericNode<Player*>, Player*> m_playersByID;
+
     //Tree of shared pointers of the type player, with all the players in the game sorted by their goals, cards and ID
     MultiTree<Player*> m_playersByScore;
 
-	Team* knockout_games(Team* teams);
+	/*
+	 * Helper functions for world_cup:
+	 * compete: finds the winner and loser of each match according the relevant parameters.
+	 * knockout_games: pairs off an array of teams, playing a match between each pair and uniting the teams according
+	 * 		to the winner and loser of each match.
+	*/
 	int compete(Team& team1, Team& team2);
+	Team* knockout_games(Team* teams);
+
 public:
 	// <DO-NOT-MODIFY> {
 	
