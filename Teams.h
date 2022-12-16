@@ -233,8 +233,20 @@ public:
     */
     void unite_teams(Team* team1, Team* team2);
 
+    /*
+    * Helper function for unite_teams in world_cup:
+    * Merges two arrays ordered by ID's of pointers to players into one united array.
+    * @param - the array, pointers to arrays of the previous teams, lengths of each array
+    * @return - void
+    */
     void mergeByID(Player** nPlayers, Player** players1, Player** players2, const int len1, const int len2);
 
+    /*
+    * Helper function for unite_teams in world_cup:
+    * Merges two arrays ordered by score, goals, and ID of pointers to players into one united array.
+    * @param - the array, pointers to arrays of the previous teams, lengths of each array
+    * @return - void
+    */
     void mergeByScore(Player** nPlayers, Player** players1, Player** players2, const int len1, const int len2);
 
     /*
@@ -278,14 +290,6 @@ public:
     * @return - void
     */
     void knockout_unite(Team& winner, Team& loser);
-
-    /*
-     * Helper function for testing:
-     * Prints the team's m_playersByScore, node by node
-     * @param - none
-     * @return - void
-     */
-    void print_team();
 
 private:
 

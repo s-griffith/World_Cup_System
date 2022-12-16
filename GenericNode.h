@@ -17,6 +17,13 @@ public:
     * @return - A new instance of GenericNode
     */ 
     GenericNode();
+
+    /*
+    * Constructor of GenericNode class
+    * Used in unite_teams to make a new node containing the desired player
+    * @param - data the node holds
+    * @return - A new instance of GenericNode
+    */   
     GenericNode(T data);
 
     /*
@@ -58,6 +65,12 @@ public:
      */
     void inorderWalkTeamID(Team* team);
 
+    /*
+    * Helper function for unite_teams in world_cup:
+    * Inserts players into a given array, node by node
+    * @param - an array, current index
+    * @return - current index
+    */
     int unite_insert(Player** players, int index);
 
     /*

@@ -190,70 +190,44 @@ void Team::update_team_stats(const int goals, const int cards){
 }
 
 
+//--------------------------------unite_teams----------------------------
+
 void Team::unite_teams(Team* team1, Team* team2) {
-    this->m_numCards = team1->m_numCards + team2->m_numCards;
-    this->m_numGames = 0;
-    this->m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
-    this->m_numGoals = team1->m_numGoals + team2->m_numGoals;
-    this->m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
-    int num1 = team1->m_numPlayers;
-    int newNum = team1->m_numPlayers + team2->m_numPlayers;
-    Player** playersID1 = new Player*[num1*sizeof(Player*)];
+    m_numCards = team1->m_numCards + team2->m_numCards;
+    m_numGames = 0;
+    m_numGoalkeepers = team1->m_numGoalkeepers + team2->m_numGoalkeepers;
+    m_numGoals = team1->m_numGoals + team2->m_numGoals;
+    m_numPlayers = team1->m_numPlayers + team2->m_numPlayers;
+    //Create an array of pointers to the players in each team
+    Player** playersID1 = new Player*[team1->m_numPlayers*sizeof(Player*)];
     Player** playersID2 = new Player*[team2->m_numPlayers*sizeof(Player*)];
-    Player** playersScore1 = new Player*[num1*sizeof(Player*)];
+    Player** playersScore1 = new Player*[team1->m_numPlayers*sizeof(Player*)];
     Player** playersScore2 = new Player*[team2->m_numPlayers*sizeof(Player*)];
+    //Insert the players into the array by inorder walk
     team1->m_playersByID.m_node->unite_insert(playersID1, 0);
     team2->m_playersByID.m_node->unite_insert(playersID2, 0);
     team1->m_playersByScore.m_node->unite_insert(playersScore1, 0);
     team2->m_playersByScore.m_node->unite_insert(playersScore2, 0);
-    Player** nPlayersID = new Player*[newNum*sizeof(Player*)];
-    Player** nPlayersScore = new Player*[newNum*sizeof(Player*)];
-    //std::cout << "By score Team1: \n";
-    /*for (int i = 0; i < team1->m_numPlayers;  i++) {
-        std::cout << "Player: " << playersScore1[i]->get_playerId() << std::endl;
-    }
-    std::cout << "By ID Team1: \n";
-    for (int i = 0; i < team1->m_numPlayers ; i++) {
-        std::cout << "Player: " << playersID1[i]->get_playerId() << std::endl;
-    }
-        std::cout << "By score Team2: \n";
-    for (int i = 0; i < team2->m_numPlayers;  i++) {
-        std::cout << "Player: " << playersScore2[i]->get_playerId() << std::endl;
-    }
-    std::cout << "By ID Team2: \n";
-    for (int i = 0; i < team2->m_numPlayers ; i++) {
-        std::cout << "Player: " << playersID2[i]->get_playerId() << std::endl;
-    }*/
-    mergeByID(nPlayersID, playersID1, playersID2, num1, team2->m_numPlayers);
+    //Create an array of pointers that holds the united teams
+    Player** nPlayersID = new Player*[m_numPlayers*sizeof(Player*)];
+    Player** nPlayersScore = new Player*[m_numPlayers*sizeof(Player*)];
+    //Merge the teams from their separate arrays into the united array
+    mergeByID(nPlayersID, playersID1, playersID2, team1->m_numPlayers, team2->m_numPlayers);
     delete[] playersID1;
     delete[] playersID2;
-    mergeByScore(nPlayersScore, playersScore1, playersScore2, num1, team2->m_numPlayers);
+    mergeByScore(nPlayersScore, playersScore1, playersScore2, team1->m_numPlayers, team2->m_numPlayers);
     delete[] playersScore1;
     delete[] playersScore2;
-    /*std::cout << "By score after unite_insert: \n";
-    for (int i = 0; i < newNum;  i++) {
-        std::cout << "Player: " << nPlayersScore[i]->get_playerId() << std::endl;
-    }
-    std::cout << "By ID after unite_insert: \n";
-    for (int i = 0; i < newNum ; i++) {
-        std::cout << "Player: " << nPlayersID[i]->get_playerId() << std::endl;
-    }*/
-    this->m_playersByID.insertInorder(nPlayersID, 0, newNum-1);
-    this->m_playersByScore.insertInorder(nPlayersScore, 0, newNum-1);
-  //  std::cout << "After insert, total numPlayers is " << this->m_numPlayers << std::endl;
+    //Create a tree from the united array
+    m_playersByID.insertInorder(nPlayersID, m_numPlayers-1);
+    m_playersByScore.insertInorder(nPlayersScore, m_numPlayers-1);
     delete[] nPlayersID;
     delete[] nPlayersScore;
-    /*this->m_playersByID.mergeNodes(team1->m_playersByID.m_node);
-    this->m_playersByScore.mergeNodes(team1->m_playersByScore.m_node);
-    this->m_playersByID.mergeNodes(team2->m_playersByID.m_node);
-    this->m_playersByScore.mergeNodes(team2->m_playersByScore.m_node); */
+    //Update each player's num_games
     team1->m_playersByID.unite_update_games(team1->get_games());
     team2->m_playersByID.unite_update_games(team2->get_games());
-    this->m_topScorer = m_playersByScore.search_and_return_max();
-    //std::cout << "After By ID" << std::endl;
-    //m_playersByID.print_tree();
-    /*std::cout << "By score\n";
-    m_playersByScore.print_tree(); */
+    //Update the top scorer of the united team
+    m_topScorer = m_playersByScore.search_and_return_max();
 }
 
 
@@ -302,6 +276,8 @@ void Team::mergeByScore(Player** nPlayers, Player** players1, Player** players2,
 }
 
 
+//--------------------------------Players Functions----------------------------
+
 void Team::get_all_team_players(int* const output) {
     m_playersByScore.get_all_data(output);
 }
@@ -333,6 +309,8 @@ int Team::get_closest_team_player(const int playerId) {
 }
 
 
+//--------------------------------knockout_winner----------------------------
+
 int Team::knockout_count(const int maxTeamID) {
     Team* current = this;
     int counter = 0;
@@ -362,9 +340,4 @@ void Team::knockout_unite(Team& winner, Team& loser) {
     winner.m_numGoals += loser.m_numGoals;
     winner.m_numPlayers += loser.m_numPlayers;
     winner.m_points += loser.m_points;
-}
-
-
-void Team::print_team() {
-    m_playersByScore.print_tree();
 }

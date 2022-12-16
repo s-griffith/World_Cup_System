@@ -15,6 +15,13 @@ public:
     * @return - A new instance of Node
     */     
     Node();
+
+    /*
+    * Constructor of Node class
+    * Used in unite_teams to make a new node containing the desired player
+    * @param - data the node holds
+    * @return - A new instance of Node
+    */     
     Node(T data);
 
     /*

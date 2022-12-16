@@ -98,14 +98,6 @@ public:
     virtual T& search_and_return_data(const int id) const;
 
     /*
-     * Helper function for unite_teams in world_cup:
-     * Recursively inserts nodes into the given tree, starting with the given node
-     * @param - A pointer to the starting node
-     * @return - none
-     */
-    void mergeNodes(N* node);
-
-    /*
     * Helper function for get_all_players in world_cup:
     * Add all of the tree keys to the given array
     * @param - an array
@@ -128,18 +120,24 @@ public:
      * @return - void
      */
     void unite_update_games(const int numTeamGames);
-    void insertInorder(T* data, const int start, const int end);
-    N* insertInorderRecursive(T* data, const int start, const int end);
 
     /*
-     * Helper function for testing:
-     * Prints the tree, node by node
-     * @param - none
+     * Helper function for unite_teams in world_cup:
+     * Creates a tree from a given ordered array
+     * @param - a pointer to the array and its final index
      * @return - void
      */
-    void print_tree();
+    void insertInorder(T* data, const int end);
 
 protected:
+
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Recursively inserts the data from the array into a tree
+     * @param - a pointer to the array, its starting index, and its final index
+     * @return - a pointer to the root node at the end of the insertions
+     */
+    N* insertInorderRecursive(T* data, const int start, const int end);
 
     /*
     * Make the node a leaf without breaking the sorted tree
@@ -378,20 +376,6 @@ T& Tree<N, T>::search_and_return_data(const int id) const
 
 //-----------------------------------------Helper Functions for world_cup-----------------------------------------
 
-template<class N, class T>
-void Tree<N, T>::mergeNodes(N* node) {
-    if (node == NULL) {
-        return;
-    }
-    this->mergeNodes(node->m_right);
-    try {
-        this->insert(node->m_data, node->m_id);
-    }
-    catch (const InvalidID& e) {}
-    this->mergeNodes(node->m_left);
-}
-
-
 template <class N, class T>
 void Tree<N, T>::get_all_data(int* const array) const
 {
@@ -430,7 +414,40 @@ void Tree<N, T>::unite_update_games(const int numTeamGames) {
     m_node->update_games_inorder(numTeamGames);
 }
 
+
+template<class N, class T>
+void Tree<N, T>::insertInorder(T* data, const int end) {
+    N* tmp = this->m_node;
+    m_node = insertInorderRecursive(data, 0, end);
+    delete tmp;
+}
+
+
 //-----------------------------------------Internal Helper Functions-----------------------------------------
+
+template<class N, class T>
+N* Tree<N, T>::insertInorderRecursive(T* data, const int start, const int end) {
+    //Stop recursion
+    if (start > end)
+        return nullptr;
+    //Get the middle player and make root
+    int mid = (start + end)/2;
+    N* root = new N(data[mid]);
+    //Construct left subtree
+    root->m_left =  insertInorderRecursive(data, start, mid-1);
+    if (root->m_left != nullptr) {
+        root->m_left->m_parent = root;
+    }
+    //Construct right subtree
+    root->m_right = insertInorderRecursive(data, mid+1, end);
+    if (root->m_right != nullptr) {
+        root->m_right->m_parent = root;
+    }
+    root->update_bf();
+    root->update_height();
+    return root;
+}
+
 
 template <class N, class T>
 N* Tree<N, T>::make_node_leaf(N* node)
@@ -587,43 +604,6 @@ N* Tree<N, T>::findRightClosest(N* currentTeam)
     }
     return nullptr;
 }
-
-template<class N, class T>
-void Tree<N, T>::insertInorder(T* data, const int start, const int end) {
-    N* tmp = this->m_node;
-    m_node = insertInorderRecursive(data, start, end);
-    delete tmp;
-}
-
-template<class N, class T>
-N* Tree<N, T>::insertInorderRecursive(T* data, const int start, const int end) {
-    //Stop recursion
-    if (start > end)
-        return nullptr;
-    //Get the middle player and make root
-    int mid = (start + end)/2;
-    N* root = new N(data[mid]);
-    //Construct left subtree
-    root->m_left =  insertInorderRecursive(data, start, mid-1);
-    if (root->m_left != nullptr) {
-        root->m_left->m_parent = root;
-    }
-    //Construct right subtree
-    root->m_right = insertInorderRecursive(data, mid+1, end);
-    if (root->m_right != nullptr) {
-        root->m_right->m_parent = root;
-    }
-    root->update_bf();
-    root->update_height();
-    return root;
-}
-
-
-template<class N, class T>
-void Tree<N, T>::print_tree() {
-    m_node->inorderWalkNode(1);
-}
-
 
 //----------------------------------------------------------------------------------------------
 

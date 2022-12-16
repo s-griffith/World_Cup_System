@@ -19,6 +19,13 @@ public:
     * @return - A new instance of ComplexNode
     */ 
     ComplexNode();
+
+    /*
+    * Constructor of ComplexNode class
+    * Used in unite_teams to make a new node containing the desired player
+    * @param - data the node holds
+    * @return - A new instance of ComplexNode
+    */     
     ComplexNode(T data);
 
     /*
@@ -36,6 +43,12 @@ public:
     */
     virtual ~ComplexNode() = default;
 
+    /*
+    * Helper function for unite_teams in world_cup:
+    * Inserts players into a given array, node by node
+    * @param - an array, current index
+    * @return - current index
+    */
     int unite_insert(Player** players, int index);
 
 private:
@@ -129,7 +142,7 @@ private:
 };
 
 
-//-----------------------------------------Constructor--------------------------
+//---------------------------------------Constructor and Public Helper Function--------------------------
 
 template <class T>
 ComplexNode<T>::ComplexNode() :
@@ -141,6 +154,7 @@ ComplexNode<T>::ComplexNode() :
         m_cards(0)
 {}
 
+
 template <class T>
 ComplexNode<T>::ComplexNode(T data) :
         Node<T>(data),
@@ -150,6 +164,7 @@ ComplexNode<T>::ComplexNode(T data) :
         m_goals(data->get_goals()),
         m_cards(data->get_cards())
 {}
+
 
 template<class T>
 int ComplexNode<T>::unite_insert(Player** players, int index) {

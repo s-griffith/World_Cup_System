@@ -80,14 +80,6 @@ public:
     ComplexNode<T>& search_recursively(const int id, const int goals, const int cards, ComplexNode<T>* currentNode);
 
     /*
-     * Helper function for unite_teams in world_cup:
-     * Recursively inserts the nodes of the previous tree into the new tree
-     * @param - The current node
-     * @return - void
-     */
-    void mergeNodes(ComplexNode<T>* node);
-
-    /*
      * Helper function for get_all_players in world_cup:
      * Recursively inserts the player ID's of the data of the tree into a given array
      * @param - an array
@@ -103,18 +95,23 @@ public:
      */
     void update_closest(const int playerId, const int goals, const int cards);
 
-    void insertInorder(T* data, const int start, const int end);
-    ComplexNode<T>* insertInorderRecursive(T* data, const int start, const int end);
-
     /*
-     * Helper function for testing:
-     * Prints the tree, node by node
-     * @param - none
+     * Helper function for unite_teams in world_cup:
+     * Creates a tree from a given ordered array
+     * @param - a pointer to the array and its final index
      * @return - void
      */
-    void print_tree();
+    void insertInorder(T* data, const int end);
 
 private:
+
+    /*
+     * Helper function for unite_teams in world_cup:
+     * Recursively inserts the data from the array into a tree
+     * @param - a pointer to the array, its starting index, and its final index
+     * @return - a pointer to the root node at the end of the insertions
+     */
+    ComplexNode<T>* insertInorderRecursive(T* data, const int start, const int end);
 
     /*
      * Helper functions for update_closest:
@@ -293,20 +290,6 @@ ComplexNode<T>& MultiTree<T>::search_recursively(const int id, const int goals, 
 
 //-----------------------------------------Helper Functions for world_cup-----------------------------------------
 
-template<class T>
-void MultiTree<T>::mergeNodes(ComplexNode<T>* node) {
-    if (node == NULL) {
-        return;
-    }
-    this->mergeNodes(node->m_right);
-    try {
-        this->insert(node->m_data, node->m_id, node->m_data->get_goals(), node->m_data->get_cards());
-    }
-    catch (const InvalidID& e) {}
-    this->mergeNodes(node->m_left);
-}
-
-
 template <class T>
 void MultiTree<T>::get_all_data(int* const array) const
 {
@@ -403,9 +386,9 @@ typename ComplexNode<T>::ComplexNode* MultiTree<T>::findRightClosest(ComplexNode
 
 
 template <class T>
-void MultiTree<T>::insertInorder(T* data, const int start, const int end) {
+void MultiTree<T>::insertInorder(T* data, const int end) {
     ComplexNode<T>* tmp = this->m_node;
-    this->m_node = insertInorderRecursive(data, start, end);
+    this->m_node = insertInorderRecursive(data, 0, end);
     delete tmp;
 }
 
@@ -430,12 +413,6 @@ ComplexNode<T>* MultiTree<T>::insertInorderRecursive(T* data, const int start, c
     root->update_bf();
     root->update_height();
     return root;
-}
-
-
-template<class T>
-void MultiTree<T>::print_tree() {
-    this->m_node->inorderWalkNode(1);
 }
 
 //----------------------------------------------------------------------------------------------
