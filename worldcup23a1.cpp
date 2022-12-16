@@ -5,7 +5,6 @@
 
 world_cup_t::world_cup_t() :
         m_totalNumPlayers(0),
-        m_totalTeams(0),
         m_overallTopScorer(nullptr),
         m_teamsByID(),
         m_qualifiedTeams(),
@@ -18,7 +17,7 @@ world_cup_t::~world_cup_t() //I feel like this should be default
     if (m_totalNumPlayers > 0) {
         m_playersByID.erase_data(m_playersByID.m_node);
     }
-    if (m_totalTeams > 0) {
+    if (m_teamsByID.m_node->get_height() < 0) {
         m_teamsByID.erase_data(m_teamsByID.m_node);
     }
     m_overallTopScorer = nullptr;
@@ -43,7 +42,6 @@ StatusType world_cup_t::add_team(int teamId, int points)
         delete newTeam;
         return StatusType::FAILURE;
     }
-    m_totalTeams++;
     return StatusType::SUCCESS;
 }
 
@@ -64,7 +62,6 @@ StatusType world_cup_t::remove_team(int teamId)
     catch(const NodeNotFound& e) {
         return StatusType::FAILURE;
     }
-    m_totalTeams--;
     return StatusType::SUCCESS;
 }
 
@@ -411,7 +408,6 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
     }
     delete team1;
     delete team2;
-    m_totalTeams--;
     return StatusType::SUCCESS;
 }
 

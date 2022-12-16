@@ -27,7 +27,6 @@ class world_cup_t {
 private:
     //Total number of players throughout the entire game
     int m_totalNumPlayers;
-	int m_totalTeams;
     //Shared pointer to the player with the top stats (goals + cards + ID)
     Player* m_overallTopScorer;
     //Tree of shared pointers of the type team, with all the teams in the game sorted by their ID
