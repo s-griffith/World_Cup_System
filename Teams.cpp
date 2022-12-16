@@ -56,7 +56,7 @@ Team::~Team() {
 }
 
 
-//-------------------------------------Getters----------------------------
+//-----------------------------------------------------Getters--------------------------------------------------
 
 int Team::get_points() const {
     return m_points;
@@ -276,7 +276,7 @@ void Team::mergeByScore(Player** nPlayers, Player** players1, Player** players2,
 }
 
 
-//--------------------------------Players Functions----------------------------
+//--------------------------------world_cup Players Functions----------------------------
 
 void Team::get_all_team_players(int* const output) {
     m_playersByScore.get_all_data(output);

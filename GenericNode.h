@@ -139,16 +139,6 @@ private:
      * @return - a pointer to the team found
      */
     void update_games_inorder(const int numTeamGames);
-    
-    /*
-     * Helper functions for testing:
-     * Prints a tree, node by node
-     * @param - none
-     * @return - void
-     */    
-    void inorderWalkNode(bool flag);
-    void printNode();
-    void printData();
 
     /*
      * The internal fields of GenericNode: pointers to the parent node and two child nodes
@@ -386,52 +376,6 @@ void GenericNode<T>::update_games_inorder(const int numTeamGames) {
     }
 }
 
-//------------------------------------Printing Functions for Testing-------------------------------------------------
-
-template <class T>
-void GenericNode<T>::printNode() {
-    int parent, left, right;
-    if (m_parent == nullptr) {
-        parent = -1;
-    }
-    else {
-        parent = m_parent->m_id;
-    }
-    if (m_left == nullptr) {
-        left = -1;
-    }
-    else {
-        left = m_left->m_id;
-    }
-    if (m_right == nullptr) {
-        right = -1;
-    }
-    else {
-        right = m_right->m_id;
-    }
-    std::cout << "ID = " << this->m_id << ", Parent = " << parent << ", Left = " << left << ", Right = " << right << ", Height = " << this->m_height << ", BF = " << this->m_bf << std::endl;
-}
-
-
-template <class T>
-void GenericNode<T>::printData() {
-    std::cout << "Data = " << this->m_data << std::endl;
-}
-
-
-template <class T>
-void GenericNode<T>::inorderWalkNode(bool flag) {
-    if (this != nullptr) {
-        m_left->inorderWalkNode(flag);
-        if (flag) {
-            this->printNode();
-        }
-        else {
-            this->printData();
-        }
-        m_right->inorderWalkNode(flag);
-    }
-}
 
 //-----------------------------------------------------------------------------------------------------------
 

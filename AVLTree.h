@@ -575,6 +575,7 @@ N* Tree<N, T>::findLeftClosest(N* currentTeam)
     return nullptr;
 }
 
+
 template<class N, class T>
 N* Tree<N, T>::findRightClosest(N* currentTeam)
 {
@@ -604,6 +605,7 @@ N* Tree<N, T>::findRightClosest(N* currentTeam)
     }
     return nullptr;
 }
+
 
 //----------------------------------------------------------------------------------------------
 
