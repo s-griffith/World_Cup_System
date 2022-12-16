@@ -38,7 +38,6 @@ add_player 3010 3 30 0 0 true
 add_player 3011 3 30 0 0 true
 add_player 4001 4 2 1 2 false
 add_player 4002 4 2 2 2 false
-get_closest_player 1001 1
 update_player_stats 3011 2 1 1
 play_match 2 3
 play_match 1 2
@@ -51,9 +50,4 @@ get_all_players 4
 get_closest_player 2008 2
 knockout_winner 0 3
 remove_team 2
-get_closest_player 1006 1
-get_closest_player 2008 2
-remove_player 2008
-get_closest_player 1006 1
-
-
+remove_player 3008
