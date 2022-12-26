@@ -196,7 +196,7 @@ void GenericNode<T>::addTeams(Team* teams, const int minTeamId, const int maxTea
 
 template <class T>
 void GenericNode<T>::inorderWalkTeamID(Team* team) {
-    if (this != nullptr) {
+    if (this != nullptr && this->m_data != nullptr) {
         m_left->inorderWalkTeamID(team);
         this->m_data->update_team(team);
         m_right->inorderWalkTeamID(team);
@@ -205,7 +205,7 @@ void GenericNode<T>::inorderWalkTeamID(Team* team) {
 
 template<class T>
 int GenericNode<T>::unite_insert(Player** players, int index) {
-    if (this != nullptr) {
+    if (this != nullptr && this->m_data != nullptr) {
         index = m_left->unite_insert(players, index);
         *(players+(index++)) = this->m_data;
         index = m_right->unite_insert(players, index);
@@ -369,7 +369,7 @@ typename GenericNode<T>::GenericNode* GenericNode<T>::getFirstTeam(const int min
 
 template <class T>
 void GenericNode<T>::update_games_inorder(const int numTeamGames) {
-    if (this != nullptr) {
+    if (this != nullptr && this->m_data != nullptr) {
         m_left->update_games_inorder(numTeamGames);
         this->m_data->update_gamesPlayed(numTeamGames);
         m_right->update_games_inorder(numTeamGames);

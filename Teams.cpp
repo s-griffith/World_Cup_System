@@ -219,8 +219,10 @@ void Team::unite_teams(Team* team1, Team* team2) {
     delete[] playersScore1;
     delete[] playersScore2;
     //Create a tree from the united array
-    m_playersByID.insertInorder(nPlayersID, m_numPlayers-1);
-    m_playersByScore.insertInorder(nPlayersScore, m_numPlayers-1);
+    if (m_numPlayers > 0) {
+        m_playersByID.insertInorder(nPlayersID, m_numPlayers-1);
+        m_playersByScore.insertInorder(nPlayersScore, m_numPlayers-1);
+    }
     delete[] nPlayersID;
     delete[] nPlayersScore;
     //Update each player's num_games

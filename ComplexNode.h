@@ -158,7 +158,7 @@ ComplexNode<T>::ComplexNode(T data) :
 
 template<class T>
 int ComplexNode<T>::unite_insert(Player** players, int index) {
-    if (this != nullptr) {
+    if (this != nullptr && this->m_data != nullptr) {
         index = m_left->unite_insert(players, index);
         *(players+(index++)) = this->m_data;
         index = m_right->unite_insert(players, index);

@@ -17,7 +17,7 @@ world_cup_t::~world_cup_t()
     if (m_totalNumPlayers > 0) {
         m_playersByID.erase_data(m_playersByID.m_node);
     }
-    if (m_teamsByID.m_node->get_height() > 0) {
+    if (m_teamsByID.m_node->get_height() >= 0) {
         m_teamsByID.erase_data(m_teamsByID.m_node);
     }
     m_overallTopScorer = nullptr;
